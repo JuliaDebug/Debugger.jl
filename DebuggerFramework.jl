@@ -91,7 +91,7 @@ module DebuggerFramework
             # Print location here
         else
             buf = IOBuffer()
-            active_line = print_status_synthtic(buf, state, frame, 2, 5)
+            active_line = print_status_synthtic(buf, state, frame, 2, 5)::Int
             code = split(String(take!(buf)),'\n')
             @assert active_line <= length(code)
             for (lineno, line) in enumerate(code)
