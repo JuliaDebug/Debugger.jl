@@ -1,8 +1,8 @@
 __precompile__()
 module DebuggerFramework
     using TerminalUI
-    
-    abstract StackFrame
+
+    abstract type StackFrame end
 
     function print_var(io::IO, name, val::Nullable, undef_callback)
         print("  | ")
@@ -28,13 +28,13 @@ module DebuggerFramework
         print_locdesc(io, frame)
         print_locals(io, frame)
     end
-    
+
     function print_backtrace(state)
         for (num, frame) in enumerate(state.stack)
             print_frame(state, Base.pipe_writer(state.terminal), num, frame)
         end
     end
-        
+
     print_backtrace(state, _::Void) = nothing
 
     function execute_command(state, frame, ::Val{:bt}, cmd)
@@ -67,14 +67,14 @@ module DebuggerFramework
     """
     function debug
     end
-    
-    type DebuggerState
+
+    mutable struct DebuggerState
         stack
         level
         main_mode
         terminal
     end
-    
+
     function print_status_synthtic(io, state, frame, lines_before, total_lines)
         return 0
     end
@@ -104,8 +104,8 @@ module DebuggerFramework
         end
         print(io, String(take!(outbuf)))
     end
-    
-    immutable AbstractDiagnostic; end
+
+    struct AbstractDiagnostic; end
 
     function execute_command
     end
