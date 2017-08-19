@@ -1,7 +1,5 @@
 __precompile__()
 module DebuggerFramework
-    using TerminalUI
-
     abstract type StackFrame end
 
     function print_var(io::IO, name, val::Nullable, undef_callback)
@@ -111,10 +109,9 @@ module DebuggerFramework
     end
 
     using Base: LineEdit, REPL
-    function RunDebugger(stack, terminal = Base.active_repl.t)
+    function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
       promptname(level, name) = "$level|$name > "
 
-      repl = Base.active_repl
       state = DebuggerState(stack, 1, nothing, terminal)
 
       # Setup debug panel
