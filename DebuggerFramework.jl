@@ -1,5 +1,8 @@
 __precompile__()
 module DebuggerFramework
+    include("LineNumbers.jl")
+    using LineNumbers: SourceFile, compute_line
+
     abstract type StackFrame end
 
     function print_var(io::IO, name, val::Nullable, undef_callback)
@@ -41,6 +44,16 @@ module DebuggerFramework
         return false
     end
 
+    function execute_command(state, frame, ::Val{Symbol("?")}, cmd)
+        println("Help not implemented for this debugger.")
+        return false
+    end
+
+    function execute_command(state, frame, _, cmd)
+        println("Unknown command `$cmd`. Executing `?` to obtain help.")
+        execute_command(state, frame, Val{Symbol("?")}(), "?")
+    end
+
     function execute_command(state, interp, ::Union{Val{:f},Val{:fr}}, command)
         subcmds = split(command,' ')[2:end]
         if isempty(subcmds) || subcmds[1] == "v"
@@ -69,24 +82,100 @@ module DebuggerFramework
     mutable struct DebuggerState
         stack
         level
+        repl
         main_mode
+        language_modes
+        standard_keymap
         terminal
     end
+    dummy_state(stack) = DebuggerState(stack, 1, nothing, nothing, nothing, nothing, nothing)
 
     function print_status_synthtic(io, state, frame, lines_before, total_lines)
         return 0
     end
 
-    haslocinfo(frame) = false
+    struct FileLocInfo
+        filepath::String
+        line::Int
+        # 0 if unknown
+        column::Int
+        # The line at which the current context starts, 0 if unknown
+        defline::Int
+    end
+
+    struct BufferLocInfo
+        data::String
+        line::Int
+        # 0 if unknown
+        column::Int
+        defline::Int
+    end
+
+    locinfo(frame) = nothing
     locdesc(frame) = "unknown function"
+
+    """
+    Determine the offsets in the source code to print, based on the offset of the
+    currently highlighted part of the code, and the start and stop line of the
+    entire function.
+    """
+    function compute_source_offsets(code, offset, startline, stopline; file = SourceFile(code))
+        offsetline = compute_line(file, offset)
+        if offsetline - 3 > length(file.offsets) || startline > length(file.offsets)
+            return -1, -1
+        end
+        startoffset = max(file.offsets[max(offsetline-3,1)], file.offsets[startline])
+        stopoffset = endof(code)-1
+        if offsetline + 3 < endof(file.offsets)
+            stopoffset = min(stopoffset, file.offsets[offsetline + 3]-1)
+        end
+        if stopline + 1 < endof(file.offsets)
+            stopoffset = min(stopoffset, file.offsets[stopline + 1]-1)
+        end
+        startoffset, stopoffset
+    end
+
+    function print_sourcecode(io, code, line, defline; file = SourceFile(code))
+        startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, line+3; file=file)
+
+        if startoffset == -1
+            print_with_color(:bold, io, "Line out of file range (bad debug info?)")
+            return
+        end
+
+        # Compute necessary data for line numbering
+        startline = compute_line(file, startoffset)
+        stopline = compute_line(file, stopoffset)
+        current_line = line
+        stoplinelength = length(string(stopline))
+
+        code = split(code[(startoffset:stopoffset)+1],'\n')
+        lineno = startline
+
+        if !isempty(code) && isempty(code[end])
+            pop!(code)
+        end
+
+        for textline in code
+            print_with_color(lineno == current_line ? :yellow : :bold, io,
+                string(lineno, " "^(stoplinelength-length(lineno)+1)))
+            println(io, textline)
+            lineno += 1
+        end
+        println(io)
+    end
+
+    print_next_state(outbuf::IO, state, frame) = nothing
 
     print_status(io, state) = print_status(io, state, state.stack[state.level])
     function print_status(io, state, frame)
         # Buffer to avoid flickering
         outbuf = IOBuffer()
         print_with_color(:bold, outbuf, "In ", locdesc(frame), "\n")
-        if haslocinfo(frame)
-            # Print location here
+        loc = locinfo(frame)
+        if loc !== nothing
+            print_sourcecode(outbuf, isa(loc, BufferLocInfo) ? loc.data : readstring(loc.filepath),
+                loc.line, loc.defline)
         else
             buf = IOBuffer()
             active_line = print_status_synthtic(buf, state, frame, 2, 5)::Int
@@ -100,6 +189,7 @@ module DebuggerFramework
                 end
             end
         end
+        print_next_state(outbuf, state, frame)
         print(io, String(take!(outbuf)))
     end
 
@@ -108,21 +198,34 @@ module DebuggerFramework
     function execute_command
     end
 
-    using Base: LineEdit, REPL
-    function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
-      promptname(level, name) = "$level|$name > "
+    function language_specific_prompt
+    end
 
-      state = DebuggerState(stack, 1, nothing, terminal)
+    function eval_code(state, frame, code)
+        error("Code evaluation not implemented for this debugger")
+    end
+
+    function eval_code(state, code)
+        try
+            result = eval_code(state, state.stack[1], code)
+            true, result
+        catch err
+            bt = catch_backtrace()
+            false, (err, bt)
+        end
+    end
+
+    using Base: LineEdit, REPL
+    promptname(level, name) = "$level|$name > "
+    function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
+
+      state = DebuggerState(stack, 1, repl, nothing, Dict{Symbol, Any}(), nothing, terminal)
 
       # Setup debug panel
       panel = LineEdit.Prompt(promptname(state.level, "debug");
           prompt_prefix="\e[38;5;166m",
           prompt_suffix=Base.text_colors[:white],
           on_enter = s->true)
-
-      # For now use the regular REPL completion provider
-      replc = Base.REPL.REPLCompletionProvider()
-
 
       panel.hist = REPL.REPLHistoryProvider(Dict{Symbol,Any}(:debug => panel))
       Base.REPL.history_reset_state(panel.hist)
@@ -181,13 +284,10 @@ module DebuggerFramework
           return true
       end
 
-      const all_commands = ("q", "s", "si", "finish", "bt", "loc", "ind", "shadow",
-          "up", "down", "ns", "nc", "n", "se")
-
       const repl_switch = Dict{Any,Any}(
           '`' => function (s,args...)
               if isempty(s) || position(LineEdit.buffer(s)) == 0
-                  prompt = language_specific_prompt(state, state.interp)
+                  prompt = language_specific_prompt(state, state.stack[1])
                   buf = copy(LineEdit.buffer(s))
                   LineEdit.transition(s, prompt) do
                       LineEdit.state(s, prompt).input_buffer = buf
@@ -198,8 +298,8 @@ module DebuggerFramework
           end
       )
 
-      b = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
-      panel.keymap_dict = LineEdit.keymap([repl_switch;b])
+      state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
+      panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
       # Skip evaluated values (e.g. constants)
       print_status(Base.pipe_writer(terminal), state)
