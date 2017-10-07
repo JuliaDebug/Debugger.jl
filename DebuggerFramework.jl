@@ -1,7 +1,7 @@
 __precompile__()
 module DebuggerFramework
     include("LineNumbers.jl")
-    using LineNumbers: SourceFile, compute_line
+    using .LineNumbers: SourceFile, compute_line
 
     abstract type StackFrame end
 
