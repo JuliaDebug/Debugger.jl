@@ -5,6 +5,11 @@ module DebuggerFramework
 
     abstract type StackFrame end
 
+    immutable Suppressed{T}
+        item::T
+    end
+    Base.show(io::IO, x::Suppressed) = print(io, "<suppressed ", x.item, '>')
+
     function print_var(io::IO, name, val::Nullable, undef_callback)
         print("  | ")
         if isnull(val)
