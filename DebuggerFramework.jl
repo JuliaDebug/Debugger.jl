@@ -92,8 +92,9 @@ module DebuggerFramework
         language_modes
         standard_keymap
         terminal
+        overall_result
     end
-    dummy_state(stack) = DebuggerState(stack, 1, nothing, nothing, nothing, nothing, nothing)
+    dummy_state(stack) = DebuggerState(stack, 1, nothing, nothing, nothing, nothing, nothing, nothing)
 
     function print_status_synthtic(io, state, frame, lines_before, total_lines)
         return 0
@@ -224,7 +225,7 @@ module DebuggerFramework
     promptname(level, name) = "$level|$name > "
     function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
 
-        state = DebuggerState(stack, 1, repl, nothing, Dict{Symbol, Any}(), nothing, terminal)
+        state = DebuggerState(stack, 1, repl, nothing, Dict{Symbol, Any}(), nothing, terminal, nothing)
 
         # Setup debug panel
         panel = LineEdit.Prompt(promptname(state.level, "debug");
@@ -295,6 +296,8 @@ module DebuggerFramework
 
         print_status(Base.pipe_writer(terminal), state)
         Base.REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
+
+        state.overall_result
     end
 
 end # module
