@@ -198,7 +198,7 @@ module DebuggerFramework
         print(io, String(take!(outbuf)))
     end
 
-    struct AbstractDiagnostic; end
+    abstract type AbstractDiagnostic; end
 
     function execute_command
     end
@@ -258,21 +258,7 @@ module DebuggerFramework
             do_print_status = try
                 execute_command(state, state.stack[state.level], Val{Symbol(cmd1)}(), command)
             catch err
-                isa(err, AbstractDiagnostic) || rethrow(err)
-                caught = false
-                for interp_idx in length(state.top_interp.stack):-1:1
-                    if process_exception!(state.top_interp.stack[interp_idx], err, interp_idx == length(top_interp.stack))
-                        interp = state.top_interp = state.top_interp.stack[interp_idx]
-                        resize!(state.top_interp.stack, interp_idx)
-                        caught = true
-                        break
-                    end
-                end
-                !caught && rethrow(err)
-                display_diagnostic(STDERR, state.interp.code, err)
-                println(STDERR)
-                LineEdit.reset_state(s)
-                return true
+                rethrow(err)
             end
             if old_level != state.level
                 panel.prompt = promptname(state.level,"debug")
