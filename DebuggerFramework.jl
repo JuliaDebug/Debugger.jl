@@ -224,91 +224,91 @@ module DebuggerFramework
     promptname(level, name) = "$level|$name > "
     function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
 
-      state = DebuggerState(stack, 1, repl, nothing, Dict{Symbol, Any}(), nothing, terminal)
+        state = DebuggerState(stack, 1, repl, nothing, Dict{Symbol, Any}(), nothing, terminal)
 
-      # Setup debug panel
-      panel = LineEdit.Prompt(promptname(state.level, "debug");
-          prompt_prefix="\e[38;5;166m",
-          prompt_suffix=Base.text_colors[:white],
-          on_enter = s->true)
+        # Setup debug panel
+        panel = LineEdit.Prompt(promptname(state.level, "debug");
+            prompt_prefix="\e[38;5;166m",
+            prompt_suffix=Base.text_colors[:white],
+            on_enter = s->true)
 
-      panel.hist = REPL.REPLHistoryProvider(Dict{Symbol,Any}(:debug => panel))
-      Base.REPL.history_reset_state(panel.hist)
+        panel.hist = REPL.REPLHistoryProvider(Dict{Symbol,Any}(:debug => panel))
+        Base.REPL.history_reset_state(panel.hist)
 
-      search_prompt, skeymap = Base.LineEdit.setup_search_keymap(panel.hist)
-      search_prompt.complete = Base.REPL.LatexCompletions()
+        search_prompt, skeymap = Base.LineEdit.setup_search_keymap(panel.hist)
+        search_prompt.complete = Base.REPL.LatexCompletions()
 
-      state.main_mode = panel
+        state.main_mode = panel
 
-      panel.on_done = (s,buf,ok)->begin
-          line = String(take!(buf))
-          old_level = state.level
-          if !ok || strip(line) == "q"
-              LineEdit.transition(s, :abort)
-              LineEdit.reset_state(s)
-              return false
-          end
-          if isempty(strip(line)) && length(panel.hist.history) > 0
-              command = panel.hist.history[end]
-          else
-              command = strip(line)
-          end
-          do_print_status = true
-          cmd1 = split(command,' ')[1]
-          do_print_status = try
-              execute_command(state, state.stack[state.level], Val{Symbol(cmd1)}(), command)
-          catch err
-              isa(err, AbstractDiagnostic) || rethrow(err)
-              caught = false
-              for interp_idx in length(state.top_interp.stack):-1:1
-                  if process_exception!(state.top_interp.stack[interp_idx], err, interp_idx == length(top_interp.stack))
-                      interp = state.top_interp = state.top_interp.stack[interp_idx]
-                      resize!(state.top_interp.stack, interp_idx)
-                      caught = true
-                      break
-                  end
-              end
-              !caught && rethrow(err)
-              display_diagnostic(STDERR, state.interp.code, err)
-              println(STDERR)
-              LineEdit.reset_state(s)
-              return true
-          end
-          if old_level != state.level
-              panel.prompt = promptname(state.level,"debug")
-          end
-          LineEdit.reset_state(s)
-          if isempty(state.stack)
-              LineEdit.transition(s, :abort)
-              LineEdit.reset_state(s)
-              return false
-          end
-          if do_print_status
-              print_status(Base.pipe_writer(terminal), state)
-          end
-          return true
-      end
+        panel.on_done = (s,buf,ok)->begin
+            line = String(take!(buf))
+            old_level = state.level
+            if !ok || strip(line) == "q"
+                LineEdit.transition(s, :abort)
+                LineEdit.reset_state(s)
+                return false
+            end
+            if isempty(strip(line)) && length(panel.hist.history) > 0
+                command = panel.hist.history[end]
+            else
+                command = strip(line)
+            end
+            do_print_status = true
+            cmd1 = split(command,' ')[1]
+            do_print_status = try
+                execute_command(state, state.stack[state.level], Val{Symbol(cmd1)}(), command)
+            catch err
+                isa(err, AbstractDiagnostic) || rethrow(err)
+                caught = false
+                for interp_idx in length(state.top_interp.stack):-1:1
+                    if process_exception!(state.top_interp.stack[interp_idx], err, interp_idx == length(top_interp.stack))
+                        interp = state.top_interp = state.top_interp.stack[interp_idx]
+                        resize!(state.top_interp.stack, interp_idx)
+                        caught = true
+                        break
+                    end
+                end
+                !caught && rethrow(err)
+                display_diagnostic(STDERR, state.interp.code, err)
+                println(STDERR)
+                LineEdit.reset_state(s)
+                return true
+            end
+            if old_level != state.level
+                panel.prompt = promptname(state.level,"debug")
+            end
+            LineEdit.reset_state(s)
+            if isempty(state.stack)
+                LineEdit.transition(s, :abort)
+                LineEdit.reset_state(s)
+                return false
+            end
+            if do_print_status
+                print_status(Base.pipe_writer(terminal), state)
+            end
+            return true
+        end
 
-      const repl_switch = Dict{Any,Any}(
-          '`' => function (s,args...)
-              if isempty(s) || position(LineEdit.buffer(s)) == 0
-                  prompt = language_specific_prompt(state, state.stack[1])
-                  buf = copy(LineEdit.buffer(s))
-                  LineEdit.transition(s, prompt) do
-                      LineEdit.state(s, prompt).input_buffer = buf
-                  end
-              else
-                  LineEdit.edit_insert(s,key)
-              end
-          end
-      )
+        const key = '`'
+        const repl_switch = Dict{Any,Any}(
+            key => function (s,args...)
+                if isempty(s) || position(LineEdit.buffer(s)) == 0
+                    prompt = language_specific_prompt(state, state.stack[1])
+                    buf = copy(LineEdit.buffer(s))
+                    LineEdit.transition(s, prompt) do
+                        LineEdit.state(s, prompt).input_buffer = buf
+                    end
+                else
+                    LineEdit.edit_insert(s,key)
+                end
+            end
+        )
 
-      state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
-      panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
+        state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
+        panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
-      # Skip evaluated values (e.g. constants)
-      print_status(Base.pipe_writer(terminal), state)
-      Base.REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
+        print_status(Base.pipe_writer(terminal), state)
+        Base.REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
     end
 
 end # module
