@@ -5,7 +5,7 @@ module DebuggerFramework
 
     abstract type StackFrame end
 
-    immutable Suppressed{T}
+    struct Suppressed{T}
         item::T
     end
     Base.show(io::IO, x::Suppressed) = print(io, "<suppressed ", x.item, '>')
