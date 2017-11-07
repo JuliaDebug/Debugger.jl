@@ -155,7 +155,7 @@ module DebuggerFramework
         current_line = line
         stoplinelength = length(string(stopline))
 
-        code = split(code[(startoffset:stopoffset)+1],'\n')
+        code = split(code[(startoffset:stopoffset).+1],'\n')
         lineno = startline
 
         if !isempty(code) && isempty(code[end])
@@ -180,7 +180,13 @@ module DebuggerFramework
         print_with_color(:bold, outbuf, "In ", locdesc(frame), "\n")
         loc = locinfo(frame)
         if loc !== nothing
-            print_sourcecode(outbuf, isa(loc, BufferLocInfo) ? loc.data : readstring(loc.filepath),
+            data = if isa(loc, BufferLocInfo)
+                    loc.data
+                else
+                    VERSION < v"0.7" ? read(loc.filepath, String) :
+                    readstring(loc.filepath)
+                end
+            print_sourcecode(outbuf, data,
                 loc.line, loc.defline)
         else
             buf = IOBuffer()
@@ -276,8 +282,8 @@ module DebuggerFramework
             return true
         end
 
-        const key = '`'
-        const repl_switch = Dict{Any,Any}(
+        key = '`'
+        repl_switch = Dict{Any,Any}(
             key => function (s,args...)
                 if isempty(s) || position(LineEdit.buffer(s)) == 0
                     prompt = language_specific_prompt(state, state.stack[1])

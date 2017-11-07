@@ -21,7 +21,7 @@ function SourceFile(data)
     if !isempty(offsets) && line[end] == '\n'
         push!(offsets, position(buf))
     end
-    SourceFile(data,offsets)
+    SourceFile(Vector{UInt8}(data), offsets)
 end
 
 function compute_line(file::SourceFile, offset)
