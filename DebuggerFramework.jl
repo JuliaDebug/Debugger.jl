@@ -187,8 +187,8 @@ module DebuggerFramework
             data = if isa(loc, BufferLocInfo)
                     loc.data
                 else
-                    VERSION < v"0.7" ? read(loc.filepath, String) :
-                    readstring(loc.filepath)
+                    VERSION < v"0.7" ? readstring(loc.filepath) :
+                    read(loc.filepath, String)
                 end
             print_sourcecode(outbuf, data,
                 loc.line, loc.defline)
