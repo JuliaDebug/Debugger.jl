@@ -159,7 +159,7 @@ module DebuggerFramework
         current_line = line
         stoplinelength = length(string(stopline))
 
-        code = split(code[broadcast(+, startoffset:stopoffset, 1)],'\n')
+        code = split(code[(startoffset+1):(stopoffset+1)],'\n')
         lineno = startline
 
         if !isempty(code) && isempty(code[end])
