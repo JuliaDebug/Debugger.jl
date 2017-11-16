@@ -17,9 +17,13 @@ module DebuggerFramework
         else
             val = get(val)
             T = typeof(val)
-            val = repr(val)
-            if length(val) > 150
-                val = Suppressed("$(length(val)) bytes of output")
+            try
+                val = repr(val)
+                if length(val) > 150
+                    val = Suppressed("$(length(val)) bytes of output")
+                end
+            catch
+                val = Suppressed("printing error")
             end
             println(io, name, "::", T, " = ", val)
         end
@@ -155,7 +159,7 @@ module DebuggerFramework
         current_line = line
         stoplinelength = length(string(stopline))
 
-        code = split(code[(startoffset:stopoffset).+1],'\n')
+        code = split(code[broadcast(+, startoffset:stopoffset, 1)],'\n')
         lineno = startline
 
         if !isempty(code) && isempty(code[end])
@@ -239,6 +243,10 @@ module DebuggerFramework
             prompt_suffix=Base.text_colors[:white],
             on_enter = s->true)
 
+        # 0.7 compat
+        if isdefined(panel, :repl)
+            panel.repl = repl
+        end
         panel.hist = REPL.REPLHistoryProvider(Dict{Symbol,Any}(:debug => panel))
         Base.REPL.history_reset_state(panel.hist)
 
