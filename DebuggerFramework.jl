@@ -10,12 +10,12 @@ module DebuggerFramework
     end
     Base.show(io::IO, x::Suppressed) = print(io, "<suppressed ", x.item, '>')
 
-    function print_var(io::IO, name, val::Nullable, undef_callback)
+    function print_var(io::IO, name, val, undef_callback)
         print("  | ")
-        if isnull(val)
+        if val === nothing
             @assert false
         else
-            val = get(val)
+            val = something(val)
             T = typeof(val)
             try
                 val = repr(val)
@@ -45,7 +45,7 @@ module DebuggerFramework
         end
     end
 
-    print_backtrace(state, _::Void) = nothing
+    print_backtrace(state, _::Nothing) = nothing
 
     function execute_command(state, frame, ::Val{:bt}, cmd)
         print_backtrace(state)
@@ -72,7 +72,7 @@ module DebuggerFramework
             new_level = parse(Int, subcmds[1])
             new_stack_idx = length(state.stack)-(new_level-1)
             if new_stack_idx > length(state.stack) || new_stack_idx < 1
-                print_with_color(:red, STDERR, "Not a valid frame index\n")
+                printstyled(stderr, "Not a valid frame index\n"; color=:red)
                 return false
             end
             state.level = new_level
@@ -135,11 +135,11 @@ module DebuggerFramework
             return -1, -1
         end
         startoffset = max(file.offsets[max(offsetline-3,1)], file.offsets[startline])
-        stopoffset = endof(code)-1
-        if offsetline + 3 < endof(file.offsets)
+        stopoffset = lastindex(code)-1
+        if offsetline + 3 < lastindex(file.offsets)
             stopoffset = min(stopoffset, file.offsets[offsetline + 3]-1)
         end
-        if stopline + 1 < endof(file.offsets)
+        if stopline + 1 < lastindex(file.offsets)
             stopoffset = min(stopoffset, file.offsets[stopline + 1]-1)
         end
         startoffset, stopoffset
@@ -149,7 +149,7 @@ module DebuggerFramework
         startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, line+3; file=file)
 
         if startoffset == -1
-            print_with_color(:bold, io, "Line out of file range (bad debug info?)")
+            printstyled(io, "Line out of file range (bad debug info?)", color=:bold)
             return
         end
 
@@ -167,8 +167,9 @@ module DebuggerFramework
         end
 
         for textline in code
-            print_with_color(lineno == current_line ? :yellow : :bold, io,
-                string(lineno, " "^(stoplinelength-length(lineno)+1)))
+            printstyled(io,
+                string(lineno, " "^(stoplinelength-length(lineno)+1));
+                color = lineno == current_line ? :yellow : :bold)
             println(io, textline)
             lineno += 1
         end
@@ -181,13 +182,13 @@ module DebuggerFramework
     function print_status(io, state, frame)
         # Buffer to avoid flickering
         outbuf = IOBuffer()
-        print_with_color(:bold, outbuf, "In ", locdesc(frame), "\n")
+        printstyled(outbuf, "In ", locdesc(frame), "\n"; color=:bold)
         loc = locinfo(frame)
         if loc !== nothing
             data = if isa(loc, BufferLocInfo)
                     loc.data
                 else
-                    VERSION < v"0.7" ? readstring(loc.filepath) :
+                    VERSION < v"0.7" ? read(loc.filepath, String) :
                     read(loc.filepath, String)
                 end
             print_sourcecode(outbuf, data,
@@ -199,9 +200,9 @@ module DebuggerFramework
             @assert active_line <= length(code)
             for (lineno, line) in enumerate(code)
                 if lineno == active_line
-                    print_with_color(:yellow, outbuf, "=> ", bold = true); println(outbuf, line)
+                    printstyled(outbuf, "=> ", bold = true, color=:yellow); println(outbuf, line)
                 else
-                    print_with_color(:bold, outbuf, "?  "); println(outbuf, line)
+                    printstyled(outbuf, "?  ", bold = true); println(outbuf, line)
                 end
             end
         end
@@ -231,7 +232,8 @@ module DebuggerFramework
         end
     end
 
-    using Base: LineEdit, REPL
+    using REPL
+    using REPL.LineEdit
     promptname(level, name) = "$level|$name > "
     function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
 
@@ -248,10 +250,10 @@ module DebuggerFramework
             panel.repl = repl
         end
         panel.hist = REPL.REPLHistoryProvider(Dict{Symbol,Any}(:debug => panel))
-        Base.REPL.history_reset_state(panel.hist)
+        REPL.history_reset_state(panel.hist)
 
-        search_prompt, skeymap = Base.LineEdit.setup_search_keymap(panel.hist)
-        search_prompt.complete = Base.REPL.LatexCompletions()
+        search_prompt, skeymap = LineEdit.setup_search_keymap(panel.hist)
+        search_prompt.complete = REPL.LatexCompletions()
 
         state.main_mode = panel
 
@@ -309,7 +311,7 @@ module DebuggerFramework
         panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
         print_status(Base.pipe_writer(terminal), state)
-        Base.REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
+        REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
 
         state.overall_result
     end
