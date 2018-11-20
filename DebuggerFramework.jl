@@ -181,7 +181,7 @@ module DebuggerFramework
     print_status(io, state) = print_status(io, state, state.stack[state.level])
     function print_status(io, state, frame)
         # Buffer to avoid flickering
-        outbuf = IOBuffer()
+        outbuf = IOContext(IOBuffer(), io)
         printstyled(outbuf, "In ", locdesc(frame), "\n"; color=:bold)
         loc = locinfo(frame)
         if loc !== nothing
@@ -207,7 +207,7 @@ module DebuggerFramework
             end
         end
         print_next_state(outbuf, state, frame)
-        print(io, String(take!(outbuf)))
+        print(io, String(take!(outbuf.io)))
     end
 
     abstract type AbstractDiagnostic; end
