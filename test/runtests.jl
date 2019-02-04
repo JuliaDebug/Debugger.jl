@@ -1,6 +1,14 @@
 using Debugger
+import Debugger: DebuggerFramework
+import JuliaInterpreter: JuliaStackFrame, @lookup, _make_stack, Compiled, pc_expr, plain, @make_stack, finish!, isexpr
+
+import .DebuggerFramework: dummy_state, execute_command
+
 using Test
 
-@testset "Debugger.jl" begin
-    # Write your own tests here.
+@testset "Main tests" begin
+    include("utils.jl")
+    include("misc.jl")
+    include("stepping.jl")
+    include("ui.jl")
 end

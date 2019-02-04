@@ -1,0 +1,236 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|
+|About to run: (==)(10, 0)
+|1|debug > 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|
+|About to run: (==)(10, 0)
+|1|debug > n
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|
+|About to run: (==)(20, 0)
+|1|debug > 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|
+|IIIIIIIIIIIIIIIIIIIIIIIII
+|EEEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|
+|About to run: (==)(10, 0)
+|1|debug > n
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|
+|About to run: (==)(20, 0)
+|1|julia > 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|
+|IIIIIIIIIIIIIIIIIIIIIIIII
+|KKKKKKKKKK
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|
+|About to run: (==)(10, 0)
+|1|debug > n
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|
+|About to run: (==)(20, 0)
+|1|julia > a
+|10
+|
+|1|julia > 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|
+|IIIIIIIIIIIIIIIIIIIIIIIII
+|KKKKKKKKKKI
+|II
+|
+|KKKKKKKKKK
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|
+|About to run: (==)(10, 0)
+|1|debug > n
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|
+|About to run: (==)(20, 0)
+|1|julia > a
+|10
+|
+|1|julia > a
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|
+|IIIIIIIIIIIIIIIIIIIIIIIII
+|KKKKKKKKKKI
+|II
+|
+|KKKKKKKKKKI
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|
+|About to run: (==)(10, 0)
+|1|debug > n
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|
+|About to run: (==)(20, 0)
+|1|julia > a
+|10
+|
+|1|debug > n
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|
+|IIIIIIIIIIIIIIIIIIIIIIIII
+|KKKKKKKKKKI
+|II
+|
+|EEEEEEEEEEF
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|
+|About to run: (==)(10, 0)
+|1|debug > n
+|In my_gcd(a, b) at ui.jl:5
+|5     a == 0 && return abs(b)
+|6     b == 0 && return abs(a)
+|7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|
+|About to run: (==)(20, 0)
+|1|julia > a
+|10
+|
+|1|debug > n^C
+|
+|1|debug > 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|
+|IIIIIIIIIIIIIIIIIIIIIIIII
+|KKKKKKKKKKI
+|II
+|
+|EEEEEEEEEEFFF
+|
+|EEEEEEEEEE
