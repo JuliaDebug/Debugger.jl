@@ -22,3 +22,6 @@ script:
                         Pkg.add([PackageSpec(name = "TerminalRegressionTests", rev = "master"),
                                  PackageSpec(name = "VT100", rev = "master")]);
                         Pkg.test()'
+
+after_success:
+  - julia -e 'import Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
