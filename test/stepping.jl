@@ -7,9 +7,9 @@ using Debugger.DebuggerFramework: execute_command, dummy_state
 struct DummyState; end
 REPL.LineEdit.transition(s::DummyState, _) = nothing
 
-@assert step_through(JuliaInterpreter.enter_call_expr(:($(+)(1,2.5)))) == 3.5
-@assert step_through(JuliaInterpreter.enter_call_expr(:($(sin)(1)))) == sin(1)
-@assert step_through(JuliaInterpreter.enter_call_expr(:($(gcd)(10,20)))) == gcd(10, 20)
+@test step_through(JuliaInterpreter.enter_call_expr(:($(+)(1,2.5)))) == 3.5
+@test step_through(JuliaInterpreter.enter_call_expr(:($(sin)(1)))) == sin(1)
+@test step_through(JuliaInterpreter.enter_call_expr(:($(gcd)(10,20)))) == gcd(10, 20)
 
 # Step into generated functions
 @generated function generatedfoo(T)
@@ -28,7 +28,7 @@ execute_command(state, state.stack[1], Val{:finish}(), "finish")
 # Now finish the regular function
 execute_command(state, state.stack[1], Val{:finish}(), "finish")
 
-@assert isempty(state.stack)
+@test isempty(state.stack)
 
 
 # Optional arguments
@@ -46,7 +46,7 @@ execute_command(state, state.stack[1], Val{:n}(), "n")
 # return
 execute_command(state, state.stack[1], Val{:n}(), "n")
 
-@assert isempty(state.stack)
+@test isempty(state.stack)
 
 # Macros
 macro insert_some_calls()
@@ -97,7 +97,7 @@ execute_command(state, state.stack[1], Val{:s}(), "s")
 # Should get out in two steps
 execute_command(state, state.stack[1], Val{:finish}(), "finish")
 execute_command(state, state.stack[1], Val{:finish}(), "finish")
-@assert isempty(state.stack)
+@test isempty(state.stack)
 
 # Test stepping into functions with exception frames
 function f_exc()
@@ -118,15 +118,15 @@ stack = @make_stack f_exc()
 state = dummy_state(stack)
 
 execute_command(state, state.stack[1], Val{:n}(), "n")
-@assert isempty(state.stack)
+@test isempty(state.stack)
 
 stack = @make_stack g_exc()
 state = dummy_state(stack)
 
 execute_command(state, state.stack[1], Val{:n}(), "n")
 execute_command(state, state.stack[1], Val{:n}(), "n")
-@assert isempty(state.stack)
-@assert state.overall_result isa ErrorException
+@test isempty(state.stack)
+@test state.overall_result isa ErrorException
 
 # Test throwing exception across frames
 function f_exc_inner()
@@ -147,8 +147,8 @@ state = dummy_state(stack)
 execute_command(state, state.stack[1], Val{:s}(), "s")
 execute_command(state, state.stack[1], Val{:n}(), "n")
 execute_command(state, state.stack[1], Val{:n}(), "n")
-@assert isempty(state.stack)
-@assert state.overall_result isa ErrorException
+@test isempty(state.stack)
+@test state.overall_result isa ErrorException
 
 # Test that symbols don't get an extra QuoteNode
 f_symbol() = :limit => true
@@ -159,8 +159,8 @@ state = dummy_state(stack)
 execute_command(state, state.stack[1], Val{:s}(), "s")
 execute_command(state, state.stack[1], Val{:finish}(), "finish")
 execute_command(state, state.stack[1], Val{:finish}(), "finish")
-@assert isempty(state.stack)
-@assert state.overall_result == f_symbol()
+@test isempty(state.stack)
+@test state.overall_result == f_symbol()
 
 # Test that we can step through varargs
 f_va_inner(x) = x + 1
@@ -171,21 +171,21 @@ state = dummy_state(stack)
 
 execute_command(state, state.stack[1], Val{:s}(), "s")
 execute_command(state, state.stack[1], Val{:n}(), "n")
-@assert !isempty(state.stack)
+@test !isempty(state.stack)
 execute_command(state, state.stack[1], Val{:finish}(), "finish")
 execute_command(state, state.stack[1], Val{:finish}(), "finish")
-@assert isempty(state.stack)
-@assert state.overall_result == 2
+@test isempty(state.stack)
+@test state.overall_result == 2
 
 # Test that we step through kw wrappers
 f(foo; bar=3) = foo+bar
 stack = @make_stack f(2, bar=4)
-@assert length(stack) > 1
+@test length(stack) > 1
 state = dummy_state(stack)
 execute_command(state, state.stack[1], Val{:n}(), "nc")
 execute_command(state, state.stack[1], Val{:n}(), "nc")
-@assert isempty(state.stack)
-@assert state.overall_result == 6
+@test isempty(state.stack)
+@test state.overall_result == 6
 
 # Test that we throw the right error when stepping through error functions
 function foo_error(a,b)
@@ -197,7 +197,7 @@ state = dummy_state(stack)
 try
     execute_command(state, state.stack[1], Val{:n}(), "n")
 catch e
-    @assert isa(e, ErrorException)
+    @test isa(e, ErrorException)
 end
 
 # Issue #17

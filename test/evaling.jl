@@ -7,10 +7,10 @@ function evalfoo1(x,y)
 end
 frame = JuliaInterpreter.enter_call_expr(:($(evalfoo1)(1,2)))
 res = DebuggerFramework.eval_code(nothing, frame, "x")
-@assert res == 1
+@test res == 1
 
 res = DebuggerFramework.eval_code(nothing, frame, "y")
-@assert res == 2
+@test res == 2
 
 # Evaling with sparams
 function evalsparams(x::T) where T
@@ -18,7 +18,7 @@ function evalsparams(x::T) where T
 end
 frame = JuliaInterpreter.enter_call_expr(:($(evalsparams)(1)))
 res = DebuggerFramework.eval_code(nothing, frame, "x")
-@assert res == 1
+@test res == 1
 
 res = DebuggerFramework.eval_code(nothing, frame, "T")
-@assert res == Int
+@test res == Int

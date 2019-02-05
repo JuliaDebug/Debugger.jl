@@ -61,7 +61,7 @@ function foo_sym()
     typeof(x)
 end
 
-@assert step_through(enter_call_expr(:($(foo_sym)()))) == Symbol
+@test step_through(enter_call_expr(:($(foo_sym)()))) == Symbol
 
 # Make sure evalling "new" works with symbols
 
