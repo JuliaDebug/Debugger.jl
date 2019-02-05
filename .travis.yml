@@ -1,0 +1,24 @@
+language: julia
+
+os:
+  - linux
+  - osx
+
+julia:
+  - 1.0
+  - 1.1
+  - nightly
+
+branches:
+  only:
+  - master
+
+notifications:
+  email: false
+
+script:
+  - julia --project --color=yes -e 'using Pkg;
+                        Pkg.instantiate();
+                        Pkg.add([PackageSpec(name = "TerminalRegressionTests", rev = "master"),
+                                 PackageSpec(name = "VT100", rev = "master")]);
+                        Pkg.test()'
