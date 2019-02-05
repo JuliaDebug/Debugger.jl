@@ -45,8 +45,8 @@ Advanced commands:
   as JuliaParsers's testshell.
 
 
-[travis-img]: https://travis-ci.org/juliadebug/Debugger.jl.svg?branch=master
-[travis-url]: https://travis-ci.org/juliadebug/Debugger.jl
+[travis-img]: https://travis-ci.org/JuliaDebug/Debugger.jl.svg?branch=master
+[travis-url]: https://travis-ci.org/JuliaDebug/Debugger.jl
 
-[codecov-img]: https://codecov.io/gh/juliadebug/Debugger.jl/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/juliadebug/Debugger.jl
+[codecov-img]: https://codecov.io/gh/JuliaDebug/Debugger.jl/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/JuliaDebug/Debugger.jl
