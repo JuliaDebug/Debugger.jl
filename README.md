@@ -41,9 +41,6 @@ Advanced commands:
 - `se` does one expression step
 - `si` does the same but steps into a call if a call is the next expression
 - `sg` steps into a generated function
-- `loc` shows the column data for the current top frame, in the same format
-  as JuliaParsers's testshell.
-
 
 [travis-img]: https://travis-ci.org/JuliaDebug/Debugger.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/JuliaDebug/Debugger.jl
