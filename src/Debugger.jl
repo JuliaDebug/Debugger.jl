@@ -2,9 +2,8 @@ module Debugger
 
 using Markdown
 using Base.Meta: isexpr
-
-
-
+using REPL
+using REPL.LineEdit
 
 include("DebuggerFramework.jl")
 using .DebuggerFramework

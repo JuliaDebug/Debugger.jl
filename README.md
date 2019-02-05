@@ -1,17 +1,20 @@
 # Debugger
 
-[![Build Status](https://travis-ci.org/JuliaDebug/Debugger.jl.svg?branch=master)](https://travis-ci.org/JuliaDebug/Debugger.jl)
-[![codecov.io](http://codecov.io/github/JuliaDebug/Debugger.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaDebug/Debugger.jl?branch=master)
+*A Julia debugger.*
+
+**Build Status**                                                                                |
+|:-----------------------------------------------------------------------------------------------:|
+| [![][travis-img]][travis-url]  [![][codecov-img]][codecov-url] |
 
 ## Installation
 
 ```jl
-]add Debugger#master
+]add https://github.com/JuliaDebug/Debugger.jl
 ```
 
 ## Usage
 
-```
+```julia
 using Debugger
 
 function foo(n)
@@ -39,3 +42,10 @@ Advanced commands:
 - `sg` steps into a generated function
 - `loc` shows the column data for the current top frame, in the same format
   as JuliaParsers's testshell.
+
+
+[travis-img]: https://travis-ci.org/juliadebug/Debugger.jl.svg?branch=master
+[travis-url]: https://travis-ci.org/juliadebug/Debugger.jl
+
+[codecov-img]: https://codecov.io/gh/juliadebug/Debugger.jl/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/juliadebug/Debugger.jl
