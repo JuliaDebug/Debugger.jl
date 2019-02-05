@@ -9,6 +9,7 @@
 ## Installation
 
 ```jl
+]add https://github.com/JuliaDebug/JuliaInterpreter.jl
 ]add https://github.com/JuliaDebug/Debugger.jl
 ```
 
