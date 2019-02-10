@@ -8,8 +8,8 @@ using REPL.LineEdit
 include("DebuggerFramework.jl")
 using .DebuggerFramework
 using .DebuggerFramework: FileLocInfo, BufferLocInfo, Suppressed
-
-using JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, JuliaProgramCounter, JuliaFrameCode
+using JuliaInterpreter;
+using JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, JuliaProgramCounter, JuliaFrameCode, enter_call
 
 # TODO: Work on better API in JuliaInterpreter and rewrite Debugger.jl to use it
 using JuliaInterpreter: _make_stack, pc_expr, plain,
@@ -213,7 +213,7 @@ function DebuggerFramework.language_specific_prompt(state, frame::JuliaStackFram
     return julia_prompt
 end
 
-function DebuggerFramework.debug(meth::Method, args...)
+function DebuggerFramework.debug(meth::T, args...) where {T <: Union{Function, Method}}
     stack = [enter_call(meth, args...)]
     DebuggerFramework.RunDebugger(stack)
 end
