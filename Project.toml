@@ -4,7 +4,8 @@ authors = ["Kristoffer Carlsson <kcarlsson89@gmail.com>"]
 version = "0.1.0"
 
 [extras]
+TerminalRegressionTests = "98bfdc55-cc95-5876-a49a-74609291cbe0"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Test", "TerminalRegressionTests"]
