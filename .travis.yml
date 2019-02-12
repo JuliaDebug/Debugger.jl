@@ -21,4 +21,5 @@ script:
                         Pkg.instantiate();
                         Pkg.add([PackageSpec(name = "TerminalRegressionTests", rev = "master"),
                                  PackageSpec(name = "VT100", rev = "master")]);
+                        Pkg.build();
                         Pkg.test()'
