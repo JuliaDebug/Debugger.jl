@@ -6,9 +6,9 @@ import .DebuggerFramework: dummy_state, execute_command
 
 using Test
 
-@testset "Main tests" begin
+#@testset "Main tests" begin
     include("utils.jl")
     include("misc.jl")
     include("stepping.jl")
     include("ui.jl")
-end
+#end

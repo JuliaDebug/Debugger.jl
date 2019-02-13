@@ -193,8 +193,13 @@ function DebuggerFramework.language_specific_prompt(state, frame::JuliaStackFram
         end
         xbuf = copy(buf)
         command = String(take!(buf))
-        ok, result = DebuggerFramework.eval_code(state, command)
-        REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
+        @static if VERSION >= v"1.2.0-DEV.253"
+            response = DebuggerFramework.eval_code(state, command)
+            REPL.print_response(state.repl, response, true, true)
+        else
+            ok, result = DebuggerFramework.eval_code(state, command)
+            REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
+        end
         println(state.repl.t)
 
         if !ok

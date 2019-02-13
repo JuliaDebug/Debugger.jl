@@ -222,13 +222,25 @@ function eval_code(state, frame, code)
     error("Code evaluation not implemented for this debugger")
 end
 
-function eval_code(state, code)
-    try
-        result = eval_code(state, state.stack[1], code)
-        true, result
-    catch err
-        bt = catch_backtrace()
-        false, (err, bt)
+@static if VERSION >= v"1.2.0-DEV.253"
+    function eval_code(state, code)
+        try
+            result = eval_code(state, state.stack[1], code)
+            result, false
+        catch err
+            bt = catch_backtrace()
+            (err, bt), true
+        end
+    end
+else
+    function eval_code(state, code)
+        try
+            result = eval_code(state, state.stack[1], code)
+            true, result
+        catch err
+            bt = catch_backtrace()
+            false, (err, bt)
+        end
     end
 end
 
@@ -245,10 +257,6 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
         prompt_suffix=Base.text_colors[:white],
         on_enter = s->true)
 
-    # 0.7 compat
-    if isdefined(panel, :repl)
-        panel.repl = repl
-    end
     panel.hist = REPL.REPLHistoryProvider(Dict{Symbol,Any}(:debug => panel))
     REPL.history_reset_state(panel.hist)
 
