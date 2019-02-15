@@ -75,9 +75,8 @@ function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, cmd::U
                 expr = Expr(:call, args...)
                 f = (expr.args[1] == Core._apply) ? expr.args[2] : expr.args[1]
                 ok = true
-                if !isa(f, Union{Core.Builtin, Core.IntrinsicFunction})
-                    new_frame = enter_call_expr(expr;
-                        enter_generated = command == "sg")
+                new_frame = enter_call_expr(expr; enter_generated = command == "sg")
+                if new_frame != nothing
                     if (cmd == Val{:s}() || cmd == Val{:sg}())
                         new_frame = JuliaStackFrame(new_frame, maybe_next_call!(Compiled(), new_frame))
                     end
