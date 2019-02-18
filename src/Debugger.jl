@@ -179,10 +179,6 @@ function DebuggerFramework.language_specific_prompt(state, frame::JuliaStackFram
         prompt_suffix = (state.repl.envcolors ? Base.input_color : state.repl.input_color),
         complete = REPL.REPLCompletionProvider(),
         on_enter = REPL.return_callback)
-    # 0.7 compat
-    if isdefined(state.main_mode, :repl)
-        julia_prompt.repl = state.main_mode.repl
-    end
     julia_prompt.hist = state.main_mode.hist
     julia_prompt.hist.mode_mapping[:julia] = julia_prompt
 

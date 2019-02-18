@@ -1,14 +1,13 @@
 module LineNumbers
 
 export SourceFile, compute_line, LineBreaking
-import Base: getindex, setindex!, length
 
 # Offsets are 0 based
 struct SourceFile
     data::Vector{UInt8}
     offsets::Vector{UInt64}
 end
-length(file::SourceFile) = length(file.offsets)
+Base.length(file::SourceFile) = length(file.offsets)
 
 function SourceFile(data)
     offsets = UInt64[0]
@@ -29,7 +28,7 @@ function compute_line(file::SourceFile, offset)
     ind <= length(file.offsets) && file.offsets[ind] == offset ? ind : ind - 1
 end
 
-function getindex(file::SourceFile, line::Int)
+function Base.getindex(file::SourceFile, line::Int)
     if line == length(file.offsets)
         return file.data[(file.offsets[end]+1):end]
     else
@@ -37,7 +36,7 @@ function getindex(file::SourceFile, line::Int)
         return file.data[(file.offsets[line]+1):(file.offsets[line+1]-1)]
     end
 end
-getindex(file::SourceFile, arr::AbstractArray) = [file[x] for x in arr]
+Base.getindex(file::SourceFile, arr::AbstractArray) = [file[x] for x in arr]
 
 # LineBreaking
 
@@ -63,16 +62,16 @@ function indtransform(lb::LineBreaking, x::Int)
     (line - offline + 1), off
 end
 
-function getindex(lb::LineBreaking, x::Int)
+function Base.getindex(lb::LineBreaking, x::Int)
     l, o = indtransform(lb, x)
     lb.obj[l][o]
 end
 
-function setindex!(lb::LineBreaking, y, x::Int)
+function Base.setindex!(lb::LineBreaking, y, x::Int)
     l, o = indtransform(lb, x)
     lb.obj[l][o] = y
 end
-function setindex!(lb::LineBreaking, y, x::AbstractArray)
+function Base.setindex!(lb::LineBreaking, y, x::AbstractArray)
     for i in x
         lb[i] = y
     end

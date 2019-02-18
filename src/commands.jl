@@ -155,7 +155,7 @@ function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Val{
 end
 
 
-function DebuggerFramework.execute_command(state, frane::JuliaStackFrame, ::Val{:?}, cmd)
+function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Val{:?}, cmd)
     display(
             @md_str """
     Basic Commands:\\
