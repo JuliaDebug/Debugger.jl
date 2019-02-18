@@ -1,6 +1,6 @@
 # Issue #14
 
-using JuliaInterpreter: JuliaInterpreter, pc_expr, plain, evaluate_call!, finish_and_return!, @lookup, enter_call_expr
+using JuliaInterpreter: JuliaInterpreter, pc_expr, evaluate_call!, finish_and_return!, @lookup, enter_call_expr
 # Execute a frame using Julia's regular compiled-code dispatch for any :call expressions
 runframe(frame, pc=frame.pc[]) = Some{Any}(finish_and_return!(Compiled(), frame, pc))
 

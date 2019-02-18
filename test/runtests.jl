@@ -1,6 +1,6 @@
 using Debugger
 import Debugger: DebuggerFramework
-import JuliaInterpreter: JuliaStackFrame, @lookup, _make_stack, Compiled, pc_expr, plain, @make_stack, finish!, isexpr
+import JuliaInterpreter: JuliaStackFrame, @lookup, _make_stack, Compiled, pc_expr, @make_stack, finish!, isexpr
 
 import .DebuggerFramework: dummy_state, execute_command
 

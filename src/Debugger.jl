@@ -12,7 +12,7 @@ using .DebuggerFramework: FileLocInfo, BufferLocInfo, Suppressed
 using JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, JuliaProgramCounter, JuliaFrameCode
 
 # TODO: Work on better API in JuliaInterpreter and rewrite Debugger.jl to use it
-using JuliaInterpreter: _make_stack, pc_expr, plain,
+using JuliaInterpreter: _make_stack, pc_expr,
 finish!, isassign, getlhs, do_assignment!, maybe_next_call!, enter_call_expr, is_call, step_expr!, _step_expr!,
 next_call!, iswrappercall, moduleof, next_line!, location
 
@@ -142,7 +142,7 @@ end
 
 function DebuggerFramework.print_next_state(io::IO, state, frame::JuliaStackFrame)
     print(io, "About to run: ")
-    expr = plain(pc_expr(frame, frame.pc[]))
+    expr = pc_expr(frame, frame.pc[])
     isa(expr, Expr) && (expr = copy(expr))
     if isexpr(expr, :(=))
         expr = expr.args[2]
