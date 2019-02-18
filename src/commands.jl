@@ -8,7 +8,7 @@ function perform_return!(state)
         if returning_frame.code.generator
             # Don't do anything here, just return us to where we were
         else
-            prev = plain(pc_expr(calling_frame))
+            prev = pc_expr(calling_frame)
             if isexpr(prev, :(=))
                 do_assignment!(calling_frame, prev.args[1], val)
             elseif isassign(calling_frame)
@@ -67,7 +67,7 @@ function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, cmd::U
     pc = frame.pc[]
     first = true
     while true
-        expr = plain(pc_expr(frame, pc))
+        expr = pc_expr(frame, pc)
         if isa(expr, Expr)
             if is_call(expr)
                 isexpr(expr, :(=)) && (expr = expr.args[2])
@@ -133,7 +133,7 @@ end
     Runs code_typed on the call we're about to run
 """
 function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Val{:code_typed}, cmd)
-    expr = plain(pc_expr(frame, frame.pc[]))
+    expr = pc_expr(frame, frame.pc[])
     if isa(expr, Expr)
         if is_call(expr)
             isexpr(expr, :(=)) && (expr = expr.args[2])
@@ -155,7 +155,7 @@ function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Val{
 end
 
 
-function DebuggerFramework.execute_command(state, frane::JuliaStackFrame, ::Val{:?}, cmd)
+function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Val{:?}, cmd)
     display(
             @md_str """
     Basic Commands:\\

@@ -3,8 +3,6 @@ module DebuggerFramework
 include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
 
-abstract type StackFrame end
-
 struct Suppressed{T}
     item::T
 end
