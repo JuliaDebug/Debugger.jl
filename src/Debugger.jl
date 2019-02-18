@@ -51,6 +51,16 @@ function DebuggerFramework.locdesc(frame::JuliaStackFrame, specslottypes = false
     end
 end
 
+function sparam_syms(meth::Method)
+    s = Symbol[]
+    sig = meth.sig
+    while sig isa UnionAll
+        push!(s, Symbol(sig.var.name))
+        sig = sig.body
+    end
+    return s
+end
+
 function DebuggerFramework.print_locals(io::IO, frame::JuliaStackFrame)
     for i = 1:length(frame.locals)
         if !isa(frame.locals[i], Nothing)
@@ -64,8 +74,8 @@ function DebuggerFramework.print_locals(io::IO, frame::JuliaStackFrame)
         end
     end
     if frame.code.scope isa Method
-        for i = 1:length(frame.sparams)
-            DebuggerFramework.print_var(io, frame.code.scope.sparam_syms[i], frame.sparams[i], nothing)
+        for (sym, value) in zip(sparam_syms(frame.code.scope), frame.sparams)
+            DebuggerFramework.print_var(io, sym, value, nothing)
         end
     end
 end
@@ -110,8 +120,9 @@ function DebuggerFramework.eval_code(state, frame::JuliaStackFrame, command)
         end
     end
     ismeth = frame.code.scope isa Method
+    ismeth && (syms = sparam_syms(frame.code.scope))
     for i = 1:length(frame.sparams)
-        ismeth && push!(local_vars, frame.code.scope.sparam_syms[i])
+        ismeth && push!(local_vars, syms[i])
         push!(local_vals, QuoteNode(frame.sparams[i]))
     end
     res = gensym()
@@ -191,6 +202,7 @@ function DebuggerFramework.language_specific_prompt(state, frame::JuliaStackFram
         command = String(take!(buf))
         @static if VERSION >= v"1.2.0-DEV.253"
             response = DebuggerFramework.eval_code(state, command)
+            val, iserr = response
             REPL.print_response(state.repl, response, true, true)
         else
             ok, result = DebuggerFramework.eval_code(state, command)

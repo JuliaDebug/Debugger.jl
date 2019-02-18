@@ -226,8 +226,8 @@ end
             result = eval_code(state, state.stack[1], code)
             result, false
         catch err
-            bt = catch_backtrace()
-            (err, bt), true
+            response = Base.catch_stack()
+            response, true
         end
     end
 else
