@@ -51,6 +51,8 @@ function DebuggerFramework.locdesc(frame::JuliaStackFrame, specslottypes = false
     end
 end
 
+sparam_names(meth::Method) = getfield.(meth.sig.body.types[2:end], :name)
+
 function DebuggerFramework.print_locals(io::IO, frame::JuliaStackFrame)
     for i = 1:length(frame.locals)
         if !isa(frame.locals[i], Nothing)
@@ -64,8 +66,8 @@ function DebuggerFramework.print_locals(io::IO, frame::JuliaStackFrame)
         end
     end
     if frame.code.scope isa Method
-        for i = 1:length(frame.sparams)
-            DebuggerFramework.print_var(io, frame.code.scope.sparam_syms[i], frame.sparams[i], nothing)
+        for (sym, value) in zip(sparam_names(frame.code.scope), frame.sparams)
+            DebuggerFramework.print_var(io, sym, value, nothing)
         end
     end
 end
@@ -110,8 +112,9 @@ function DebuggerFramework.eval_code(state, frame::JuliaStackFrame, command)
         end
     end
     ismeth = frame.code.scope isa Method
+    ismeth && (sparam_syms = sparam_names(frame.code.scope))
     for i = 1:length(frame.sparams)
-        ismeth && push!(local_vars, frame.code.scope.sparam_syms[i])
+        ismeth && push!(local_vars, sparam_syms[i])
         push!(local_vals, QuoteNode(frame.sparams[i]))
     end
     res = gensym()
