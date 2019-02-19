@@ -1,5 +1,3 @@
-using JuliaInterpreter
-
 # Simple evaling of function argument
 function evalfoo1(x,y)
     x+y
