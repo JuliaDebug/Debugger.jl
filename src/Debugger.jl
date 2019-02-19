@@ -9,7 +9,7 @@ using JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, Ju
       finish!, enter_call_expr, step_expr!
 
 # TODO: Work on better API in JuliaInterpreter and rewrite Debugger.jl to use it
-# These are undocumented functions used by Debugger.jl from JuliaInterpreter
+# These are undocumented functions from from JuliaInterpreter.jl used by Debugger.jl`
 using JuliaInterpreter: _make_stack, pc_expr,isassign, getlhs, do_assignment!, maybe_next_call!, is_call, _step_expr!, next_call!,  moduleof,
                         iswrappercall, next_line!, location
 
