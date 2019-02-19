@@ -3,6 +3,8 @@ module DebuggerFramework
 include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
 
+import ..Debugger: JuliaStackFrame, location
+
 struct Suppressed{T}
     item::T
 end
@@ -110,8 +112,57 @@ struct BufferLocInfo
     defline::Int
 end
 
-locinfo(frame) = nothing
-locdesc(frame) = "unknown function"
+
+
+function loc_for_fname(file, line, defline)
+    if startswith(string(file),"REPL[")
+        hist_idx = parse(Int,string(file)[6:end-1])
+        isdefined(Base, :active_repl) || return nothing, ""
+        hp = Base.active_repl.interface.modes[1].hist
+        return BufferLocInfo(hp.history[hp.start_idx+hist_idx], line, 0, defline)
+    else
+        for path in SEARCH_PATH
+            fullpath = joinpath(path,string(file))
+            if isfile(fullpath)
+                return FileLocInfo(fullpath, line, 0, defline)
+            end
+        end
+    end
+    return nothing
+end
+
+function locinfo(frame::JuliaStackFrame)
+    if frame.code.scope isa Method
+        meth = frame.code.scope
+        loc_for_fname(meth.file, location(frame), meth.line)
+    else
+        println("not yet implemented")
+    end
+end
+
+function locdesc(frame::JuliaStackFrame, specslottypes = false)
+    sprint() do io
+        if frame.code.scope isa Method
+            meth = frame.code.scope
+            argnames = frame.code.code.slotnames[2:meth.nargs]
+            spectypes = Any[Any for i=1:length(argnames)]
+            print(io, meth.name,'(')
+            first = true
+            for (argname, argT) in zip(argnames, spectypes)
+                first || print(io, ", ")
+                first = false
+                print(io, argname)
+                !(argT === Any) && print(io, "::", argT)
+            end
+            print(io, ") at ",
+                frame.code.fullpath ? meth.file :
+                basename(String(meth.file)),
+                ":",meth.line)
+        else
+            println("not yet implemented")
+        end
+    end
+end
 
 """
 Determine the offsets in the source code to print, based on the offset of the

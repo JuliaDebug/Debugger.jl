@@ -5,10 +5,6 @@ using Base.Meta: isexpr
 using REPL
 using REPL.LineEdit
 
-include("DebuggerFramework.jl")
-using .DebuggerFramework
-using .DebuggerFramework: FileLocInfo, BufferLocInfo, Suppressed
-
 using JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, JuliaProgramCounter, JuliaFrameCode,
       finish!, enter_call_expr, step_expr!
 
@@ -16,6 +12,11 @@ using JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, Ju
 # These are undocumented functions used by Debugger.jl from JuliaInterpreter
 using JuliaInterpreter: _make_stack, pc_expr,isassign, getlhs, do_assignment!, maybe_next_call!, is_call, _step_expr!, next_call!,  moduleof,
                         iswrappercall, next_line!, location
+
+
+include("DebuggerFramework.jl")
+using .DebuggerFramework
+using .DebuggerFramework: FileLocInfo, BufferLocInfo, Suppressed
 
 export @enter
 
@@ -28,29 +29,6 @@ end
 
 include("commands.jl")
 
-function DebuggerFramework.locdesc(frame::JuliaStackFrame, specslottypes = false)
-    sprint() do io
-        if frame.code.scope isa Method
-            meth = frame.code.scope
-            argnames = frame.code.code.slotnames[2:meth.nargs]
-            spectypes = Any[Any for i=1:length(argnames)]
-            print(io, meth.name,'(')
-            first = true
-            for (argname, argT) in zip(argnames, spectypes)
-                first || print(io, ", ")
-                first = false
-                print(io, argname)
-                !(argT === Any) && print(io, "::", argT)
-            end
-            print(io, ") at ",
-                frame.code.fullpath ? meth.file :
-                basename(String(meth.file)),
-                ":",meth.line)
-        else
-            println("not yet implemented")
-        end
-    end
-end
 
 function sparam_syms(meth::Method)
     s = Symbol[]
@@ -81,31 +59,7 @@ function DebuggerFramework.print_locals(io::IO, frame::JuliaStackFrame)
     end
 end
 
-function loc_for_fname(file, line, defline)
-    if startswith(string(file),"REPL[")
-        hist_idx = parse(Int,string(file)[6:end-1])
-        isdefined(Base, :active_repl) || return nothing, ""
-        hp = Base.active_repl.interface.modes[1].hist
-        return BufferLocInfo(hp.history[hp.start_idx+hist_idx], line, 0, defline)
-    else
-        for path in SEARCH_PATH
-            fullpath = joinpath(path,string(file))
-            if isfile(fullpath)
-                return FileLocInfo(fullpath, line, 0, defline)
-            end
-        end
-    end
-    return nothing
-end
 
-function DebuggerFramework.locinfo(frame::JuliaStackFrame)
-    if frame.code.scope isa Method
-        meth = frame.code.scope
-        loc_for_fname(meth.file, location(frame), meth.line)
-    else
-        println("not yet implemented")
-    end
-end
 
 function DebuggerFramework.eval_code(state, frame::JuliaStackFrame, command)
     expr = Base.parse_input_line(command)
