@@ -29,41 +29,6 @@ end
 
 include("commands.jl")
 
-
-
-
-
-
-function maybe_quote(x)
-    (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
-end
-
-function DebuggerFramework.print_next_state(io::IO, state, frame::JuliaStackFrame)
-    print(io, "About to run: ")
-    expr = pc_expr(frame, frame.pc[])
-    isa(expr, Expr) && (expr = copy(expr))
-    if isexpr(expr, :(=))
-        expr = expr.args[2]
-    end
-    if isexpr(expr, :call) || isexpr(expr, :return)
-        expr.args = map(var->maybe_quote(@lookup(frame, var)), expr.args)
-    end
-    if isa(expr, Expr)
-        for (i, arg) in enumerate(expr.args)
-            try
-                nbytes = length(repr(arg))
-                if nbytes > max(40, div(200, length(expr.args)))
-                    expr.args[i] = Suppressed("$nbytes bytes of output")
-                end
-            catch
-                expr.args[i] = Suppressed("printing error")
-            end
-        end
-    end
-    print(io, expr)
-    println(io)
-end
-
 const all_commands = ("q", "s", "si", "finish", "bt", "nc", "n", "se")
 
 function DebuggerFramework.language_specific_prompt(state, frame::JuliaStackFrame)

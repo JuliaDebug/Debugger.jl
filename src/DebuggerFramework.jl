@@ -6,7 +6,7 @@ using .Meta: isexpr
 
 using .LineNumbers: SourceFile, compute_line
 
-import ..Debugger: JuliaStackFrame, location, moduleof
+import ..Debugger: JuliaStackFrame, location, moduleof, @lookup, pc_expr
 
 struct Suppressed{T}
     item::T
@@ -246,7 +246,35 @@ function print_sourcecode(io, code, line, defline; file = SourceFile(code))
     println(io)
 end
 
-print_next_state(outbuf::IO, state, frame) = nothing
+function maybe_quote(x)
+    (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
+end
+
+function print_next_state(io::IO, state, frame::JuliaStackFrame)
+    print(io, "About to run: ")
+    expr = pc_expr(frame, frame.pc[])
+    isa(expr, Expr) && (expr = copy(expr))
+    if isexpr(expr, :(=))
+        expr = expr.args[2]
+    end
+    if isexpr(expr, :call) || isexpr(expr, :return)
+        expr.args = map(var->maybe_quote(@lookup(frame, var)), expr.args)
+    end
+    if isa(expr, Expr)
+        for (i, arg) in enumerate(expr.args)
+            try
+                nbytes = length(repr(arg))
+                if nbytes > max(40, div(200, length(expr.args)))
+                    expr.args[i] = Suppressed("$nbytes bytes of output")
+                end
+            catch
+                expr.args[i] = Suppressed("printing error")
+            end
+        end
+    end
+    print(io, expr)
+    println(io)
+end
 
 print_status(io, state) = print_status(io, state, state.stack[state.level])
 function print_status(io, state, frame)
