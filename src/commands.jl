@@ -45,7 +45,7 @@ function propagate_exception!(state, exc)
     rethrow(exc)
 end
 
-function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Union{Val{:nc},Val{:n},Val{:se}}, command)
+function execute_command(state, frame::JuliaStackFrame, ::Union{Val{:nc},Val{:n},Val{:se}}, command)
     pc = try
         command == "nc" ? next_call!(Compiled(), frame) :
         command == "n" ? next_line!(Compiled(), frame, state.stack) :
@@ -63,7 +63,7 @@ function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Unio
     return true
 end
 
-function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, cmd::Union{Val{:s},Val{:si},Val{:sg}}, command)
+function execute_command(state, frame::JuliaStackFrame, cmd::Union{Val{:s},Val{:si},Val{:sg}}, command)
     pc = frame.pc[]
     first = true
     while true
@@ -123,7 +123,7 @@ function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, cmd::U
     return true
 end
 
-function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Val{:finish}, cmd)
+function execute_command(state, frame::JuliaStackFrame, ::Val{:finish}, cmd)
     state.stack[1] = JuliaStackFrame(frame, finish!(Compiled(), frame))
     perform_return!(state)
     return true
@@ -132,7 +132,7 @@ end
 """
     Runs code_typed on the call we're about to run
 """
-function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Val{:code_typed}, cmd)
+function execute_command(state, frame::JuliaStackFrame, ::Val{:code_typed}, cmd)
     expr = pc_expr(frame, frame.pc[])
     if isa(expr, Expr)
         if is_call(expr)
@@ -155,7 +155,7 @@ function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Val{
 end
 
 
-function DebuggerFramework.execute_command(state, frame::JuliaStackFrame, ::Val{:?}, cmd)
+function execute_command(state, frame::JuliaStackFrame, ::Val{:?}, cmd)
     display(
             @md_str """
     Basic Commands:\\

@@ -1,12 +1,13 @@
 module DebuggerFramework
 
-include("LineNumbers.jl")
-
 using .Meta: isexpr
+using Markdown
+import ..Debugger: JuliaStackFrame, location, moduleof, @lookup, pc_expr, Compiled, next_line!
+
+include("LineNumbers.jl")
+include("commands.jl")
 
 using .LineNumbers: SourceFile, compute_line
-
-import ..Debugger: JuliaStackFrame, location, moduleof, @lookup, pc_expr
 
 struct Suppressed{T}
     item::T
@@ -310,8 +311,6 @@ function print_status(io, state, frame)
     print_next_state(outbuf, state, frame)
     print(io, String(take!(outbuf.io)))
 end
-
-abstract type AbstractDiagnostic; end
 
 function execute_command
 end

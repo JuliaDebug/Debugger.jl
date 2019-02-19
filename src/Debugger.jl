@@ -14,10 +14,6 @@ using JuliaInterpreter: _make_stack, pc_expr,isassign, getlhs, do_assignment!, m
                         iswrappercall, next_line!, location
 
 
-include("DebuggerFramework.jl")
-
-export @enter
-
 const SEARCH_PATH = []
 function __init__()
     append!(SEARCH_PATH,[joinpath(Sys.BINDIR,"../share/julia/base/"),
@@ -25,7 +21,9 @@ function __init__()
     return nothing
 end
 
-include("commands.jl")
+export @enter
+
+include("DebuggerFramework.jl")
 
 macro enter(arg)
     quote
@@ -34,4 +32,5 @@ macro enter(arg)
         end
     end
 end
+
 end # module
