@@ -110,7 +110,9 @@ end
     The second argument should default to the global environment if such
     an environment exists for the language in question.
 """
-function debug
+function debug(meth::Method, args...)
+    stack = [enter_call(meth, args...)]
+    DebuggerFramework.RunDebugger(stack)
 end
 
 mutable struct DebuggerState
