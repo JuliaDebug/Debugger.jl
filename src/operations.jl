@@ -1,26 +1,15 @@
-struct Suppressed{T}
-    item::T
+mutable struct DebuggerState
+    stack::Vector{JuliaStackFrame}
+    level::Int
+    repl
+    terminal
+    main_mode
+    julia_prompt::Ref{LineEdit.Prompt}
+    standard_keymap
+    overall_result
 end
-Base.show(io::IO, x::Suppressed) = print(io, "<suppressed ", x.item, '>')
-
-function print_var(io::IO, name, val)
-    print("  | ")
-    if val === nothing
-        @assert false
-    else
-        val = something(val)
-        T = typeof(val)
-        try
-            val = repr(val)
-            if length(val) > 150
-                val = Suppressed("$(length(val)) bytes of output")
-            end
-        catch
-            val = Suppressed("printing error")
-        end
-        println(io, name, "::", T, " = ", val)
-    end
-end
+DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
+DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
 
 function sparam_syms(meth::Method)
     s = Symbol[]
@@ -32,55 +21,29 @@ function sparam_syms(meth::Method)
     return s
 end
 
-function print_locals(io::IO, frame::JuliaStackFrame)
-    for i = 1:length(frame.locals)
-        if !isa(frame.locals[i], Nothing)
-            # #self# is only interesting if it has values inside of it. We already know
-            # which function we're in otherwise.
-            val = something(frame.locals[i])
-            if frame.code.code.slotnames[i] == Symbol("#self#") && (isa(val, Type) || sizeof(val) == 0)
-                continue
-            end
-            print_var(io, frame.code.code.slotnames[i], frame.locals[i])
-        end
-    end
-    if frame.code.scope isa Method
-        for (sym, value) in zip(sparam_syms(frame.code.scope), frame.sparams)
-            print_var(io, sym, value)
-        end
-    end
-end
-
-print_locdesc(io, frame) = println(io, locdesc(frame))
-function print_frame(_, io::IO, num, frame)
-    print(io, "[$num] ")
-    print_locdesc(io, frame)
-    print_locals(io, frame)
-end
-
-function print_backtrace(state)
+function print_backtrace(state::DebuggerState)
     for (num, frame) in enumerate(state.stack)
-        print_frame(state, Base.pipe_writer(state.terminal), num, frame)
+        print_frame(Base.pipe_writer(state.terminal), num, frame)
     end
 end
 
-print_backtrace(state, _::Nothing) = nothing
+print_backtrace(state::DebuggerState, _::Nothing) = nothing
 
-function execute_command(state, frame, ::Val{:bt}, cmd)
+function execute_command(state::DebuggerState, frame, ::Val{:bt}, cmd)
     print_backtrace(state)
     println()
     return false
 end
 
-function execute_command(state, frame, _, cmd)
+function execute_command(state::DebuggerState, frame, _, cmd)
     println("Unknown command `$cmd`. Executing `?` to obtain help.")
     execute_command(state, frame, Val{Symbol("?")}(), "?")
 end
 
-function execute_command(state, interp, ::Union{Val{:f},Val{:fr}}, command)
-    subcmds = split(command,' ')[2:end]
+function execute_command(state::DebuggerState, _::JuliaStackFrame, ::Union{Val{:f},Val{:fr}}, cmd)
+    subcmds = split(cmd,' ')[2:end]
     if isempty(subcmds) || subcmds[1] == "v"
-        print_frame(state, Base.pipe_writer(state.terminal), state.level, state.stack[state.level])
+        print_frame(Base.pipe_writer(state.terminal), state.level, state.stack[state.level])
         return false
     else
         new_level = parse(Int, subcmds[1])
@@ -104,16 +67,6 @@ function debug(meth::Method, args...)
     RunDebugger(stack)
 end
 
-mutable struct DebuggerState
-    stack
-    level
-    repl
-    main_mode
-    language_modes
-    standard_keymap
-    terminal
-    overall_result
-end
 
 struct FileLocInfo
     filepath::String
@@ -132,7 +85,7 @@ struct BufferLocInfo
     defline::Int
 end
 
-function loc_for_fname(file, line, defline)
+function loc_for_fname(file::Symbol, line::Integer, defline::Integer)
     if startswith(string(file),"REPL[")
         hist_idx = parse(Int,string(file)[6:end-1])
         isdefined(Base, :active_repl) || return nothing, ""
@@ -158,7 +111,7 @@ function locinfo(frame::JuliaStackFrame)
     end
 end
 
-function locdesc(frame::JuliaStackFrame, specslottypes = false)
+function locdesc(frame::JuliaStackFrame)
     sprint() do io
         if frame.code.scope isa Method
             meth = frame.code.scope
@@ -187,7 +140,7 @@ Determine the offsets in the source code to print, based on the offset of the
 currently highlighted part of the code, and the start and stop line of the
 entire function.
 """
-function compute_source_offsets(code, offset, startline, stopline; file = SourceFile(code))
+function compute_source_offsets(code::String, offset::Integer, startline::Integer, stopline::Integer; file::SourceFile = SourceFile(code))
     offsetline = compute_line(file, offset)
     if offsetline - 3 > length(file.offsets) || startline > length(file.offsets)
         return -1, -1
@@ -203,7 +156,7 @@ function compute_source_offsets(code, offset, startline, stopline; file = Source
     startoffset, stopoffset
 end
 
-function print_sourcecode(io, code, line, defline; file = SourceFile(code))
+function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer; file::SourceFile = SourceFile(code))
     startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, line+3; file=file)
 
     if startoffset == -1
@@ -238,7 +191,7 @@ function maybe_quote(x)
     (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
 end
 
-function print_next_state(io::IO, state, frame::JuliaStackFrame)
+function print_next_state(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     print(io, "About to run: ")
     expr = pc_expr(frame, frame.pc[])
     isa(expr, Expr) && (expr = copy(expr))
@@ -264,8 +217,8 @@ function print_next_state(io::IO, state, frame::JuliaStackFrame)
     println(io)
 end
 
-print_status(io, state) = print_status(io, state, state.stack[state.level])
-function print_status(io, state, frame)
+print_status(io::IO, state::DebuggerState) = print_status(io, state, state.stack[state.level])
+function print_status(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     # Buffer to avoid flickering
     outbuf = IOContext(IOBuffer(), io)
     printstyled(outbuf, "In ", locdesc(frame), "\n"; color=:bold)
@@ -297,12 +250,10 @@ function print_status(io, state, frame)
     print(io, String(take!(outbuf.io)))
 end
 
-const all_commands = ("q", "s", "si", "finish", "bt", "nc", "n", "se")
+function julia_prompt(state::DebuggerState, frame::JuliaStackFrame)
+    # Return early if this has already been called on the state
+    isassigned(state.julia_prompt) && return state.julia_prompt[]
 
-function julia_prompt(state, frame::JuliaStackFrame)
-    if haskey(state.language_modes, :julia)
-        return state.language_modes[:julia]
-    end
     julia_prompt = LineEdit.Prompt(promptname(state.level, "julia");
         # Copy colors from the prompt object
         prompt_prefix = state.repl.prompt_color,
@@ -321,31 +272,20 @@ function julia_prompt(state, frame::JuliaStackFrame)
         command = String(take!(buf))
         @static if VERSION >= v"1.2.0-DEV.253"
             response = eval_code(state, command)
-            val, iserr = response
             REPL.print_response(state.repl, response, true, true)
         else
             ok, result = eval_code(state, command)
             REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
         end
-        println(state.repl.t)
-
-        if !ok
-            # Convenience hack. We'll see if this is more useful or annoying
-            for c in all_commands
-                !startswith(command, c) && continue
-                LineEdit.transition(s, state.main_mode)
-                LineEdit.state(s, state.main_mode).input_buffer = xbuf
-                break
-            end
-        end
+        println(state.terminal)
         LineEdit.reset_state(s)
     end
-    julia_prompt.keymap_dict = LineEdit.keymap([REPL.mode_keymap(state.main_mode);state.standard_keymap])
-    state.language_modes[:julia] = julia_prompt
+    julia_prompt.keymap_dict = LineEdit.keymap([REPL.mode_keymap(state.main_mode); state.standard_keymap])
+    state.julia_prompt[] = julia_prompt
     return julia_prompt
 end
 
-function eval_code(state, frame::JuliaStackFrame, command)
+function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::AbstractString)
     expr = Base.parse_input_line(command)
     if isexpr(expr, :toplevel)
         expr = expr.args[end]
@@ -387,23 +327,19 @@ function eval_code(state, frame::JuliaStackFrame, command)
 end
 
 @static if VERSION >= v"1.2.0-DEV.253"
-    function eval_code(state, code)
+    function eval_code(state::DebuggerState, code::AbstractString)
         try
-            result = eval_code(state, state.stack[1], code)
-            result, false
-        catch err
-            response = Base.catch_stack()
-            response, true
+            return eval_code(state, state.stack[1], code), false
+        catch
+            return Base.catch_stack(), true
         end
     end
 else
-    function eval_code(state, code)
+    function eval_code(state::DebuggerState, code::AbstractString)
         try
-            result = eval_code(state, state.stack[1], code)
-            true, result
+            return true, eval_code(state, state.stack[1], code)
         catch err
-            bt = catch_backtrace()
-            false, (err, bt)
+            return false, (err, catch_backtrace())
         end
     end
 end
@@ -411,7 +347,7 @@ end
 promptname(level, name) = "$level|$name > "
 function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
 
-    state = DebuggerState(stack, 1, repl, nothing, Dict{Symbol, Any}(), nothing, terminal, nothing)
+    state = DebuggerState(stack, repl, terminal)
 
     # Setup debug panel
     panel = LineEdit.Prompt(promptname(state.level, "debug");
@@ -483,5 +419,5 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
     print_status(Base.pipe_writer(terminal), state)
     REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
 
-    state.overall_result
+    return state.overall_result
 end

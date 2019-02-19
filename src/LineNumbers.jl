@@ -9,7 +9,7 @@ struct SourceFile
 end
 Base.length(file::SourceFile) = length(file.offsets)
 
-function SourceFile(data)
+function SourceFile(data::AbstractString)
     offsets = UInt64[0]
     buf = IOBuffer(data)
     local line
@@ -23,7 +23,7 @@ function SourceFile(data)
     SourceFile(copy(codeunits(data)), offsets)
 end
 
-function compute_line(file::SourceFile, offset)
+function compute_line(file::SourceFile, offset::Integer)
     ind = searchsortedfirst(file.offsets, offset)
     ind <= length(file.offsets) && file.offsets[ind] == offset ? ind : ind - 1
 end

@@ -26,8 +26,9 @@ export @enter
 include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
 
-include("commands.jl")
 include("operations.jl")
+include("printing.jl")
+include("commands.jl")
 
 macro enter(arg)
     quote
