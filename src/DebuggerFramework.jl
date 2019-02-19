@@ -51,11 +51,6 @@ function execute_command(state, frame, ::Val{:bt}, cmd)
     return false
 end
 
-function execute_command(state, frame, ::Val{Symbol("?")}, cmd)
-    println("Help not implemented for this debugger.")
-    return false
-end
-
 function execute_command(state, frame, _, cmd)
     println("Unknown command `$cmd`. Executing `?` to obtain help.")
     execute_command(state, frame, Val{Symbol("?")}(), "?")
