@@ -15,8 +15,6 @@ using JuliaInterpreter: _make_stack, pc_expr,isassign, getlhs, do_assignment!, m
 
 
 include("DebuggerFramework.jl")
-using .DebuggerFramework
-using .DebuggerFramework: FileLocInfo, BufferLocInfo, Suppressed
 
 export @enter
 
