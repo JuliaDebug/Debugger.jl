@@ -1,13 +1,3 @@
-module DebuggerFramework
-
-using .Meta: isexpr
-using Markdown
-import ..Debugger: JuliaStackFrame, location, moduleof, @lookup, pc_expr, Compiled, next_line!
-
-include("LineNumbers.jl")
-include("commands.jl")
-
-using .LineNumbers: SourceFile, compute_line
 
 struct Suppressed{T}
     item::T
@@ -113,7 +103,7 @@ end
 """
 function debug(meth::Method, args...)
     stack = [enter_call(meth, args...)]
-    DebuggerFramework.RunDebugger(stack)
+    RunDebugger(stack)
 end
 
 mutable struct DebuggerState
@@ -126,7 +116,6 @@ mutable struct DebuggerState
     terminal
     overall_result
 end
-dummy_state(stack) = DebuggerState(stack, 1, nothing, nothing, nothing, nothing, nothing, nothing)
 
 struct FileLocInfo
     filepath::String
@@ -322,7 +311,7 @@ function julia_prompt(state, frame::JuliaStackFrame)
     if haskey(state.language_modes, :julia)
         return state.language_modes[:julia]
     end
-    julia_prompt = LineEdit.Prompt(DebuggerFramework.promptname(state.level, "julia");
+    julia_prompt = LineEdit.Prompt(promptname(state.level, "julia");
         # Copy colors from the prompt object
         prompt_prefix = state.repl.prompt_color,
         prompt_suffix = (state.repl.envcolors ? Base.input_color : state.repl.input_color),
@@ -339,11 +328,11 @@ function julia_prompt(state, frame::JuliaStackFrame)
         xbuf = copy(buf)
         command = String(take!(buf))
         @static if VERSION >= v"1.2.0-DEV.253"
-            response = DebuggerFramework.eval_code(state, command)
+            response = eval_code(state, command)
             val, iserr = response
             REPL.print_response(state.repl, response, true, true)
         else
-            ok, result = DebuggerFramework.eval_code(state, command)
+            ok, result = eval_code(state, command)
             REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
         end
         println(state.repl.t)
@@ -506,5 +495,3 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
 
     state.overall_result
 end
-
-end # module

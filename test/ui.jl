@@ -34,7 +34,7 @@ if Sys.isunix() && VERSION >= v"1.1.0"
         repl.specialdisplay = REPL.REPLDisplay(repl)
         stack = JuliaInterpreter.@make_stack my_gcd(10, 20)
         stack[1] = JuliaInterpreter.JuliaStackFrame(stack[1], stack[1].pc[]; fullpath=false)
-        DebuggerFramework.RunDebugger(stack, repl, emuterm)
+        RunDebugger(stack, repl, emuterm)
     end
 else
     @warn "Skipping UI tests on non unix systems"

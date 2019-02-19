@@ -1,8 +1,5 @@
-using Debugger
-import Debugger: DebuggerFramework
+using Debugger: Debugger, @enter, execute_command, RunDebugger
 import JuliaInterpreter: JuliaStackFrame, @lookup, _make_stack, Compiled, pc_expr, @make_stack, finish!, isexpr
-
-import .DebuggerFramework: dummy_state, execute_command
 
 using Test
 

@@ -2,7 +2,6 @@
 using JuliaInterpreter
 using Base.Meta
 using REPL
-using Debugger.DebuggerFramework: execute_command, dummy_state
 
 struct DummyState; end
 REPL.LineEdit.transition(s::DummyState, _) = nothing

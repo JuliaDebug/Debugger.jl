@@ -23,12 +23,16 @@ end
 
 export @enter
 
-include("DebuggerFramework.jl")
+include("LineNumbers.jl")
+using .LineNumbers: SourceFile, compute_line
+
+include("commands.jl")
+include("operations.jl")
 
 macro enter(arg)
     quote
         let stack = $(_make_stack(__module__,arg))
-            DebuggerFramework.RunDebugger(stack)
+            RunDebugger(stack)
         end
     end
 end
