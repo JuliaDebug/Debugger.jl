@@ -30,77 +30,9 @@ end
 include("commands.jl")
 
 
-function sparam_syms(meth::Method)
-    s = Symbol[]
-    sig = meth.sig
-    while sig isa UnionAll
-        push!(s, Symbol(sig.var.name))
-        sig = sig.body
-    end
-    return s
-end
-
-function DebuggerFramework.print_locals(io::IO, frame::JuliaStackFrame)
-    for i = 1:length(frame.locals)
-        if !isa(frame.locals[i], Nothing)
-            # #self# is only interesting if it has values inside of it. We already know
-            # which function we're in otherwise.
-            val = something(frame.locals[i])
-            if frame.code.code.slotnames[i] == Symbol("#self#") && (isa(val, Type) || sizeof(val) == 0)
-                continue
-            end
-            DebuggerFramework.print_var(io, frame.code.code.slotnames[i], frame.locals[i], nothing)
-        end
-    end
-    if frame.code.scope isa Method
-        for (sym, value) in zip(sparam_syms(frame.code.scope), frame.sparams)
-            DebuggerFramework.print_var(io, sym, value, nothing)
-        end
-    end
-end
 
 
 
-function DebuggerFramework.eval_code(state, frame::JuliaStackFrame, command)
-    expr = Base.parse_input_line(command)
-    if isexpr(expr, :toplevel)
-        expr = expr.args[end]
-    end
-    local_vars = Any[]
-    local_vals = Any[]
-    for i = 1:length(frame.locals)
-        if !isa(frame.locals[i], Nothing)
-            push!(local_vars, frame.code.code.slotnames[i])
-            push!(local_vals, QuoteNode(something(frame.locals[i])))
-        end
-    end
-    ismeth = frame.code.scope isa Method
-    ismeth && (syms = sparam_syms(frame.code.scope))
-    for i = 1:length(frame.sparams)
-        ismeth && push!(local_vars, syms[i])
-        push!(local_vals, QuoteNode(frame.sparams[i]))
-    end
-    res = gensym()
-    eval_expr = Expr(:let,
-        Expr(:block, map(x->Expr(:(=), x...), zip(local_vars, local_vals))...),
-        Expr(:block,
-            Expr(:(=), res, expr),
-            Expr(:tuple, res, Expr(:tuple, local_vars...))
-        ))
-    eval_res, res = Core.eval(moduleof(frame), eval_expr)
-    j = 1
-    for i = 1:length(frame.locals)
-        if !isa(frame.locals[i], Nothing)
-            frame.locals[i] = Some{Any}(res[j])
-            j += 1
-        end
-    end
-    for i = 1:length(frame.sparams)
-        frame.sparams[i] = res[j]
-        j += 1
-    end
-    eval_res
-end
 
 function maybe_quote(x)
     (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
