@@ -301,10 +301,6 @@ function print_status(io, state, frame)
     print(io, String(take!(outbuf.io)))
 end
 
-function execute_command
-end
-
-
 const all_commands = ("q", "s", "si", "finish", "bt", "nc", "n", "se")
 
 function julia_prompt(state, frame::JuliaStackFrame)
@@ -336,7 +332,7 @@ function julia_prompt(state, frame::JuliaStackFrame)
             REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
         end
         println(state.repl.t)
-
+        
         if !ok
             # Convenience hack. We'll see if this is more useful or annoying
             for c in all_commands
