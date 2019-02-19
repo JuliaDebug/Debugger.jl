@@ -1,10 +1,9 @@
-
 struct Suppressed{T}
     item::T
 end
 Base.show(io::IO, x::Suppressed) = print(io, "<suppressed ", x.item, '>')
 
-function print_var(io::IO, name, val, undef_callback)
+function print_var(io::IO, name, val)
     print("  | ")
     if val === nothing
         @assert false
@@ -22,7 +21,6 @@ function print_var(io::IO, name, val, undef_callback)
         println(io, name, "::", T, " = ", val)
     end
 end
-
 
 function sparam_syms(meth::Method)
     s = Symbol[]
@@ -43,12 +41,12 @@ function print_locals(io::IO, frame::JuliaStackFrame)
             if frame.code.code.slotnames[i] == Symbol("#self#") && (isa(val, Type) || sizeof(val) == 0)
                 continue
             end
-            print_var(io, frame.code.code.slotnames[i], frame.locals[i], nothing)
+            print_var(io, frame.code.code.slotnames[i], frame.locals[i])
         end
     end
     if frame.code.scope isa Method
         for (sym, value) in zip(sparam_syms(frame.code.scope), frame.sparams)
-            print_var(io, sym, value, nothing)
+            print_var(io, sym, value)
         end
     end
 end
@@ -133,8 +131,6 @@ struct BufferLocInfo
     column::Int
     defline::Int
 end
-
-
 
 function loc_for_fname(file, line, defline)
     if startswith(string(file),"REPL[")
@@ -332,7 +328,7 @@ function julia_prompt(state, frame::JuliaStackFrame)
             REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
         end
         println(state.repl.t)
-        
+
         if !ok
             # Convenience hack. We'll see if this is more useful or annoying
             for c in all_commands
@@ -412,8 +408,6 @@ else
     end
 end
 
-using REPL
-using REPL.LineEdit
 promptname(level, name) = "$level|$name > "
 function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
 
