@@ -98,10 +98,6 @@ mutable struct DebuggerState
 end
 dummy_state(stack) = DebuggerState(stack, 1, nothing, nothing, nothing, nothing, nothing, nothing)
 
-function print_status_synthtic(io, state, frame, lines_before, total_lines)
-    return 0
-end
-
 struct FileLocInfo
     filepath::String
     line::Int
@@ -193,7 +189,8 @@ function print_status(io, state, frame)
             loc.line, loc.defline)
     else
         buf = IOBuffer()
-        active_line = print_status_synthtic(buf, state, frame, 2, 5)::Int
+        # TODO: look at the = 0
+        active_line = 0
         code = split(String(take!(buf)),'\n')
         @assert active_line <= length(code)
         for (lineno, line) in enumerate(code)
