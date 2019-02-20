@@ -4,6 +4,7 @@ using Markdown
 using Base.Meta: isexpr
 using REPL
 using REPL.LineEdit
+using REPL.REPLCompletions
 
 using JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, JuliaProgramCounter, JuliaFrameCode,
       finish!, enter_call_expr, step_expr!
@@ -27,6 +28,7 @@ include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
 
 include("operations.jl")
+include("repl.jl")
 include("printing.jl")
 include("commands.jl")
 
