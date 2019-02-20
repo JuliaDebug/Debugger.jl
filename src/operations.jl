@@ -105,7 +105,7 @@ end
 function locinfo(frame::JuliaStackFrame)
     if frame.code.scope isa Method
         meth = frame.code.scope
-        loc_for_fname(meth.file, location(frame), meth.line)
+        loc_for_fname(meth.file, linenumber(frame), meth.line)
     else
         println("not yet implemented")
     end
