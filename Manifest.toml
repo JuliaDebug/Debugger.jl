@@ -9,7 +9,7 @@ uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[JuliaInterpreter]]
 deps = ["InteractiveUtils"]
-git-tree-sha1 = "988f3e8f8a22da5d3d448d2d607c0b7ef94d7288"
+git-tree-sha1 = "63ef72675d232cbcab6da9c840168bbea08cbe0a"
 repo-rev = "master"
 repo-url = "https://github.com/JuliaDebug/JuliaInterpreter.jl"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"

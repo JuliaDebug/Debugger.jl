@@ -39,3 +39,23 @@ if Sys.isunix() && VERSION >= v"1.1.0"
 else
     @warn "Skipping UI tests on non unix systems"
 end
+
+# Completions
+function test_complete(c, s)
+    c, r, s = Debugger.completions(c, s, lastindex(s))
+    return unique!(map(REPL.REPLCompletions.completion_text, c)), r, s
+end
+
+module F
+    local_var = 1
+    f(x) = x
+end
+
+@testset "REPL completions" begin
+    frame = JuliaInterpreter.enter_call_expr(:($(F.f)(1)))
+    state = dummy_state([frame])
+    prov = Debugger.DebugCompletionProvider(state)
+
+    c, r = test_complete(prov, "local")
+    @test "local_var" in c
+end
