@@ -1,12 +1,3 @@
-
-using JuliaInterpreter
-using Base.Meta
-using REPL
-using Debugger.DebuggerFramework: execute_command, dummy_state
-
-struct DummyState; end
-REPL.LineEdit.transition(s::DummyState, _) = nothing
-
 @test step_through(JuliaInterpreter.enter_call_expr(:($(+)(1,2.5)))) == 3.5
 @test step_through(JuliaInterpreter.enter_call_expr(:($(sin)(1)))) == sin(1)
 @test step_through(JuliaInterpreter.enter_call_expr(:($(gcd)(10,20)))) == gcd(10, 20)

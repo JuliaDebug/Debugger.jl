@@ -1,10 +1,9 @@
-using Debugger
-import Debugger: DebuggerFramework
-import JuliaInterpreter: JuliaStackFrame, @lookup, _make_stack, Compiled, pc_expr, @make_stack, finish!, isexpr
-
-import .DebuggerFramework: dummy_state, execute_command
+using Debugger: Debugger, @enter, execute_command, RunDebugger
+import JuliaInterpreter: JuliaStackFrame, @lookup, Compiled, pc_expr, @make_stack, finish!
 
 using Test
+using .Meta: isexpr
+import REPL
 
 #@testset "Main tests" begin
     include("utils.jl")
