@@ -6,8 +6,8 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
 
     # Setup debug panel
     panel = LineEdit.Prompt(promptname(state.level, "debug");
-        prompt_prefix="\e[38;5;166m",
-        prompt_suffix=Base.text_colors[:white],
+        prompt_prefix = "\e[38;5;166m",
+        prompt_suffix = Base.text_colors[:normal],
         on_enter = s->true)
 
     panel.hist = REPL.REPLHistoryProvider(Dict{Symbol,Any}(:debug => panel))

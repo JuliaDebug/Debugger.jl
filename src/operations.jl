@@ -216,13 +216,14 @@ function print_next_state(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     print(io, expr)
     println(io)
 end
-
+using Base.IRShow
 print_status(io::IO, state::DebuggerState) = print_status(io, state, state.stack[state.level])
 function print_status(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     # Buffer to avoid flickering
     outbuf = IOContext(IOBuffer(), io)
     printstyled(outbuf, "In ", locdesc(frame), "\n"; color=:bold)
     loc = locinfo(frame)
+
     if loc !== nothing
         data = if isa(loc, BufferLocInfo)
                 loc.data
@@ -233,21 +234,33 @@ function print_status(io::IO, state::DebuggerState, frame::JuliaStackFrame)
         print_sourcecode(outbuf, data,
             loc.line, loc.defline)
     else
-        buf = IOBuffer()
-        # TODO: look at the = 0
-        active_line = 0
-        code = split(String(take!(buf)),'\n')
-        @assert active_line <= length(code)
-        for (lineno, line) in enumerate(code)
-            if lineno == active_line
-                printstyled(outbuf, "=> ", bold = true, color=:yellow); println(outbuf, line)
-            else
-                printstyled(outbuf, "?  ", bold = true); println(outbuf, line)
-            end
-        end
+        print_codeinfo(outbuf, frame)
     end
     print_next_state(outbuf, state, frame)
     print(io, String(take!(outbuf.io)))
+end
+
+function print_codeinfo(io::IO, frame::JuliaStackFrame)
+    buf = IOBuffer()
+    src = frame.code.code
+    IRShow.show_ir(IOContext(buf, :SOURCE_SLOTNAMES => Base.sourceinfo_slotnames(src)),
+                   src, IRShow.debuginfo[:default](src))
+    active_line = convert(Int, frame.pc[])
+
+    code = filter!(x -> !isempty(x), split(String(take!(buf)), '\n'))
+
+    @assert active_line <= length(code)
+    for (lineno, line) in enumerate(code)
+        (lineno < active_line - 3 || lineno > active_line + 2) && continue
+        col = (lineno < active_line) ? :white : :normal
+        if lineno == active_line
+            printstyled(io, rpad(lineno, 4), bold = true, color=:yellow)
+        else
+            printstyled(io, rpad(lineno, 4), bold = true, color = col)
+        end
+        printstyled(io, line, color = col)
+        println(io)
+    end
 end
 
 function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::AbstractString)
