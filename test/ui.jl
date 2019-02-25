@@ -50,7 +50,7 @@ end
     if Sys.isunix() && VERSION >= v"1.1.0"
         using TerminalRegressionTests
 
-        thisdir = dirname(@__FILE__)
+        thisdir = @__DIR__
         TerminalRegressionTests.automated_test(
                         joinpath(thisdir,"ui/history_gcd.multiout"),
                     ["n\n","`", "a\n", "\e[A", "\e[A", "\x3", "\x4"]) do emuterm
@@ -61,15 +61,19 @@ end
             stack[1] = JuliaInterpreter.JuliaStackFrame(stack[1], stack[1].pc[]; fullpath=false)
             RunDebugger(stack, repl, emuterm)
         end
-        TerminalRegressionTests.automated_test(
-                        joinpath(thisdir,"ui/history_noinfo.multiout"),
-                    ["n\n","`", "a\n", "\e[A", "\e[A", "\x3", "\x4"]) do emuterm
-            repl = REPL.LineEditREPL(emuterm, true)
-            repl.interface = REPL.setup_interface(repl)
-            repl.specialdisplay = REPL.REPLDisplay(repl)
-            stack = JuliaInterpreter.@make_stack my_gcd_noinfo(10, 20)
-            stack[1] = JuliaInterpreter.JuliaStackFrame(stack[1], stack[1].pc[]; fullpath=false)
-            RunDebugger(stack, repl, emuterm)
+        if VERSION == v"1.1.0"
+            TerminalRegressionTests.automated_test(
+                            joinpath(thisdir,"ui/history_noinfo.multiout"),
+                        ["n\n","`", "a\n", "\e[A", "\e[A", "\x3", "\x4"]) do emuterm
+                repl = REPL.LineEditREPL(emuterm, true)
+                repl.interface = REPL.setup_interface(repl)
+                repl.specialdisplay = REPL.REPLDisplay(repl)
+                stack = JuliaInterpreter.@make_stack my_gcd_noinfo(10, 20)
+                stack[1] = JuliaInterpreter.JuliaStackFrame(stack[1], stack[1].pc[]; fullpath=false)
+                RunDebugger(stack, repl, emuterm)
+            end
+        else
+            @warn "Skipping tests for IR display due to mismatched Julia versions."
         end
     else
         @warn "Skipping UI tests on non unix systems"
