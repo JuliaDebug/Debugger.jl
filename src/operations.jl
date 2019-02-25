@@ -223,6 +223,7 @@ function print_status(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     outbuf = IOContext(IOBuffer(), io)
     printstyled(outbuf, "In ", locdesc(frame), "\n"; color=:bold)
     loc = locinfo(frame)
+
     if loc !== nothing
         data = if isa(loc, BufferLocInfo)
                 loc.data
@@ -233,21 +234,37 @@ function print_status(io::IO, state::DebuggerState, frame::JuliaStackFrame)
         print_sourcecode(outbuf, data,
             loc.line, loc.defline)
     else
-        buf = IOBuffer()
-        # TODO: look at the = 0
-        active_line = 0
-        code = split(String(take!(buf)),'\n')
-        @assert active_line <= length(code)
-        for (lineno, line) in enumerate(code)
-            if lineno == active_line
-                printstyled(outbuf, "=> ", bold = true, color=:yellow); println(outbuf, line)
-            else
-                printstyled(outbuf, "?  ", bold = true); println(outbuf, line)
-            end
-        end
+        print_codeinfo(outbuf, frame)
     end
     print_next_state(outbuf, state, frame)
     print(io, String(take!(outbuf.io)))
+end
+
+function print_codeinfo(io::IO, frame::JuliaStackFrame)
+    buf = IOBuffer()
+    src = frame.code.code
+    show(buf, src)
+    active_line = convert(Int, frame.pc[])
+
+    code = filter!(split(String(take!(buf)), '\n')) do line
+        !(line == "CodeInfo(" || line == ")" || isempty(line))
+    end
+
+    code .= replace.(code, Ref(r"\$\(QuoteNode\((.*)\)\)" => s"\1"))
+
+    for (lineno, line) in enumerate(code)
+        (lineno < active_line - 3 || lineno > active_line + 2) && continue
+
+        color = (lineno < active_line) ? :white : :normal
+        if lineno == active_line
+            printstyled(io, rpad(lineno, 4), bold = true, color = :yellow)
+        else
+            printstyled(io, rpad(lineno, 4), bold = true, color = color)
+        end
+        printstyled(io, line, color = color)
+        println(io)
+    end
+    println(io)
 end
 
 function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::AbstractString)

@@ -1,0 +1,302 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|4   │          Core.NewvarNode(:(u))
+|5   │          Core.NewvarNode(:(v))
+|6   │          Core.NewvarNode(:(r))
+|7   │    %7  = (==)(a, 0)
+|8   └───       goto #4 if not %7
+|9   2 ── %9  = (abs)(b)
+|
+|About to run: (==)(10, 0)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDDDEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|GGGGGGGGG
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|4   │          Core.NewvarNode(:(u))
+|5   │          Core.NewvarNode(:(v))
+|6   │          Core.NewvarNode(:(r))
+|7   │    %7  = (==)(a, 0)
+|8   └───       goto #4 if not %7
+|9   2 ── %9  = (abs)(b)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|9   2 ── %9  = (abs)(b)
+|10  └───       return %9
+|11  3 ──       goto #4
+|12  4 ┄─ %12 = (==)(b, 0)
+|13  └───       goto #7 if not %12
+|14  5 ── %14 = (abs)(a)
+|
+|About to run: (==)(20, 0)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDDDEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|GGGGGGGGGE
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIII
+|JJJJEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|GGGGGGGGG
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|4   │          Core.NewvarNode(:(u))
+|5   │          Core.NewvarNode(:(v))
+|6   │          Core.NewvarNode(:(r))
+|7   │    %7  = (==)(a, 0)
+|8   └───       goto #4 if not %7
+|9   2 ── %9  = (abs)(b)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|9   2 ── %9  = (abs)(b)
+|10  └───       return %9
+|11  3 ──       goto #4
+|12  4 ┄─ %12 = (==)(b, 0)
+|13  └───       goto #7 if not %12
+|14  5 ── %14 = (abs)(a)
+|
+|About to run: (==)(20, 0)
+|1|julia> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDDDEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|GGGGGGGGGE
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIII
+|JJJJEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|KKKKKKKKK
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|4   │          Core.NewvarNode(:(u))
+|5   │          Core.NewvarNode(:(v))
+|6   │          Core.NewvarNode(:(r))
+|7   │    %7  = (==)(a, 0)
+|8   └───       goto #4 if not %7
+|9   2 ── %9  = (abs)(b)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|9   2 ── %9  = (abs)(b)
+|10  └───       return %9
+|11  3 ──       goto #4
+|12  4 ┄─ %12 = (==)(b, 0)
+|13  └───       goto #7 if not %12
+|14  5 ── %14 = (abs)(a)
+|
+|About to run: (==)(20, 0)
+|1|julia> a
+|10
+|
+|1|julia> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDDDEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|GGGGGGGGGE
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIII
+|JJJJEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|KKKKKKKKKE
+|EE
+|
+|KKKKKKKKK
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|4   │          Core.NewvarNode(:(u))
+|5   │          Core.NewvarNode(:(v))
+|6   │          Core.NewvarNode(:(r))
+|7   │    %7  = (==)(a, 0)
+|8   └───       goto #4 if not %7
+|9   2 ── %9  = (abs)(b)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|9   2 ── %9  = (abs)(b)
+|10  └───       return %9
+|11  3 ──       goto #4
+|12  4 ┄─ %12 = (==)(b, 0)
+|13  └───       goto #7 if not %12
+|14  5 ── %14 = (abs)(a)
+|
+|About to run: (==)(20, 0)
+|1|julia> a
+|10
+|
+|1|julia> a
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDDDEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|GGGGGGGGGE
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIII
+|JJJJEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|KKKKKKKKKE
+|EE
+|
+|KKKKKKKKKE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|4   │          Core.NewvarNode(:(u))
+|5   │          Core.NewvarNode(:(v))
+|6   │          Core.NewvarNode(:(r))
+|7   │    %7  = (==)(a, 0)
+|8   └───       goto #4 if not %7
+|9   2 ── %9  = (abs)(b)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|9   2 ── %9  = (abs)(b)
+|10  └───       return %9
+|11  3 ──       goto #4
+|12  4 ┄─ %12 = (==)(b, 0)
+|13  └───       goto #7 if not %12
+|14  5 ── %14 = (abs)(a)
+|
+|About to run: (==)(20, 0)
+|1|julia> a
+|10
+|
+|1|debug> n
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDDDEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|GGGGGGGGGE
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIII
+|JJJJEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|KKKKKKKKKE
+|EE
+|
+|GGGGGGGGGE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|4   │          Core.NewvarNode(:(u))
+|5   │          Core.NewvarNode(:(v))
+|6   │          Core.NewvarNode(:(r))
+|7   │    %7  = (==)(a, 0)
+|8   └───       goto #4 if not %7
+|9   2 ── %9  = (abs)(b)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd_noinfo(a, b) at nope.jl:2
+|9   2 ── %9  = (abs)(b)
+|10  └───       return %9
+|11  3 ──       goto #4
+|12  4 ┄─ %12 = (==)(b, 0)
+|13  └───       goto #7 if not %12
+|14  5 ── %14 = (abs)(a)
+|
+|About to run: (==)(20, 0)
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|BBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDDDEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|GGGGGGGGGE
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIIIII
+|HHHHIIIIIIIIIIIIIIIIII
+|JJJJEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+|FFFFEEEEEEEEEEEEEEEEEEE
+|
+|EEEEEEEEEEEEEEEEEEEEEEEEE
+|KKKKKKKKKE
+|EE
+|
+|GGGGGGGGGEEE
+|
+|GGGGGGGGG
