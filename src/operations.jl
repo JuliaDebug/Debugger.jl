@@ -250,7 +250,8 @@ function print_codeinfo(io::IO, frame::JuliaStackFrame)
         !(line == "CodeInfo(" || line == ")" || isempty(line))
     end
 
-    @assert active_line <= length(code)
+    code .= replace.(code, Ref(r"\$\(QuoteNode\((.*)\)\)" => s"\1"))
+
     for (lineno, line) in enumerate(code)
         (lineno < active_line - 3 || lineno > active_line + 2) && continue
 
