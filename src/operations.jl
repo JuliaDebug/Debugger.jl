@@ -216,7 +216,7 @@ function print_next_state(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     print(io, expr)
     println(io)
 end
-using Base.IRShow
+
 print_status(io::IO, state::DebuggerState) = print_status(io, state, state.stack[state.level])
 function print_status(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     # Buffer to avoid flickering
@@ -243,11 +243,12 @@ end
 function print_codeinfo(io::IO, frame::JuliaStackFrame)
     buf = IOBuffer()
     src = frame.code.code
-    IRShow.show_ir(IOContext(buf, :SOURCE_SLOTNAMES => Base.sourceinfo_slotnames(src)),
-                   src, IRShow.debuginfo[:default](src))
+    show(buf, src)
     active_line = convert(Int, frame.pc[])
 
-    code = filter!(x -> !isempty(x), split(String(take!(buf)), '\n'))
+    code = filter!(split(String(take!(buf)), '\n')) do line
+        !(line == "CodeInfo(" || line == ")" || isempty(line))
+    end
 
     @assert active_line <= length(code)
     for (lineno, line) in enumerate(code)
