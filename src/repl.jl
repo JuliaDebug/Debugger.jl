@@ -1,5 +1,5 @@
 
-promptname(level, name) = "$level|$name > "
+promptname(level, name) = "$level|$name> "
 function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
 
     state = DebuggerState(stack, repl, terminal)

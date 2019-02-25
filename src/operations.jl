@@ -252,15 +252,17 @@ function print_codeinfo(io::IO, frame::JuliaStackFrame)
     @assert active_line <= length(code)
     for (lineno, line) in enumerate(code)
         (lineno < active_line - 3 || lineno > active_line + 2) && continue
-        col = (lineno < active_line) ? :white : :normal
+
+        color = (lineno < active_line) ? :white : :normal
         if lineno == active_line
-            printstyled(io, rpad(lineno, 4), bold = true, color=:yellow)
+            printstyled(io, rpad(lineno, 4), bold = true, color = :yellow)
         else
-            printstyled(io, rpad(lineno, 4), bold = true, color = col)
+            printstyled(io, rpad(lineno, 4), bold = true, color = color)
         end
-        printstyled(io, line, color = col)
+        printstyled(io, line, color = color)
         println(io)
     end
+    println(io)
 end
 
 function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::AbstractString)

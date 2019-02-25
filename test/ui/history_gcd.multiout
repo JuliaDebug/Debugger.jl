@@ -5,7 +5,7 @@
 |7     za = trailing_zeros(a)
 |
 |About to run: (==)(10, 0)
-|1|debug > 
+|1|debug> 
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -13,7 +13,7 @@
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
-|EEEEEEEEEE
+|EEEEEEEEE
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
@@ -21,7 +21,7 @@
 |7     za = trailing_zeros(a)
 |
 |About to run: (==)(10, 0)
-|1|debug > n
+|1|debug> n
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
@@ -29,7 +29,7 @@
 |8     zb = trailing_zeros(b)
 |
 |About to run: (==)(20, 0)
-|1|debug > 
+|1|debug> 
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -37,15 +37,15 @@
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
-|EEEEEEEEEEF
+|EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
 |GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
-|IIIIIIIIIIIIIIIIIIIIIIIII
-|EEEEEEEEEE
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|EEEEEEEEE
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
@@ -53,7 +53,7 @@
 |7     za = trailing_zeros(a)
 |
 |About to run: (==)(10, 0)
-|1|debug > n
+|1|debug> n
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
@@ -61,7 +61,7 @@
 |8     zb = trailing_zeros(b)
 |
 |About to run: (==)(20, 0)
-|1|julia > 
+|1|julia> 
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -69,15 +69,15 @@
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
-|EEEEEEEEEEF
+|EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
 |GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
-|IIIIIIIIIIIIIIIIIIIIIIIII
-|KKKKKKKKKK
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIII
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
@@ -85,7 +85,7 @@
 |7     za = trailing_zeros(a)
 |
 |About to run: (==)(10, 0)
-|1|debug > n
+|1|debug> n
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
@@ -93,10 +93,10 @@
 |8     zb = trailing_zeros(b)
 |
 |About to run: (==)(20, 0)
-|1|julia > a
+|1|julia> a
 |10
 |
-|1|julia > 
+|1|julia> 
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -104,18 +104,18 @@
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
-|EEEEEEEEEEF
+|EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
 |GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
-|IIIIIIIIIIIIIIIIIIIIIIIII
-|KKKKKKKKKKI
-|II
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIF
+|FF
 |
-|KKKKKKKKKK
+|IIIIIIIII
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
@@ -123,7 +123,7 @@
 |7     za = trailing_zeros(a)
 |
 |About to run: (==)(10, 0)
-|1|debug > n
+|1|debug> n
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
@@ -131,10 +131,10 @@
 |8     zb = trailing_zeros(b)
 |
 |About to run: (==)(20, 0)
-|1|julia > a
+|1|julia> a
 |10
 |
-|1|julia > a
+|1|julia> a
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -142,18 +142,18 @@
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
-|EEEEEEEEEEF
+|EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
 |GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
-|IIIIIIIIIIIIIIIIIIIIIIIII
-|KKKKKKKKKKI
-|II
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIF
+|FF
 |
-|KKKKKKKKKKI
+|IIIIIIIIIF
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
@@ -161,7 +161,7 @@
 |7     za = trailing_zeros(a)
 |
 |About to run: (==)(10, 0)
-|1|debug > n
+|1|debug> n
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
@@ -169,10 +169,10 @@
 |8     zb = trailing_zeros(b)
 |
 |About to run: (==)(20, 0)
-|1|julia > a
+|1|julia> a
 |10
 |
-|1|debug > n
+|1|debug> n
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -180,18 +180,18 @@
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
-|EEEEEEEEEEF
+|EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
 |GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
-|IIIIIIIIIIIIIIIIIIIIIIIII
-|KKKKKKKKKKI
-|II
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIF
+|FF
 |
-|EEEEEEEEEEF
+|EEEEEEEEEF
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
@@ -199,7 +199,7 @@
 |7     za = trailing_zeros(a)
 |
 |About to run: (==)(10, 0)
-|1|debug > n
+|1|debug> n
 |In my_gcd(a, b) at ui.jl:5
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
@@ -207,12 +207,12 @@
 |8     zb = trailing_zeros(b)
 |
 |About to run: (==)(20, 0)
-|1|julia > a
+|1|julia> a
 |10
 |
-|1|debug > n^C
+|1|debug> n^C
 |
-|1|debug > 
+|1|debug> 
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -220,17 +220,17 @@
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
-|EEEEEEEEEEF
+|EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
 |GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHIIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
-|JJIIIIIIIIIIIIIIIIIIIIIIIIII
+|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
-|IIIIIIIIIIIIIIIIIIIIIIIII
-|KKKKKKKKKKI
-|II
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIF
+|FF
 |
-|EEEEEEEEEEFFF
+|EEEEEEEEEFFF
 |
-|EEEEEEEEEE
+|EEEEEEEEE
