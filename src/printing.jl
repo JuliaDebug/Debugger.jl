@@ -4,43 +4,32 @@ struct Suppressed{T}
 end
 Base.show(io::IO, x::Suppressed) = print(io, "<suppressed ", x.item, '>')
 
-function print_var(io::IO, name::Symbol, val)
+function print_var(io::IO, var::JuliaInterpreter.Variable)
     print("  | ")
-    if val === nothing
-        @assert false
-    else
-        val = something(val)
-        T = typeof(val)
-        try
-            val = repr(val)
-            if length(val) > 150
-                val = Suppressed("$(length(val)) bytes of output")
-            end
-        catch
-            val = Suppressed("printing error")
+    T = typeof(var.value)
+    local val
+    try
+        val = repr(var.value)
+        if length(val) > 150
+            val = Suppressed("$(length(val)) bytes of output")
         end
-        println(io, name, "::", T, " = ", val)
+    catch
+        val = Suppressed("printing error")
     end
+    println(io, var.name, "::", T, " = ", val)
 end
 
 print_locdesc(io::IO, frame::JuliaStackFrame) = println(io, locdesc(frame))
 
 function print_locals(io::IO, frame::JuliaStackFrame)
-    for i = 1:length(frame.locals)
-        if !isa(frame.locals[i], Nothing)
-            # #self# is only interesting if it has values inside of it. We already know
-            # which function we're in otherwise.
-            val = something(frame.locals[i])
-            if frame.code.code.slotnames[i] == Symbol("#self#") && (isa(val, Type) || sizeof(val) == 0)
-                continue
-            end
-            print_var(io, frame.code.code.slotnames[i], frame.locals[i])
+    vars = JuliaInterpreter.locals(frame)
+    for var in vars
+        # #self# is only interesting if it has values inside of it. We already know
+        # which function we're in otherwise.
+        if var.name == Symbol("#self#") && (isa(var.value, Type) || sizeof(var.value) == 0)
+            continue
         end
-    end
-    if frame.code.scope isa Method
-        for (sym, value) in zip(sparam_syms(frame.code.scope), frame.sparams)
-            print_var(io, sym, value)
-        end
+        print_var(io, var)
     end
 end
 
