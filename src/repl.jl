@@ -122,7 +122,7 @@ end
 function LineEdit.complete_line(c::DebugCompletionProvider, s)
     partial = REPL.beforecursor(s.input_buffer)
     full = LineEdit.input_string(s)
-    ret, range, should_complete = completions(c, full, partial)
+    ret, range, should_complete = completions(c, full, lastindex(partial))
     return unique!(map(REPLCompletions.completion_text, ret)), partial[range], should_complete
 end
 
