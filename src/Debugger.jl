@@ -61,12 +61,12 @@ function maybe_step_through_wrapper!(stack)
         while pc != JuliaProgramCounter(length(frame.code.code.code)-1)
             pc = next_call!(Compiled(), frame, pc)
         end
-        stack[1] = JuliaStackFrame(JuliaFrameCode(frame.code; wrapper=true), frame, pc)
+        stack[end] = JuliaStackFrame(JuliaFrameCode(frame.code; wrapper=true), frame, pc)
         newcall = Expr(:call, map(x->@lookup(frame, x), last.args)...)
         push!(stack, enter_call_expr(newcall))
         return maybe_step_through_wrapper!(stack)
     end
-    stack
+    return stack
 end
 
 macro make_stack(arg)
