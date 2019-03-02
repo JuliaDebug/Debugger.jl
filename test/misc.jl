@@ -6,7 +6,7 @@ runframe(frame::JuliaStackFrame, pc=frame.pc[]) = Some{Any}(finish_and_return!(C
 
 stack = @make_stack map(x->2x, 1:10)
 state = dummy_state(stack)
-execute_command(state, state.stack[1], Val{:finish}(), "finish")
+execute_command(state, state.stack[end], Val{:finish}(), "finish")
 @test isempty(state.stack)
 @test state.overall_result == 2 .* [1:10...]
 
@@ -17,8 +17,8 @@ function complicated_keyword_stuff(args...; kw...)
 end
 stack = @make_stack complicated_keyword_stuff(1)
 state = dummy_state(stack)
-execute_command(state, state.stack[1], Val{:n}(), "n")
-execute_command(state, state.stack[1], Val{:finish}(), "finish")
+execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, state.stack[end], Val{:finish}(), "finish")
 @test isempty(state.stack)
 
 @test runframe(JuliaInterpreter.enter_call(complicated_keyword_stuff, 1, 2)) ==

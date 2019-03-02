@@ -33,8 +33,10 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
         end
         do_print_status = true
         cmd1 = split(command,' ')[1]
+        #@show state.level
+        #@show length(state.stack) - state.level + 1
         do_print_status = try
-            execute_command(state, state.stack[state.level], Val{Symbol(cmd1)}(), command)
+            execute_command(state, state.stack[end - state.level + 1], Val{Symbol(cmd1)}(), command)
         catch err
             rethrow(err)
         end
@@ -57,7 +59,7 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
     repl_switch = Dict{Any,Any}(
         key => function (s,args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
-                prompt = julia_prompt(state, state.stack[1])
+                prompt = julia_prompt(state, state.stack[end])
                 buf = copy(LineEdit.buffer(s))
                 LineEdit.transition(s, prompt) do
                     LineEdit.state(s, prompt).input_buffer = buf
@@ -127,7 +129,7 @@ function LineEdit.complete_line(c::DebugCompletionProvider, s)
 end
 
 function completions(c::DebugCompletionProvider, full, partial)
-    mod = moduleof(first(c.state.stack))
+    mod = moduleof(last(c.state.stack))
     ret, range, should_complete = REPLCompletions.completions(full, partial, mod)
 
     # TODO Add local variable completions

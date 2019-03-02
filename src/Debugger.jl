@@ -11,8 +11,8 @@ using JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, Ju
 
 # TODO: Work on better API in JuliaInterpreter and rewrite Debugger.jl to use it
 # These are undocumented functions from JuliaInterpreter.jl used by Debugger.jl`
-using JuliaInterpreter: _make_stack, pc_expr,isassign, getlhs, do_assignment!, maybe_next_call!, is_call, _step_expr!, next_call!,  moduleof,
-                        iswrappercall, next_line!, linenumber
+using JuliaInterpreter: pc_expr,isassign, getlhs, do_assignment!, maybe_next_call!, is_call, _step_expr!, next_call!,  moduleof,
+                        iswrappercall, next_line!, linenumber, extract_args
 
 
 const SEARCH_PATH = []
@@ -31,6 +31,47 @@ include("operations.jl")
 include("repl.jl")
 include("printing.jl")
 include("commands.jl")
+
+function _make_stack(mod, arg)
+    args = try
+        extract_args(mod, arg)
+    catch e
+        return :(throw($e))
+    end
+    quote
+        theargs = $(esc(args))
+        stack = [enter_call_expr(Expr(:call,theargs...))]
+        maybe_step_through_wrapper!(stack)
+        stack[end] = JuliaStackFrame(stack[end], JuliaInterpreter.maybe_next_call!(Compiled(), stack[end]))
+        stack
+    end
+end
+
+function maybe_step_through_wrapper!(stack)
+    length(stack[end].code.code.code) < 2 && return stack
+    last = stack[end].code.code.code[end-1]
+    isexpr(last, :(=)) && (last = last.args[2])
+    stack1 = stack[end]
+    is_kw = stack1.code.scope isa Method && startswith(String(Base.unwrap_unionall(stack1.code.scope.sig).parameters[1].name.name), "#kw")
+    if is_kw || isexpr(last, :call) && any(x->x==Core.SlotNumber(1), last.args)
+        # If the last expr calls #self# or passes it to an implementation method,
+        # this is a wrapper function that we might want to step through
+        frame = stack1
+        pc = frame.pc[]
+        while pc != JuliaProgramCounter(length(frame.code.code.code)-1)
+            pc = next_call!(Compiled(), frame, pc)
+        end
+        stack[1] = JuliaStackFrame(JuliaFrameCode(frame.code; wrapper=true), frame, pc)
+        newcall = Expr(:call, map(x->@lookup(frame, x), last.args)...)
+        push!(stack, enter_call_expr(newcall))
+        return maybe_step_through_wrapper!(stack)
+    end
+    stack
+end
+
+macro make_stack(arg)
+    _make_stack(__module__, arg)
+end
 
 macro enter(arg)
     quote
