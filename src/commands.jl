@@ -165,7 +165,8 @@ function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:?}
     - `bt` shows a simple backtrace\\
     - ``` `stuff ``` runs `stuff` in the current frame's context\\
     - `fr v` will show all variables in the current frame\\
-    - `f n` where `n` is an integer, will go to the `n`-th frame.\\
+    - `f n` where `n` is an integer, will go to the `n`-th frame\\
+    - `q` quits the debugger, returning `nothing`\\
     Advanced commands:\\
     - `nc` steps to the next call\\
     - `se` does one expression step\\
