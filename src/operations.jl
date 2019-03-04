@@ -22,7 +22,7 @@ function sparam_syms(meth::Method)
 end
 
 function print_backtrace(state::DebuggerState)
-    for (num, frame) in enumerate(state.stack)
+    for (num, frame) in enumerate(Iterators.reverse(state.stack))
         print_frame(Base.pipe_writer(state.terminal), num, frame)
     end
 end
@@ -43,12 +43,12 @@ end
 function execute_command(state::DebuggerState, _::JuliaStackFrame, ::Union{Val{:f},Val{:fr}}, cmd)
     subcmds = split(cmd,' ')[2:end]
     if isempty(subcmds) || subcmds[1] == "v"
-        print_frame(Base.pipe_writer(state.terminal), state.level, state.stack[state.level])
+        @info "Level is $(state.level)"
+        print_frame(Base.pipe_writer(state.terminal), state.level, state.stack[end - state.level + 1])
         return false
     else
         new_level = parse(Int, subcmds[1])
-        new_stack_idx = length(state.stack)-(new_level-1)
-        if new_stack_idx > length(state.stack) || new_stack_idx < 1
+        if new_level > length(state.stack) || new_level < 1
             printstyled(stderr, "Not a valid frame index\n"; color=:red)
             return false
         end
@@ -217,7 +217,7 @@ function print_next_state(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     println(io)
 end
 
-print_status(io::IO, state::DebuggerState) = print_status(io, state, state.stack[state.level])
+print_status(io::IO, state::DebuggerState) = print_status(io, state, state.stack[end - state.level + 1])
 function print_status(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     # Buffer to avoid flickering
     outbuf = IOContext(IOBuffer(), io)
@@ -228,7 +228,6 @@ function print_status(io::IO, state::DebuggerState, frame::JuliaStackFrame)
         data = if isa(loc, BufferLocInfo)
                 loc.data
             else
-                VERSION < v"0.7" ? read(loc.filepath, String) :
                 read(loc.filepath, String)
             end
         print_sourcecode(outbuf, data,
@@ -311,7 +310,7 @@ end
 @static if VERSION >= v"1.2.0-DEV.253"
     function eval_code(state::DebuggerState, code::AbstractString)
         try
-            return eval_code(state, state.stack[1], code), false
+            return eval_code(state, state.stack[end], code), false
         catch
             return Base.catch_stack(), true
         end
@@ -319,7 +318,7 @@ end
 else
     function eval_code(state::DebuggerState, code::AbstractString)
         try
-            return true, eval_code(state, state.stack[1], code)
+            return true, eval_code(state, state.stack[end], code)
         catch err
             return false, (err, catch_backtrace())
         end
