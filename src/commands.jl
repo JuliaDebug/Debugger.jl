@@ -56,7 +56,6 @@ function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Union{V
         return true
     end
     if pc != nothing
-        state.stack[end] = JuliaStackFrame(state.stack[end], pc)
         return true
     end
     perform_return!(state)
@@ -84,7 +83,7 @@ function execute_command(state::DebuggerState, frame, cmd::Union{Val{:s},Val{:si
                     if moduleof(new_frame) == Core.Compiler
                         ok = false
                     else
-                        state.stack[end] = JuliaStackFrame(frame, pc)
+                        state.stack[end].pc[] = pc
                         push!(state.stack, new_frame)
                         return true
                     end
@@ -98,7 +97,7 @@ function execute_command(state::DebuggerState, frame, cmd::Union{Val{:s},Val{:si
                     return true
                 end
             elseif !first && isexpr(expr, :return)
-                state.stack[end] = JuliaStackFrame(frame, pc)
+                state.stack[end].pc[] = pc
                 return true
             end
         end
@@ -111,15 +110,15 @@ function execute_command(state::DebuggerState, frame, cmd::Union{Val{:s},Val{:si
             state.stack[end] = JuliaStackFrame(state.stack[end], next_call!(Compiled(), state.stack[end], pc))
             return true
         end
-        if new_pc == nothing
-            state.stack[end] = JuliaStackFrame(frame, pc)
+        if new_pc === nothing
+            state.stack[end].pc[] = pc
             perform_return!(state)
             return true
         else
             pc = new_pc
         end
     end
-    state.stack[end] = JuliaStackFrame(frame, pc)
+    state.stack[end].pc[] = pc
     return true
 end
 
