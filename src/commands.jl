@@ -23,7 +23,7 @@ function perform_return!(state::DebuggerState)
     end
     pop!(state.stack)
     if !isempty(state.stack) && state.stack[end].code.wrapper
-        state.stack[end] = JuliaStackFrame(state.stack[end], finish!(Compiled(), state.stack[end]))
+        finish!(Compiled(), state.stack[end])
         perform_return!(state)
     end
 end
@@ -52,7 +52,7 @@ function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Union{V
         #= cmd == "se" =# step_expr!(Compiled(), frame)
     catch err
         propagate_exception!(state, err)
-        state.stack[end] = JuliaStackFrame(state.stack[end], next_call!(Compiled(), state.stack[end], state.stack[end].pc[]))
+        next_call!(Compiled(), state.stack[end])
         return true
     end
     if pc != nothing
@@ -123,7 +123,7 @@ function execute_command(state::DebuggerState, frame, cmd::Union{Val{:s},Val{:si
 end
 
 function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:finish}, cmd::AbstractString)
-    state.stack[end] = JuliaStackFrame(frame, finish!(Compiled(), frame))
+    finish!(Compiled(), frame)
     perform_return!(state)
     return true
 end
