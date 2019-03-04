@@ -12,7 +12,7 @@ using JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, Ju
 # TODO: Work on better API in JuliaInterpreter and rewrite Debugger.jl to use it
 # These are undocumented functions from JuliaInterpreter.jl used by Debugger.jl`
 using JuliaInterpreter: pc_expr,isassign, getlhs, do_assignment!, maybe_next_call!, is_call, _step_expr!, next_call!,  moduleof,
-                        iswrappercall, next_line!, linenumber, extract_args
+                        iswrappercall, next_line!, linenumber, extract_args, sparam_syms
 
 
 const SEARCH_PATH = []
@@ -27,10 +27,34 @@ export @enter
 include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
 
-include("operations.jl")
+mutable struct DebuggerState
+    stack::Vector{JuliaStackFrame}
+    level::Int
+    repl
+    terminal
+    main_mode
+    julia_prompt::Ref{LineEdit.Prompt}
+    standard_keymap
+    overall_result
+end
+DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
+DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
+
+"""
+    Start debugging the specified code in the the specified environment.
+    The second argument should default to the global environment if such
+    an environment exists for the language in question.
+"""
+function debug(meth::Method, args...)
+    stack = [enter_call(meth, args...)]
+    RunDebugger(stack)
+end
+
+
+include("locationinfo.jl")
 include("repl.jl")
-include("printing.jl")
 include("commands.jl")
+include("printing.jl")
 
 function _make_stack(mod, arg)
     args = try

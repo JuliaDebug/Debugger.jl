@@ -155,6 +155,36 @@ function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:co
 end
 
 
+function execute_command(state::DebuggerState, frame, ::Val{:bt}, cmd)
+    for (num, frame) in enumerate(Iterators.reverse(state.stack))
+        print_frame(Base.pipe_writer(state.terminal), num, frame)
+    end
+    println()
+    return false
+end
+
+function execute_command(state::DebuggerState, _::JuliaStackFrame, ::Union{Val{:f},Val{:fr}}, cmd)
+    subcmds = split(cmd,' ')[2:end]
+    if isempty(subcmds) || subcmds[1] == "v"
+        @info "Level is $(state.level)"
+        print_frame(Base.pipe_writer(state.terminal), state.level, state.stack[end - state.level + 1])
+        return false
+    else
+        new_level = parse(Int, subcmds[1])
+        if new_level > length(state.stack) || new_level < 1
+            printstyled(stderr, "Not a valid frame index\n"; color=:red)
+            return false
+        end
+        state.level = new_level
+    end
+    return true
+end
+
+function execute_command(state::DebuggerState, frame, _, cmd)
+    println("Unknown command `$cmd`. Executing `?` to obtain help.")
+    execute_command(state, frame, Val{Symbol("?")}(), "?")
+end
+
 function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:?}, cmd::AbstractString)
     display(
             @md_str """

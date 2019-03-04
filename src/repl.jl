@@ -115,6 +115,65 @@ function julia_prompt(state::DebuggerState, frame::JuliaStackFrame)
     return julia_prompt
 end
 
+@static if VERSION >= v"1.2.0-DEV.253"
+    function eval_code(state::DebuggerState, code::AbstractString)
+        try
+            return eval_code(state, state.stack[end], code), false
+        catch
+            return Base.catch_stack(), true
+        end
+    end
+else
+    function eval_code(state::DebuggerState, code::AbstractString)
+        try
+            return true, eval_code(state, state.stack[end], code)
+        catch err
+            return false, (err, catch_backtrace())
+        end
+    end
+end
+
+function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::AbstractString)
+    expr = Base.parse_input_line(command)
+    if isexpr(expr, :toplevel)
+        expr = expr.args[end]
+    end
+    local_vars = Any[]
+    local_vals = Any[]
+    for i = 1:length(frame.locals)
+        if !isa(frame.locals[i], Nothing)
+            push!(local_vars, frame.code.code.slotnames[i])
+            push!(local_vals, QuoteNode(something(frame.locals[i])))
+        end
+    end
+    ismeth = frame.code.scope isa Method
+    ismeth && (syms = sparam_syms(frame.code.scope))
+    for i = 1:length(frame.sparams)
+        ismeth && push!(local_vars, syms[i])
+        push!(local_vals, QuoteNode(frame.sparams[i]))
+    end
+    res = gensym()
+    eval_expr = Expr(:let,
+        Expr(:block, map(x->Expr(:(=), x...), zip(local_vars, local_vals))...),
+        Expr(:block,
+            Expr(:(=), res, expr),
+            Expr(:tuple, res, Expr(:tuple, local_vars...))
+        ))
+    eval_res, res = Core.eval(moduleof(frame), eval_expr)
+    j = 1
+    for i = 1:length(frame.locals)
+        if !isa(frame.locals[i], Nothing)
+            frame.locals[i] = Some{Any}(res[j])
+            j += 1
+        end
+    end
+    for i = 1:length(frame.sparams)
+        frame.sparams[i] = res[j]
+        j += 1
+    end
+    eval_res
+end
+
 # Completions
 
 mutable struct DebugCompletionProvider <: REPL.CompletionProvider
