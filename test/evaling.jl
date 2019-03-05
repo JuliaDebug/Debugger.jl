@@ -1,12 +1,16 @@
+using Debugger: eval_code
+
 # Simple evaling of function argument
 function evalfoo1(x,y)
     x+y
 end
 frame = JuliaInterpreter.enter_call_expr(:($(evalfoo1)(1,2)))
-res = eval_code(nothing, frame, "x")
+state = dummy_state([frame])
+res = eval_code(state, frame, "x")
+
 @test res == 1
 
-res = eval_code(nothing, frame, "y")
+res = eval_code(state, frame, "y")
 @test res == 2
 
 # Evaling with sparams
@@ -14,8 +18,16 @@ function evalsparams(x::T) where T
     x
 end
 frame = JuliaInterpreter.enter_call_expr(:($(evalsparams)(1)))
-res = eval_code(nothing, frame, "x")
+state = dummy_state([frame])
+res = eval_code(state, frame, "x")
 @test res == 1
 
-res = eval_code(nothing, frame, "T")
+res = eval_code(state, frame, "T")
 @test res == Int
+
+# Evaling with keywords
+evalkw(x; bar=true) = x
+stack = @make_stack evalkw(2)
+state = dummy_state(stack)
+res = eval_code(state, stack[end], "x")
+@test res == 2
