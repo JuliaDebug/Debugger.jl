@@ -20,6 +20,7 @@ notifications:
 #   https://github.com/JuliaWeb/MbedTLS.jl/issues/193
 before_script:
   - julia -e 'using Pkg;
+      Pkg.instantiate();
       Pkg.add("MbedTLS");
       Pkg.pin(PackageSpec(name="MbedTLS", version="0.6.6"));'
 
