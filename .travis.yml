@@ -15,6 +15,15 @@ branches:
 
 notifications:
   email: false
+  
+# Pin MbedTLS due to issue:
+#   https://github.com/JuliaWeb/MbedTLS.jl/issues/193
+before_script:
+  - julia -e 'using Pkg;
+      Pkg.add("MbedTLS");
+      Pkg.pin(PackageSpec(name="MbedTLS", version="0.6.6"));'
+
+codecov: true
 
 script:
   - julia --project --color=yes -e 'using Pkg;
