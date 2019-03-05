@@ -24,8 +24,6 @@ before_script:
       Pkg.add("MbedTLS");
       Pkg.pin(PackageSpec(name="MbedTLS", version="0.6.6"));'
 
-codecov: true
-
 script:
   - julia --project --color=yes -e 'using Pkg;
                         Pkg.instantiate();
@@ -33,3 +31,7 @@ script:
                                  PackageSpec(name = "VT100", rev = "master")]);
                         Pkg.build();
                         Pkg.test()'
+
+after_success:
+  # push coverage results to Codecov
+- julia -e 'import Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
