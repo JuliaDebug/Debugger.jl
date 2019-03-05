@@ -135,46 +135,25 @@ end
 
 function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::AbstractString)
     expr = Base.parse_input_line(command)
-    if isexpr(expr, :toplevel)
-        expr = expr.args[end]
-    end
+    isexpr(expr, :toplevel) && (expr = expr.args[end])
     # see https://github.com/JuliaLang/julia/issues/31255 for the Symbol("") check
-    ignore_local(i) = isa(frame.locals[i], Nothing) || frame.code.code.slotnames[i] == Symbol("")
-    local_vars = Any[]
-    local_vals = Any[]
-    for i = 1:length(frame.locals)
-        if !ignore_local(i)
-            sym = frame.code.code.slotnames[i]
-            push!(local_vars, sym)
-            push!(local_vals, QuoteNode(something(frame.locals[i])))
-        end
-    end
-    ismeth = frame.code.scope isa Method
-    if ismeth
-        syms = sparam_syms(frame.code.scope)
-        for i = 1:length(frame.sparams)
-            push!(local_vars, syms[i])
-            push!(local_vals, QuoteNode(frame.sparams[i]))
-        end
-    end
+    vars = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
     res = gensym()
     eval_expr = Expr(:let,
-        Expr(:block, map(x->Expr(:(=), x...), zip(local_vars, local_vals))...),
+        Expr(:block, map(x->Expr(:(=), x...), [(v.name, v.value) for v in vars])...),
         Expr(:block,
             Expr(:(=), res, expr),
-            Expr(:tuple, res, Expr(:tuple, local_vars...))
+            Expr(:tuple, res, Expr(:tuple, [v.name for v in vars]...))
         ))
     eval_res, res = Core.eval(moduleof(frame), eval_expr)
     j = 1
-    for i = 1:length(frame.locals)
-        if !ignore_local(i)
-            frame.locals[i] = Some{Any}(res[j])
+    for (i, v) in enumerate(vars)
+        if v.isparam
+            frame.sparams[j] = res[i]
             j += 1
+        else
+            frame.locals[frame.last_reference[v.name]] = Some{Any}(res[i])
         end
-    end
-    for i = 1:length(frame.sparams)
-        frame.sparams[i] = res[j]
-        j += 1
     end
     eval_res
 end
