@@ -76,7 +76,7 @@ function maybe_step_through_wrapper!(stack)
     last = stack[end].code.code.code[end-1]
     isexpr(last, :(=)) && (last = last.args[2])
     stack1 = stack[end]
-    is_kw = stack1.code.scope isa Method && startswith(String(Base.unwrap_unionall(stack1.code.scope.sig).parameters[1].name.name), "#kw")
+    is_kw = stack1.code.scope isa Method && startswith(String(Base.unwrap_unionall(Base.unwrap_unionall(stack1.code.scope.sig).parameters[1]).name.name), "#kw")
     if is_kw || isexpr(last, :call) && any(x->x==Core.SlotNumber(1), last.args)
         # If the last expr calls #self# or passes it to an implementation method,
         # this is a wrapper function that we might want to step through
