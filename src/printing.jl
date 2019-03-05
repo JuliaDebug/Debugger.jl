@@ -24,11 +24,8 @@ print_locdesc(io::IO, frame::JuliaStackFrame) = println(io, locdesc(frame))
 function print_locals(io::IO, frame::JuliaStackFrame)
     vars = JuliaInterpreter.locals(frame)
     for var in vars
-        # #self# is only interesting if it has values inside of it. We already know
-        # which function we're in otherwise.
-        if var.name == Symbol("#self#") && (isa(var.value, Type) || sizeof(var.value) == 0)
-            continue
-        end
+        # Hide gensymmed variables
+        startswith(string(var.name), "#") && continue
         print_var(io, var)
     end
 end
