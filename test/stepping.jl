@@ -200,3 +200,17 @@ end
 
 B_inst = B{Int}()
 step_through(JuliaInterpreter.enter_call_expr(:($(B_inst)(10))))
+
+# Stepping in non toplevel frames
+@info " BEGIN ERRORS -------------------------------------"
+f2(x) = f1(x)
+f1(x) = x
+stack = @make_stack f2(1)
+state = dummy_state(stack)
+execute_command(state, state.stack[end], Val{:s}(), "s")
+execute_command(state, state.stack[end], Val{:fr}(), "fr 2")
+@test execute_command(state, state.stack[end], Val{:s}(), "s") == false
+@test execute_command(state, state.stack[end], Val{:n}(), "n") == false
+@test execute_command(state, state.stack[end], Val{:finish}(), "finish") == false
+@info " END ERRORS ---------------------------------------"
+

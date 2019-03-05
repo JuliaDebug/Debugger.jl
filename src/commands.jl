@@ -45,7 +45,14 @@ function propagate_exception!(state::DebuggerState, exc)
     rethrow(exc)
 end
 
+function assert_is_toplevel_frame(state)
+    state.level == 1 && return true
+    printstyled(stderr, "Cannot step or mutate variables in a non toplevel frame,\n"; color=:red)
+    return false
+end
+
 function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Union{Val{:nc},Val{:n},Val{:se}}, cmd::AbstractString)
+    assert_is_toplevel_frame(state) || return false
     pc = try
         cmd == "nc" ? next_call!(Compiled(), frame) :
         cmd == "n" ? next_line!(Compiled(), frame, state.stack) :
@@ -63,6 +70,7 @@ function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Union{V
 end
 
 function execute_command(state::DebuggerState, frame, cmd::Union{Val{:s},Val{:si},Val{:sg}}, command::AbstractString)
+    assert_is_toplevel_frame(state) || return false
     pc = frame.pc[]
     first = true
     while true
@@ -123,6 +131,7 @@ function execute_command(state::DebuggerState, frame, cmd::Union{Val{:s},Val{:si
 end
 
 function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:finish}, cmd::AbstractString)
+    assert_is_toplevel_frame(state) || return false
     state.stack[end] = JuliaStackFrame(frame, finish!(Compiled(), frame))
     perform_return!(state)
     return true
