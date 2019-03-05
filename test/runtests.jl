@@ -10,4 +10,6 @@ import REPL
     include("misc.jl")
     include("stepping.jl")
     include("ui.jl")
+    include("interpret.jl")
+    include("evaling.jl")
 #end
