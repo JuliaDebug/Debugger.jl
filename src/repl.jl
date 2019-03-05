@@ -138,19 +138,24 @@ function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::Abstra
     if isexpr(expr, :toplevel)
         expr = expr.args[end]
     end
+    # see https://github.com/JuliaLang/julia/issues/31255 for the Symbol("") check
+    ignore_local(i) = isa(frame.locals[i], Nothing) || frame.code.code.slotnames[i] == Symbol("")
     local_vars = Any[]
     local_vals = Any[]
     for i = 1:length(frame.locals)
-        if !isa(frame.locals[i], Nothing)
-            push!(local_vars, frame.code.code.slotnames[i])
+        if !ignore_local(i)
+            sym = frame.code.code.slotnames[i]
+            push!(local_vars, sym)
             push!(local_vals, QuoteNode(something(frame.locals[i])))
         end
     end
     ismeth = frame.code.scope isa Method
-    ismeth && (syms = sparam_syms(frame.code.scope))
-    for i = 1:length(frame.sparams)
-        ismeth && push!(local_vars, syms[i])
-        push!(local_vals, QuoteNode(frame.sparams[i]))
+    if ismeth
+        syms = sparam_syms(frame.code.scope)
+        for i = 1:length(frame.sparams)
+            push!(local_vars, syms[i])
+            push!(local_vals, QuoteNode(frame.sparams[i]))
+        end
     end
     res = gensym()
     eval_expr = Expr(:let,
@@ -162,7 +167,7 @@ function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::Abstra
     eval_res, res = Core.eval(moduleof(frame), eval_expr)
     j = 1
     for i = 1:length(frame.locals)
-        if !isa(frame.locals[i], Nothing)
+        if !ignore_local(i)
             frame.locals[i] = Some{Any}(res[j])
             j += 1
         end
