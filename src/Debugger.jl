@@ -40,17 +40,6 @@ end
 DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
 DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
 
-"""
-    Start debugging the specified code in the the specified environment.
-    The second argument should default to the global environment if such
-    an environment exists for the language in question.
-"""
-function debug(meth::Method, args...)
-    stack = [enter_call(meth, args...)]
-    RunDebugger(stack)
-end
-
-
 include("locationinfo.jl")
 include("repl.jl")
 include("commands.jl")
