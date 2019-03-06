@@ -56,7 +56,7 @@ function RunDebugger(stack, frame, repl = Base.active_repl, terminal = Base.acti
     repl_switch = Dict{Any,Any}(
         key => function (s,args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
-                prompt = julia_prompt(state, state.stack[end])
+                prompt = julia_prompt(state)
                 buf = copy(LineEdit.buffer(s))
                 LineEdit.transition(s, prompt) do
                     LineEdit.state(s, prompt).input_buffer = buf
@@ -77,7 +77,7 @@ function RunDebugger(stack, frame, repl = Base.active_repl, terminal = Base.acti
 end
 
 
-function julia_prompt(state::DebuggerState, frame::JuliaStackFrame)
+function julia_prompt(state::DebuggerState)
     # Return early if this has already been called on the state
     isassigned(state.julia_prompt) && return state.julia_prompt[]
 
@@ -98,10 +98,10 @@ function julia_prompt(state::DebuggerState, frame::JuliaStackFrame)
         xbuf = copy(buf)
         command = String(take!(buf))
         @static if VERSION >= v"1.2.0-DEV.253"
-            response = eval_code(state, command)
+            response = _eval_code(state, command)
             REPL.print_response(state.repl, response, true, true)
         else
-            ok, result = eval_code(state, command)
+            ok, result = _eval_code(state, command)
             REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
         end
         println(state.terminal)
@@ -112,25 +112,27 @@ function julia_prompt(state::DebuggerState, frame::JuliaStackFrame)
     return julia_prompt
 end
 
+
 @static if VERSION >= v"1.2.0-DEV.253"
-    function eval_code(state::DebuggerState, code::AbstractString)
+    function _eval_code(state::DebuggerState, code::AbstractString)
         try
-            return eval_code(state, state.stack[end], code), false
+            return eval_code(state, code), false
         catch
             return Base.catch_stack(), true
         end
     end
 else
-    function eval_code(state::DebuggerState, code::AbstractString)
+    function _eval_code(state::DebuggerState, code::AbstractString)
         try
-            return true, eval_code(state, state.stack[end], code)
+            return true, eval_code(state, code)
         catch err
             return false, (err, catch_backtrace())
         end
     end
 end
 
-function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::AbstractString)
+function eval_code(state::DebuggerState, command::AbstractString)
+    frame = active_frame(state)
     expr = Base.parse_input_line(command)
     isexpr(expr, :toplevel) && (expr = expr.args[end])
     # see https://github.com/JuliaLang/julia/issues/31255 for the Symbol("") check
@@ -142,7 +144,14 @@ function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::Abstra
             Expr(:(=), res, expr),
             Expr(:tuple, res, Expr(:tuple, [v.name for v in vars]...))
         ))
-    eval_res, res = Core.eval(moduleof(frame), eval_expr)
+    local eval_res
+    try
+        eval_res, res = Core.eval(moduleof(frame), eval_expr)
+    catch err
+        # No point showing an internal stacktrace here
+        Base.display_error(stdout, err, [])
+        return
+    end
     j = 1
     for (i, v) in enumerate(vars)
         if v.isparam

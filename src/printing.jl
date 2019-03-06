@@ -36,7 +36,6 @@ function print_frame(io::IO, num::Integer, frame::JuliaStackFrame)
     print_locals(io, frame)
 end
 
-
 function print_next_state(io::IO, frame::JuliaStackFrame)
     maybe_quote(x) = (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
 

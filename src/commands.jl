@@ -45,7 +45,7 @@ function propagate_exception!(state::DebuggerState, exc)
 
     # Exception not caught
     if JuliaInterpreter.break_on_error[]
-        # restore our frame and stack
+        # Restore our frame and stack
         state.stack = original_stack
         state.frame = original_frame
         push!(state.stack, state.frame)
@@ -55,31 +55,40 @@ function propagate_exception!(state::DebuggerState, exc)
     rethrow(exc)
 end
 
-function assert_is_toplevel_frame(state)
-    state.level == 1 && return true
-    printstyled(stderr, "Cannot step or mutate variables in a non toplevel frame,\n"; color=:red)
-    return false
+function assert_allowed_to_step(state::DebuggerState)
+    if state.broke_on_error
+        printstyled(stderr, "Cannot step after breaking on error\n\n"; color=:red)
+        return false
+    elseif state.level != 1
+        printstyled(stderr, "Cannot step or in a non toplevel frame\n\n"; color=:red)
+        return false
+    end
+    return true
 end
 
+function handle_breakpoint!(state::DebuggerState, bp::JuliaInterpreter.BreakpointRef)
+    state.broke_on_error = bp.err !== nothing
+    state.frame = pop!(state.stack)
+    println("Hit breakpoint: $(bp)")
+end
+    
 function execute_command(state::DebuggerState, ::Union{Val{:nc},Val{:n},Val{:se}}, cmd::AbstractString)
-    assert_is_toplevel_frame(state) || return false
+    assert_allowed_to_step(state) || return false, false
     pc = try
         cmd == "nc" ? next_call!(state.stack, state.frame) :
         cmd == "n" ? next_line!(state.stack, state.frame) :
         #= cmd == "se" =# step_expr!(state.stack, state.frame)
     catch err
         pc_exc = propagate_exception!(state, err)
-        if pc_exc isa JuliaInterpreter.Breakpoints.BreakpointRef
-            state.frame = pop!(state.stack)
-            show(pc); println()
+        if pc_exc isa JuliaInterpreter.BreakpointRef
+            handle_breakpoint!(state, pc_exc)
             return true, false
         end
         next_call!(state.frame, state.frame)
         return true, false
     end
     if pc isa JuliaInterpreter.Breakpoints.BreakpointRef
-        state.frame = pop!(state.stack)
-        show(pc); println()
+        handle_breakpoint!(state, pc)
     end
     if pc != nothing
         return true, false
@@ -94,7 +103,7 @@ function dummy_breakpoint(stack, frame)
 end
 
 function execute_command(state::DebuggerState, md::Union{Val{:s},Val{:si},Val{:sg}}, command::AbstractString)
-    assert_is_toplevel_frame(state) || return false, false
+    assert_allowed_to_step(state) || return false, false
     ret = JuliaInterpreter.maybe_next_call!(state.stack, state.frame)
     if ret === nothing
         finish!(state.stack, state.frame)
@@ -127,11 +136,10 @@ function execute_command(state::DebuggerState, md::Union{Val{:s},Val{:si},Val{:s
 end
 
 function execute_command(state::DebuggerState, ::Val{:finish}, cmd::AbstractString)
-    assert_is_toplevel_frame(state) || return false, false
+    assert_allowed_to_step(state) || return false, false
     pc = finish!(state.stack, state.frame)
     if pc isa JuliaInterpreter.Breakpoints.BreakpointRef
-        state.frame = pop!(state.stack)
-        show(pc); println()
+        handle_breakpoint!(state, pc)
         return true, false
     end
     perform_return!(state)
@@ -153,14 +161,14 @@ function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:co
                 args = Base.append_any((args[2],), args[3:end]...)
             end
             if isa(args[1], Core.Builtin)
-                return false
+                return false, false
             end
             ct = Base.code_typed(f, Base.typesof(args[2:end]...))
             ct = ct == 1 ? ct[1] : ct
             println(ct)
         end
     end
-    return false
+    return false, false
 end
 
 
@@ -172,29 +180,29 @@ function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
     return false, false
 end
 
-function execute_command(state::DebuggerState, _::JuliaStackFrame, ::Union{Val{:f},Val{:fr}}, cmd)
+function execute_command(state::DebuggerState, ::Union{Val{:f},Val{:fr}}, cmd)
     subcmds = split(cmd,' ')[2:end]
     if isempty(subcmds) || subcmds[1] == "v"
-        @info "Level is $(state.level)"
-        print_frame(Base.pipe_writer(state.terminal), state.level, state.stack[end - state.level + 1])
-        return false
+        frame = active_frame(state)
+        print_frame(Base.pipe_writer(state.terminal), state.level, frame)
+        return false, false
     else
         new_level = parse(Int, subcmds[1])
-        if checkbounds(Bool, state.stack, new_level)
+        if !checkbounds(Bool, state.stack, new_level)
             printstyled(stderr, "Not a valid frame index\n"; color=:red)
-            return false
+            return false, false
         end
         state.level = new_level
     end
-    return true
+    return true, false
 end
 
-function execute_command(state::DebuggerState, frame, _, cmd)
+function execute_command(state::DebuggerState, _, cmd)
     println("Unknown command `$cmd`. Executing `?` to obtain help.")
-    execute_command(state, frame, Val{Symbol("?")}(), "?")
+    execute_command(state, Val{Symbol("?")}(), "?")
 end
 
-function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:?}, cmd::AbstractString)
+function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     display(
             @md_str """
     Basic Commands:\\
@@ -212,5 +220,5 @@ function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:?}
     - `si` does the same but steps into a call if a call is the next expression\\
     - `sg` steps into a generated function\\
     """)
-    return false
+    return false, false
 end

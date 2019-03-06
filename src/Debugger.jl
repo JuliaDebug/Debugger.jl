@@ -31,6 +31,7 @@ mutable struct DebuggerState
     stack::Vector{JuliaStackFrame}
     frame::JuliaStackFrame
     level::Int
+    broke_on_error::Bool
     repl
     terminal
     main_mode
@@ -38,7 +39,7 @@ mutable struct DebuggerState
     standard_keymap
     overall_result
 end
-DebuggerState(stack, frame, repl, terminal) = DebuggerState(stack, frame, 1, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
+DebuggerState(stack, frame, repl, terminal) = DebuggerState(stack, frame, 1, false, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
 DebuggerState(stack, frame, repl) = DebuggerState(stack, frame, repl, nothing)
 
 active_frame(state::DebuggerState) = state.level == 1 ? state.frame : state.stack[end - state.level + 2]
@@ -69,6 +70,7 @@ function _make_stack(mod, arg)
         stack = [enter_call_expr(Expr(:call,theargs...))]
         maybe_step_through_wrapper!(stack)
         stack[end] = JuliaStackFrame(stack[end], JuliaInterpreter.maybe_next_call!(Compiled(), stack[end]))
+        stack, popfirst!(stack)
     end
 end
 
