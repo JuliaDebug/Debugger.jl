@@ -1,8 +1,7 @@
 
 promptname(level, name) = "$level|$name> "
-function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
-
-    state = DebuggerState(stack, repl, terminal)
+function RunDebugger(stack, frame, repl = Base.active_repl, terminal = Base.active_repl.t)
+    state = DebuggerState(stack, frame, repl, terminal)
 
     # Setup debug panel
     panel = LineEdit.Prompt(promptname(state.level, "debug");
@@ -33,10 +32,8 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
         end
         do_print_status = true
         cmd1 = split(command,' ')[1]
-        #@show state.level
-        #@show length(state.stack) - state.level + 1
-        do_print_status = try
-            execute_command(state, state.stack[end - state.level + 1], Val{Symbol(cmd1)}(), command)
+        do_print_status, frame_finished = try
+            execute_command(state, Val{Symbol(cmd1)}(), command)
         catch err
             rethrow(err)
         end
@@ -44,7 +41,7 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
             panel.prompt = promptname(state.level,"debug")
         end
         LineEdit.reset_state(s)
-        if isempty(state.stack)
+        if isempty(state.stack) && frame_finished
             LineEdit.transition(s, :abort)
             LineEdit.reset_state(s)
             return false

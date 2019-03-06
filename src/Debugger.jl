@@ -29,6 +29,7 @@ using .LineNumbers: SourceFile, compute_line
 
 mutable struct DebuggerState
     stack::Vector{JuliaStackFrame}
+    frame::JuliaStackFrame
     level::Int
     repl
     terminal
@@ -37,8 +38,10 @@ mutable struct DebuggerState
     standard_keymap
     overall_result
 end
-DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
-DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
+DebuggerState(stack, frame, repl, terminal) = DebuggerState(stack, frame, 1, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
+DebuggerState(stack, frame, repl) = DebuggerState(stack, frame, repl, nothing)
+
+active_frame(state::DebuggerState) = state.level == 1 ? state.frame : state.stack[end - state.level + 2]
 
 """
     Start debugging the specified code in the the specified environment.
@@ -46,8 +49,7 @@ DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
     an environment exists for the language in question.
 """
 function debug(meth::Method, args...)
-    stack = [enter_call(meth, args...)]
-    RunDebugger(stack)
+    RunDebugger(JuliaStackFrame[], enter_call(meth, args...))
 end
 
 
@@ -67,7 +69,6 @@ function _make_stack(mod, arg)
         stack = [enter_call_expr(Expr(:call,theargs...))]
         maybe_step_through_wrapper!(stack)
         stack[end] = JuliaStackFrame(stack[end], JuliaInterpreter.maybe_next_call!(Compiled(), stack[end]))
-        stack
     end
 end
 
@@ -99,8 +100,9 @@ end
 
 macro enter(arg)
     quote
-        let stack = $(_make_stack(__module__,arg))
-            RunDebugger(stack)
+        let stackdata = $(_make_stack(__module__,arg))
+            stack, frame = stackdata
+            RunDebugger(stack, frame)
         end
     end
 end
