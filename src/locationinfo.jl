@@ -15,8 +15,8 @@ struct BufferLocInfo
     defline::Int
 end
 
-function loc_for_fname(file::Symbol, line::Integer, defline::Integer)
-    if startswith(string(file),"REPL[")
+function loc_for_fname(file::String, line::Integer, defline::Integer)
+    if startswith(file, "REPL[")
         hist_idx = parse(Int,string(file)[6:end-1])
         isdefined(Base, :active_repl) || return nothing, ""
         hp = Base.active_repl.interface.modes[1].hist
@@ -35,7 +35,9 @@ end
 function locinfo(frame::JuliaStackFrame)
     if frame.code.scope isa Method
         meth = frame.code.scope
-        loc_for_fname(meth.file, linenumber(frame), meth.line)
+        file, def_line = JuliaInterpreter.whereis(meth)
+        _, current_line = JuliaInterpreter.whereis(frame)
+        return loc_for_fname(file, current_line, def_line)
     else
         println("not yet implemented")
     end
