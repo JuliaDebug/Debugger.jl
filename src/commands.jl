@@ -1,3 +1,18 @@
+
+function maybe_assign!(frame, stmt, pc, val)
+    if isexpr(stmt, :(=))
+        lhs = stmt.args[1]
+        JuliaInterpreter.do_assignment!(frame, lhs, val)
+    elseif JuliaInterpreter.isassign(frame, pc)
+        lhs = JuliaInterpreter.getlhs(pc)
+        JuliaInterpreter.do_assignment!(frame, lhs, val)
+    end
+    return nothing
+end
+maybe_assign!(frame, pc, val) = maybe_assign!(frame, JuliaInterpreter.pc_expr(frame, pc), pc, val)
+maybe_assign!(frame, val) = maybe_assign!(frame, JuliaInterpreter.pc_expr(frame, frame.pc[]), frame.pc[], val)
+
+# Returns if this finished the last frame
 function perform_return!(state::DebuggerState)
     returning_frame = state.frame
     returning_expr = pc_expr(returning_frame)
@@ -9,13 +24,10 @@ function perform_return!(state::DebuggerState)
         else
             state.frame = pop!(state.stack)
             prev = pc_expr(state.frame)
-            if isexpr(prev, :(=))
-                do_assignment!(state.frame, prev.args[1], val)
-            elseif isassign(state.frame)
-                do_assignment!(state.frame, getlhs(state.frame.pc[]), val)
-            end
+            maybe_assign!(state.frame, val)
             state.frame.pc[] += 1
             maybe_next_call!(state.stack, state.frame)
+            return false
         end
     else
         @assert !returning_frame.code.generator
@@ -25,6 +37,7 @@ function perform_return!(state::DebuggerState)
         finish!(state.stack, state.frame)
         perform_return!(state)
     end
+    return true
 end
 
 function propagate_exception!(state::DebuggerState, exc)
@@ -87,7 +100,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:nc},Val{:n},Val{:se}
         next_call!(state.frame, state.frame)
         return true, false
     end
-    if pc isa JuliaInterpreter.Breakpoints.BreakpointRef
+    if pc isa JuliaInterpreter.BreakpointRef
         handle_breakpoint!(state, pc)
     end
     if pc != nothing
@@ -117,18 +130,19 @@ function execute_command(state::DebuggerState, md::Union{Val{:s},Val{:si},Val{:s
         callstmt = stmt
         if isexpr(callstmt, :(=))
             callstmt = callstmt.args[2]
+        elseif isexpr(callstmt, :return)
+            perform_return!(state)
+            return true, true
         end
         isexpr(callstmt, :call) || return true, false
         ret = JuliaInterpreter.evaluate_call!(state.stack, state.frame, callstmt, pc; exec! = dummy_breakpoint)
         if isa(ret, JuliaInterpreter.BreakpointRef)
-            @show state.frame.exception_frames
-
             state.frame = pop!(state.stack)
-            @show state.frame.exception_frames
+            JuliaInterpreter.maybe_next_call!(state.stack, state.frame)
             return true, false
         else
             # The call returned in Compiled mode
-            JuliaInterpreter.maybe_assign!(stack.frame, stmt, pc, ret)
+            maybe_assign!(state.frame, stmt, pc, ret)
             state.frame.pc[] += 1
         end
     end
@@ -136,20 +150,15 @@ function execute_command(state::DebuggerState, md::Union{Val{:s},Val{:si},Val{:s
 end
 
 function execute_command(state::DebuggerState, ::Val{:finish}, cmd::AbstractString)
-    assert_allowed_to_step(state) || return false, false
-    pc = finish!(state.stack, state.frame)
-    if pc isa JuliaInterpreter.Breakpoints.BreakpointRef
-        handle_breakpoint!(state, pc)
-        return true, false
-    end
-    perform_return!(state)
-    return true, true
+    finish!(state.stack, state.frame)
+    return true, perform_return!(state)
 end
 
 """
     Runs code_typed on the call we're about to run
 """
-function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:code_typed}, cmd::AbstractString)
+function execute_command(state::DebuggerState, ::Val{:code_typed}, ::AbstractString)
+    frame = active_frame(state)
     expr = pc_expr(frame, frame.pc[])
     if isa(expr, Expr)
         if is_call(expr)

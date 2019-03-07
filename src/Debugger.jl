@@ -70,7 +70,7 @@ function _make_stack(mod, arg)
         stack = [enter_call_expr(Expr(:call,theargs...))]
         maybe_step_through_wrapper!(stack)
         stack[end] = JuliaStackFrame(stack[end], JuliaInterpreter.maybe_next_call!(Compiled(), stack[end]))
-        stack, popfirst!(stack)
+        stack, pop!(stack)
     end
 end
 
