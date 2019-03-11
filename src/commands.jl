@@ -139,33 +139,6 @@ function execute_command(state::DebuggerState, ::Val{:finish}, cmd::AbstractStri
     return true
 end
 
-"""
-    Runs code_typed on the call we're about to run
-"""
-function execute_command(state::DebuggerState, ::Val{:code_typed}, cmd::AbstractString)
-    frame = active_frame(state)
-    expr = pc_expr(frame, frame.pc[])
-    if isa(expr, Expr)
-        if is_call(expr)
-            isexpr(expr, :(=)) && (expr = expr.args[2])
-            args = map(x->isa(x, QuoteNode) ? x.value : @lookup(frame, x), expr.args)
-            f = args[1]
-            if f == Core._apply
-                f = to_function(args[2])
-                args = Base.append_any((args[2],), args[3:end]...)
-            end
-            if isa(args[1], Core.Builtin)
-                return false
-            end
-            ct = Base.code_typed(f, Base.typesof(args[2:end]...))
-            ct = ct == 1 ? ct[1] : ct
-            println(ct)
-        end
-    end
-    return false
-end
-
-
 function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
     for (num, frame) in enumerate(Iterators.reverse(state.stack))
         print_frame(Base.pipe_writer(state.terminal), num, frame)
