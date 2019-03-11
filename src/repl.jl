@@ -57,7 +57,7 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
     repl_switch = Dict{Any,Any}(
         key => function (s,args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
-                prompt = julia_prompt(state, state.stack[end])
+                prompt = julia_prompt(state)
                 buf = copy(LineEdit.buffer(s))
                 LineEdit.transition(s, prompt) do
                     LineEdit.state(s, prompt).input_buffer = buf
@@ -78,7 +78,7 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
 end
 
 
-function julia_prompt(state::DebuggerState, frame::Frame)
+function julia_prompt(state::DebuggerState)
     # Return early if this has already been called on the state
     isassigned(state.julia_prompt) && return state.julia_prompt[]
 
@@ -150,7 +150,7 @@ function eval_code(frame::Frame, command::AbstractString)
             frame.sparams[j] = res[i]
             j += 1
         else
-            frame.locals[frame.last_reference[v.name]] = Some{Any}(res[i])
+            frame.framedata.locals[frame.framedata.last_reference[v.name]] = Some{Any}(res[i])
         end
     end
     eval_res
@@ -170,7 +170,7 @@ function LineEdit.complete_line(c::DebugCompletionProvider, s)
 end
 
 function completions(c::DebugCompletionProvider, full, partial)
-    mod = moduleof(last(c.state.stack))
+    mod = moduleof(c.state.frame)
     ret, range, should_complete = REPLCompletions.completions(full, partial, mod)
 
     # TODO Add local variable completions
