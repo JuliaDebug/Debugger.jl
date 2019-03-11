@@ -33,10 +33,8 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
         end
         do_print_status = true
         cmd1 = split(command,' ')[1]
-        #@show state.level
-        #@show length(state.stack) - state.level + 1
         do_print_status = try
-            execute_command(state, state.stack[end - state.level + 1], Val{Symbol(cmd1)}(), command)
+            execute_command(state, Val{Symbol(cmd1)}(), command)
         catch err
             rethrow(err)
         end
@@ -50,7 +48,7 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
             return false
         end
         if do_print_status
-            print_status(Base.pipe_writer(terminal), state)
+            print_status(Base.pipe_writer(terminal), active_frame(state))
         end
         return true
     end
@@ -73,7 +71,7 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
     state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
     panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
-    print_status(Base.pipe_writer(terminal), state)
+    print_status(Base.pipe_writer(terminal), active_frame(state))
     REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
 
     return state.overall_result
@@ -101,10 +99,10 @@ function julia_prompt(state::DebuggerState, frame::JuliaStackFrame)
         xbuf = copy(buf)
         command = String(take!(buf))
         @static if VERSION >= v"1.2.0-DEV.253"
-            response = eval_code(state, command)
+            response = _eval_code(active_frame(state), command)
             REPL.print_response(state.repl, response, true, true)
         else
-            ok, result = eval_code(state, command)
+            ok, result = _eval_code(active_frame(state), command)
             REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
         end
         println(state.terminal)
@@ -116,24 +114,24 @@ function julia_prompt(state::DebuggerState, frame::JuliaStackFrame)
 end
 
 @static if VERSION >= v"1.2.0-DEV.253"
-    function eval_code(state::DebuggerState, code::AbstractString)
+    function _eval_code(frame::JuliaStackFrame, code::AbstractString)
         try
-            return eval_code(state, state.stack[end], code), false
+            return eval_code(frame, code), false
         catch
             return Base.catch_stack(), true
         end
     end
 else
-    function eval_code(state::DebuggerState, code::AbstractString)
+    function _eval_code(frame::JuliaStackFrame, code::AbstractString)
         try
-            return true, eval_code(state, state.stack[end], code)
+            return true, eval_code(frame, code)
         catch err
             return false, (err, catch_backtrace())
         end
     end
 end
 
-function eval_code(state::DebuggerState, frame::JuliaStackFrame, command::AbstractString)
+function eval_code(frame::JuliaStackFrame, command::AbstractString)
     expr = Base.parse_input_line(command)
     isexpr(expr, :toplevel) && (expr = expr.args[end])
     # see https://github.com/JuliaLang/julia/issues/31255 for the Symbol("") check
