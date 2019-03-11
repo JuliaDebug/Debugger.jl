@@ -1,5 +1,5 @@
 using Debugger: Debugger, @enter, execute_command, RunDebugger, @make_stack
-import JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, pc_expr, finish!
+import JuliaInterpreter: JuliaInterpreter, Frame, @lookup, Compiled, pc_expr, finish!
 
 using Test
 using .Meta: isexpr

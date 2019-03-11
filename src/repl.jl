@@ -1,8 +1,8 @@
 
 promptname(level, name) = "$level|$name> "
-function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl.t)
+function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl.t)
 
-    state = DebuggerState(stack, repl, terminal)
+    state = DebuggerState(frame, repl, terminal)
 
     # Setup debug panel
     panel = LineEdit.Prompt(promptname(state.level, "debug");
@@ -39,10 +39,10 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
             rethrow(err)
         end
         if old_level != state.level
-            panel.prompt = promptname(state.level,"debug")
+            panel.prompt = promptname(state.level, "debug")
         end
         LineEdit.reset_state(s)
-        if isempty(state.stack)
+        if state.frame.callee === nothing
             LineEdit.transition(s, :abort)
             LineEdit.reset_state(s)
             return false
@@ -78,7 +78,7 @@ function RunDebugger(stack, repl = Base.active_repl, terminal = Base.active_repl
 end
 
 
-function julia_prompt(state::DebuggerState, frame::JuliaStackFrame)
+function julia_prompt(state::DebuggerState, frame::Frame)
     # Return early if this has already been called on the state
     isassigned(state.julia_prompt) && return state.julia_prompt[]
 
@@ -114,7 +114,7 @@ function julia_prompt(state::DebuggerState, frame::JuliaStackFrame)
 end
 
 @static if VERSION >= v"1.2.0-DEV.253"
-    function _eval_code(frame::JuliaStackFrame, code::AbstractString)
+    function _eval_code(frame::Frame, code::AbstractString)
         try
             return eval_code(frame, code), false
         catch
@@ -122,7 +122,7 @@ end
         end
     end
 else
-    function _eval_code(frame::JuliaStackFrame, code::AbstractString)
+    function _eval_code(frame::Frame, code::AbstractString)
         try
             return true, eval_code(frame, code)
         catch err
@@ -131,7 +131,7 @@ else
     end
 end
 
-function eval_code(frame::JuliaStackFrame, command::AbstractString)
+function eval_code(frame::Frame, command::AbstractString)
     expr = Base.parse_input_line(command)
     isexpr(expr, :toplevel) && (expr = expr.args[end])
     # see https://github.com/JuliaLang/julia/issues/31255 for the Symbol("") check

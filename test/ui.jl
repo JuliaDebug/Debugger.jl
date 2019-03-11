@@ -58,7 +58,7 @@ end
             repl.interface = REPL.setup_interface(repl)
             repl.specialdisplay = REPL.REPLDisplay(repl)
             stack = @make_stack my_gcd(10, 20)
-            stack[end] = JuliaInterpreter.JuliaStackFrame(stack[end], stack[end].pc[]; fullpath=false)
+            stack[end] = JuliaInterpreter.Frame(stack[end], stack[end].pc[]; fullpath=false)
             RunDebugger(stack, repl, emuterm)
         end
         if VERSION == v"1.1.0"
@@ -69,7 +69,7 @@ end
                 repl.interface = REPL.setup_interface(repl)
                 repl.specialdisplay = REPL.REPLDisplay(repl)
                 stack = @make_stack my_gcd_noinfo(10, 20)
-                stack[end] = JuliaInterpreter.JuliaStackFrame(stack[end], stack[end].pc[]; fullpath=false)
+                stack[end] = JuliaInterpreter.Frame(stack[end], stack[end].pc[]; fullpath=false)
                 RunDebugger(stack, repl, emuterm)
             end
         else

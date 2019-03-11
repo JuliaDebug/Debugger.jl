@@ -6,13 +6,13 @@ using REPL
 using REPL.LineEdit
 using REPL.REPLCompletions
 
-using JuliaInterpreter: JuliaInterpreter, JuliaStackFrame, @lookup, Compiled, JuliaProgramCounter, JuliaFrameCode,
+using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, Compiled, FrameCode,
       finish!, enter_call_expr, step_expr!
 
 # TODO: Work on better API in JuliaInterpreter and rewrite Debugger.jl to use it
 # These are undocumented functions from JuliaInterpreter.jl used by Debugger.jl`
-using JuliaInterpreter: pc_expr,isassign, getlhs, do_assignment!, maybe_next_call!, is_call, _step_expr!, next_call!,  moduleof,
-                        iswrappercall, next_line!, linenumber, extract_args
+using JuliaInterpreter: pc_expr,isassign, getlhs, do_assignment!, maybe_next_call!, is_call, next_call!,  moduleof,
+                        next_line!, linenumber, extract_args, maybe_step_through_wrapper!
 
 
 const SEARCH_PATH = []
@@ -28,7 +28,7 @@ include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
 
 mutable struct DebuggerState
-    stack::Vector{JuliaStackFrame}
+    frame::Frame
     level::Int
     repl
     terminal
@@ -40,7 +40,13 @@ end
 DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
 DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
 
-active_frame(state) = state.stack[end - state.level + 1]
+function active_frame(state)
+    frame = state.frame
+    for i in 1:(state.level - 1)
+        frame = frame.callee
+    end
+    return frame
+end
 
 include("locationinfo.jl")
 include("repl.jl")
@@ -55,33 +61,11 @@ function _make_stack(mod, arg)
     end
     quote
         theargs = $(esc(args))
-        stack = [enter_call_expr(Expr(:call,theargs...))]
-        maybe_step_through_wrapper!(stack)
-        stack[end] = JuliaStackFrame(stack[end], JuliaInterpreter.maybe_next_call!(Compiled(), stack[end]))
-        stack
+        frame = enter_call_expr(Expr(:call,theargs...))
+        frame = maybe_step_through_wrapper!(frame)
+        maybe_next_call!(frame)
+        frame
     end
-end
-
-function maybe_step_through_wrapper!(stack)
-    length(stack[end].code.code.code) < 2 && return stack
-    last = stack[end].code.code.code[end-1]
-    isexpr(last, :(=)) && (last = last.args[2])
-    stack1 = stack[end]
-    is_kw = stack1.code.scope isa Method && startswith(String(Base.unwrap_unionall(Base.unwrap_unionall(stack1.code.scope.sig).parameters[1]).name.name), "#kw")
-    if is_kw || isexpr(last, :call) && any(x->x==Core.SlotNumber(1), last.args)
-        # If the last expr calls #self# or passes it to an implementation method,
-        # this is a wrapper function that we might want to step through
-        frame = stack1
-        pc = frame.pc[]
-        while pc != JuliaProgramCounter(length(frame.code.code.code)-1)
-            pc = next_call!(Compiled(), frame, pc)
-        end
-        stack[end] = JuliaStackFrame(JuliaFrameCode(frame.code; wrapper=true), frame, pc)
-        newcall = Expr(:call, map(x->@lookup(frame, x), last.args)...)
-        push!(stack, enter_call_expr(newcall))
-        return maybe_step_through_wrapper!(stack)
-    end
-    return stack
 end
 
 macro make_stack(arg)
@@ -90,8 +74,8 @@ end
 
 macro enter(arg)
     quote
-        let stack = $(_make_stack(__module__,arg))
-            RunDebugger(stack)
+        let frame = $(_make_stack(__module__,arg))
+            RunDebugger(frame)
         end
     end
 end
