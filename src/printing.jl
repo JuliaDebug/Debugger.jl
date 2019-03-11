@@ -37,7 +37,7 @@ function print_frame(io::IO, num::Integer, frame::JuliaStackFrame)
 end
 
 
-function print_next_state(io::IO, state::DebuggerState, frame::JuliaStackFrame)
+function print_next_expr(io::IO, frame::JuliaStackFrame)
     maybe_quote(x) = (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
 
     print(io, "About to run: ")
@@ -65,8 +65,7 @@ function print_next_state(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     println(io)
 end
 
-print_status(io::IO, state::DebuggerState) = print_status(io, state, state.stack[end - state.level + 1])
-function print_status(io::IO, state::DebuggerState, frame::JuliaStackFrame)
+function print_status(io::IO, frame::JuliaStackFrame)
     # Buffer to avoid flickering
     outbuf = IOContext(IOBuffer(), io)
     printstyled(outbuf, "In ", locdesc(frame), "\n"; color=:bold)
@@ -83,7 +82,7 @@ function print_status(io::IO, state::DebuggerState, frame::JuliaStackFrame)
     else
         print_codeinfo(outbuf, frame)
     end
-    print_next_state(outbuf, state, frame)
+    print_next_expr(outbuf, frame)
     print(io, String(take!(outbuf.io)))
 end
 

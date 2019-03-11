@@ -51,12 +51,13 @@ function assert_is_toplevel_frame(state)
     return false
 end
 
-function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Union{Val{:nc},Val{:n},Val{:se}}, cmd::AbstractString)
+function execute_command(state::DebuggerState, ::Union{Val{:nc},Val{:n},Val{:se}}, cmd::AbstractString)
     assert_is_toplevel_frame(state) || return false
     pc = try
-        cmd == "nc" ? next_call!(Compiled(), frame) :
+        frame = state.stack[end]
+        cmd == "nc" ? next_call!(Compiled(),frame) :
         cmd == "n" ? next_line!(Compiled(), frame, state.stack) :
-        #= cmd == "se" =# step_expr!(Compiled(), frame)
+        #= cmd == "se" =# step_expr!(Compiled(),  frame)
     catch err
         propagate_exception!(state, err)
         next_call!(Compiled(), state.stack[end])
@@ -69,8 +70,9 @@ function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Union{V
     return true
 end
 
-function execute_command(state::DebuggerState, frame, cmd::Union{Val{:s},Val{:si},Val{:sg}}, command::AbstractString)
+function execute_command(state::DebuggerState, cmd::Union{Val{:s},Val{:si},Val{:sg}}, command::AbstractString)
     assert_is_toplevel_frame(state) || return false
+    frame = state.stack[end]
     pc = frame.pc[]
     first = true
     while true
@@ -130,9 +132,9 @@ function execute_command(state::DebuggerState, frame, cmd::Union{Val{:s},Val{:si
     return true
 end
 
-function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:finish}, cmd::AbstractString)
+function execute_command(state::DebuggerState, ::Val{:finish}, cmd::AbstractString)
     assert_is_toplevel_frame(state) || return false
-    finish!(Compiled(), frame)
+    finish!(Compiled(), state.stack[end])
     perform_return!(state)
     return true
 end
@@ -140,7 +142,8 @@ end
 """
     Runs code_typed on the call we're about to run
 """
-function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:code_typed}, cmd::AbstractString)
+function execute_command(state::DebuggerState, ::Val{:code_typed}, cmd::AbstractString)
+    frame = active_frame(state)
     expr = pc_expr(frame, frame.pc[])
     if isa(expr, Expr)
         if is_call(expr)
@@ -163,7 +166,7 @@ function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:co
 end
 
 
-function execute_command(state::DebuggerState, frame, ::Val{:bt}, cmd)
+function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
     for (num, frame) in enumerate(Iterators.reverse(state.stack))
         print_frame(Base.pipe_writer(state.terminal), num, frame)
     end
@@ -171,7 +174,7 @@ function execute_command(state::DebuggerState, frame, ::Val{:bt}, cmd)
     return false
 end
 
-function execute_command(state::DebuggerState, _::JuliaStackFrame, ::Union{Val{:f},Val{:fr}}, cmd)
+function execute_command(state::DebuggerState, ::Union{Val{:f},Val{:fr}}, cmd)
     subcmds = split(cmd,' ')[2:end]
     if isempty(subcmds) || subcmds[1] == "v"
         @info "Level is $(state.level)"
@@ -188,12 +191,12 @@ function execute_command(state::DebuggerState, _::JuliaStackFrame, ::Union{Val{:
     return true
 end
 
-function execute_command(state::DebuggerState, frame, _, cmd)
+function execute_command(state::DebuggerState, _, cmd)
     println("Unknown command `$cmd`. Executing `?` to obtain help.")
-    execute_command(state, frame, Val{Symbol("?")}(), "?")
+    execute_command(state, Val{Symbol("?")}(), "?")
 end
 
-function execute_command(state::DebuggerState, frame::JuliaStackFrame, ::Val{:?}, cmd::AbstractString)
+function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     display(
             @md_str """
     Basic Commands:\\

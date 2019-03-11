@@ -11,13 +11,13 @@ frame = JuliaInterpreter.enter_call_expr(:($(callgenerated)()))
 state = dummy_state([frame])
 
 # Step into the generated function itself
-execute_command(state, state.stack[end], Val{:sg}(), "sg")
+execute_command(state, Val{:sg}(), "sg")
 
 # Should now be in generated function
-execute_command(state, state.stack[end], Val{:finish}(), "finish")
+execute_command(state, Val{:finish}(), "finish")
 
 # Now finish the regular function
-execute_command(state, state.stack[end], Val{:finish}(), "finish")
+execute_command(state, Val{:finish}(), "finish")
 
 @test isempty(state.stack)
 
@@ -31,11 +31,11 @@ end
 frame = JuliaInterpreter.enter_call_expr(:($(optional)()))
 state = dummy_state([frame])
 # First call steps in
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 # cos(1.0)
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 # return
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 
 @test isempty(state.stack)
 
@@ -62,16 +62,16 @@ end
 frame = JuliaInterpreter.enter_call_expr(:($(test_macro)()))
 state = dummy_state([frame])
 # a = sin(5)
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 # b = asin(5)
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 # @insert_some_calls
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 # TODO: Is this right?
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 # return z
-execute_command(state, state.stack[end], Val{:n}(), "n")
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 @test isempty(state.stack)
 
 # Test stepping into functions with keyword arguments
@@ -80,14 +80,14 @@ g() = f(1; b = 2)
 frame = JuliaInterpreter.enter_call_expr(:($(g)()));
 state = dummy_state([frame])
 # Step to the actual call
-execute_command(state, state.stack[end], Val{:nc}(), "nc")
-execute_command(state, state.stack[end], Val{:nc}(), "nc")
-execute_command(state, state.stack[end], Val{:nc}(), "nc")
+execute_command(state, Val{:nc}(), "nc")
+execute_command(state, Val{:nc}(), "nc")
+execute_command(state, Val{:nc}(), "nc")
 # Step in
-execute_command(state, state.stack[end], Val{:s}(), "s")
+execute_command(state, Val{:s}(), "s")
 # Should get out in two steps
-execute_command(state, state.stack[end], Val{:finish}(), "finish")
-execute_command(state, state.stack[end], Val{:finish}(), "finish")
+execute_command(state, Val{:finish}(), "finish")
+execute_command(state, Val{:finish}(), "finish")
 @test isempty(state.stack)
 
 # Test stepping into functions with exception frames
@@ -108,14 +108,14 @@ end
 stack = @make_stack f_exc()
 state = dummy_state(stack)
 
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 @test isempty(state.stack)
 
 stack = @make_stack g_exc()
 state = dummy_state(stack)
 
-execute_command(state, state.stack[end], Val{:n}(), "n")
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 @test isempty(state.stack)
 @test state.overall_result isa ErrorException
 
@@ -135,9 +135,9 @@ end
 stack = @make_stack f_exc_outer()
 state = dummy_state(stack)
 
-execute_command(state, state.stack[end], Val{:s}(), "s")
-execute_command(state, state.stack[end], Val{:n}(), "n")
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:s}(), "s")
+execute_command(state, Val{:n}(), "n")
+execute_command(state, Val{:n}(), "n")
 @test isempty(state.stack)
 @test state.overall_result isa ErrorException
 
@@ -147,9 +147,9 @@ f_symbol() = :limit => true
 stack = @make_stack f_symbol()
 state = dummy_state(stack)
 
-execute_command(state, state.stack[end], Val{:s}(), "s")
-execute_command(state, state.stack[end], Val{:finish}(), "finish")
-execute_command(state, state.stack[end], Val{:finish}(), "finish")
+execute_command(state, Val{:s}(), "s")
+execute_command(state, Val{:finish}(), "finish")
+execute_command(state, Val{:finish}(), "finish")
 @test isempty(state.stack)
 @test state.overall_result == f_symbol()
 
@@ -160,11 +160,11 @@ f_va_outer(args...) = f_va_inner(args...)
 stack = @make_stack f_va_outer(1)
 state = dummy_state(stack)
 
-execute_command(state, state.stack[end], Val{:s}(), "s")
-execute_command(state, state.stack[end], Val{:n}(), "n")
+execute_command(state, Val{:s}(), "s")
+execute_command(state, Val{:n}(), "n")
 @test !isempty(state.stack)
-execute_command(state, state.stack[end], Val{:finish}(), "finish")
-execute_command(state, state.stack[end], Val{:finish}(), "finish")
+execute_command(state, Val{:finish}(), "finish")
+execute_command(state, Val{:finish}(), "finish")
 @test isempty(state.stack)
 @test state.overall_result == 2
 
@@ -173,8 +173,8 @@ f(foo; bar=3) = foo+bar
 stack = @make_stack f(2, bar=4)
 @test length(stack) > 1
 state = dummy_state(stack)
-execute_command(state, state.stack[end], Val{:n}(), "nc")
-execute_command(state, state.stack[end], Val{:n}(), "nc")
+execute_command(state, Val{:n}(), "nc")
+execute_command(state, Val{:n}(), "nc")
 @test isempty(state.stack)
 @test state.overall_result == 6
 
@@ -186,7 +186,7 @@ end
 stack = @make_stack foo_error(3,1)
 state = dummy_state(stack)
 try
-    execute_command(state, state.stack[end], Val{:n}(), "n")
+    execute_command(state, Val{:n}(), "n")
 catch e
     @test isa(e, ErrorException)
 end
@@ -207,10 +207,10 @@ f2(x) = f1(x)
 f1(x) = x
 stack = @make_stack f2(1)
 state = dummy_state(stack)
-execute_command(state, state.stack[end], Val{:s}(), "s")
-execute_command(state, state.stack[end], Val{:fr}(), "fr 2")
-@test execute_command(state, state.stack[end], Val{:s}(), "s") == false
-@test execute_command(state, state.stack[end], Val{:n}(), "n") == false
-@test execute_command(state, state.stack[end], Val{:finish}(), "finish") == false
+execute_command(state, Val{:s}(), "s")
+execute_command(state, Val{:fr}(), "fr 2")
+@test execute_command(state, Val{:s}(), "s") == false
+@test execute_command(state, Val{:n}(), "n") == false
+@test execute_command(state, Val{:finish}(), "finish") == false
 @info " END ERRORS ---------------------------------------"
 
