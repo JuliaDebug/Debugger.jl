@@ -36,7 +36,11 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
         do_print_status = try
             execute_command(state, Val{Symbol(cmd1)}(), command)
         catch err
-            rethrow(err)
+            # No point showing an internal stacktrace
+            Base.display_error(Base.pipe_writer(terminal), err, [])
+            LineEdit.transition(s, :abort)
+            LineEdit.reset_state(s)
+            return false
         end
         if old_level != state.level
             panel.prompt = promptname(state.level, "debug")

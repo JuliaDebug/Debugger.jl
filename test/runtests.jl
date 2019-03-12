@@ -8,7 +8,7 @@ import REPL
 #@testset "Main tests" begin
     include("utils.jl")
     include("misc.jl")
-    #include("stepping.jl")
+    include("stepping.jl")
     #include("ui.jl")
     #include("interpret.jl")
     #include("evaling.jl")

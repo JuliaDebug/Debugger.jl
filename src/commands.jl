@@ -42,7 +42,9 @@ function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},
         state.frame, pc = ret
         if pc isa BreakpointRef
             if pc.stmtidx != 0 # This is the dummy breakpoint to stop just after entering a call
-                show_breakpoint(Base.pipe_writer(state.terminal), pc)
+                if state.terminal !== nothing # fix this, it happens when a test hits this and hasnt set a terminal
+                    show_breakpoint(Base.pipe_writer(state.terminal), pc)
+                end
             end
             if pc.err !== nothing
                 state.broke_on_error = true
