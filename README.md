@@ -15,6 +15,8 @@
 
 ## Usage
 
+The debug interface is entered using the `@enter` macro:
+
 ```julia
 using Debugger
 
@@ -26,22 +28,25 @@ end
 @enter foo(20)
 ```
 
-Basic Commands:
-- `n` steps to the next line
-- `s` steps into the next call
-- `finish` runs to the end of the function
-- `bt` shows a simple backtrace
-- ``` `stuff ``` runs `stuff` in the current frame's context
-- `fr v` will show all variables in the current frame
-- `f n` where `n` is an integer, will go to the `n`-th frame
-- `q` quits the debugger, returning `nothing`
+This interface allows for manipulating program execution, such as stepping in and
+out of functions, line stepping, showing local variables, and evaluating code in 
+the context of functions.
 
+Basic Commands:
+- `n`: step to the next line
+- `s`: step into the next call
+- `so`: step out of the current call
+- `bt`: show a simple backtrace
+- ``` `stuff ```: run `stuff` in the current function's context
+- `fr [v::Int]`: show all variables in the current function, `v` defaults to `1`
+- `f [n::Int]`: go to the `n`-th function in the call stack
+- `q`: quit the debugger, returning `nothing`
 Advanced commands:
-- `nc` steps to the next call
-- `ns` steps to the next statement
-- `se` does one expression step
-- `si` does the same but steps into a call if a call is the next expression
-- `sg` steps into a generated function
+- `nc`: step to the next call
+- `se`: step one expression step
+- `si`: same as `se` but step into a call if a call is the next expression
+- `sg`: step into a generated function
+
 
 [travis-img]: https://travis-ci.org/JuliaDebug/Debugger.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/JuliaDebug/Debugger.jl
