@@ -4,7 +4,7 @@
 
 **Build Status**                                                                                |
 |:-----------------------------------------------------------------------------------------------:|
-| [![][travis-img]][travis-url]  [![][codecov-img]][codecov-url] |
+| [![][travis-img]][travis-url]  |
 
 ## Installation
 
@@ -46,7 +46,6 @@ Advanced commands:
 - `se`: step one expression step
 - `si`: same as `se` but step into a call if a call is the next expression
 - `sg`: step into a generated function
-
 
 [travis-img]: https://travis-ci.org/JuliaDebug/Debugger.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/JuliaDebug/Debugger.jl
