@@ -97,20 +97,19 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     display(
             @md_str """
     Basic Commands:\\
-    - `n` steps to the next line\\
-    - `s` steps into the next call\\
-    - `c` continue execution until eventually hitting a breakpoint\\
-    - `finish` runs to the end of the function\\
-    - `bt` shows a simple backtrace\\
-    - ``` `stuff ``` runs `stuff` in the current frame's context\\
-    - `fr v` will show all variables in the current frame\\
-    - `f n` where `n` is an integer, will go to the `n`-th frame\\
-    - `q` quits the debugger, returning `nothing`\\
+    - `n`: step to the next line\\
+    - `s`: step into the next call\\
+    - `finish`: run to the end of the function\\
+    - `bt`: show a simple backtrace\\
+    - ``` `stuff ```: run `stuff` in the current function's context\\
+    - `fr [v::Int]`: show all variables in the current frame, `v` defaults to `1`\\
+    - `f [n::Int]`: go to the `n`-th frame\\
+    - `q`: quit the debugger, returning `nothing`\\
     Advanced commands:\\
-    - `nc` steps to the next call\\
-    - `se` does one expression step\\
-    - `si` does the same but steps into a call if a call is the next expression\\
-    - `sg` steps into a generated function\\
+    - `nc`: step to the next call\\
+    - `se`: step one expression step\\
+    - `si`: same as `se` but step into a call if a call is the next expression\\
+    - `sg`: step into a generated function\\
     """)
     return false
 end
