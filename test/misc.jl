@@ -30,3 +30,15 @@ f22() = string(:(a+b))
 @test step_through(enter_call_expr(:($f22()))) == "a + b"
 f22() = string(QuoteNode(:a))
 @test step_through(enter_call_expr(:($f22()))) == ":a"
+
+# Breakpoints
+f_outer_break(x) = f_inner_break(x)
+f_inner_break(x) = x
+JuliaInterpreter.breakpoint(f_inner_break)
+frame = @make_frame f_outer_break(2)
+state = dummy_state(frame)
+execute_command(state, Val{:finish}(), "c")
+@test state.frame.framecode.scope.name === :f_inner_break
+execute_command(state, Val{:finish}(), "c")
+@test state.frame === nothing
+@test state.overall_result == 2
