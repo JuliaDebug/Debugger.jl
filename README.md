@@ -42,6 +42,7 @@ Basic Commands:
 - `fr [v::Int]`: show all variables in the current function, `v` defaults to `1`
 - `f [n::Int]`: go to the `n`-th function in the call stack
 - `q`: quit the debugger, returning `nothing`
+
 Advanced commands:
 - `nc`: step to the next call
 - `se`: step one expression step
