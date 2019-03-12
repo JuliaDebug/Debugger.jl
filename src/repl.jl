@@ -42,7 +42,7 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
             panel.prompt = promptname(state.level, "debug")
         end
         LineEdit.reset_state(s)
-        if state.frame.callee === nothing
+        if state.frame === nothing
             LineEdit.transition(s, :abort)
             LineEdit.reset_state(s)
             return false

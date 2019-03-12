@@ -28,7 +28,7 @@ include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
 
 mutable struct DebuggerState
-    frame::Frame
+    frame::Union{Nothing, Frame}
     level::Int
     repl
     terminal
