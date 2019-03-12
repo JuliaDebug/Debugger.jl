@@ -48,6 +48,7 @@ end
 
 @testset "UI" begin
     if Sys.isunix() && VERSION >= v"1.1.0"
+        Debugger._print_full_path[] = false
         using TerminalRegressionTests
 
         thisdir = @__DIR__

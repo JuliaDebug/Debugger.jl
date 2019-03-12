@@ -11,5 +11,5 @@ import REPL
     include("stepping.jl")
     include("interpret.jl")
     include("evaling.jl")
-    #include("ui.jl")
+    include("ui.jl")
 #end

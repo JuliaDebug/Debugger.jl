@@ -43,6 +43,9 @@ function locinfo(frame::Frame)
     end
 end
 
+# Used for the tests
+const _print_full_path = Ref(true)
+
 function locdesc(frame::Frame)
     sprint() do io
         if frame.framecode.scope isa Method
@@ -57,7 +60,7 @@ function locdesc(frame::Frame)
                 print(io, argname)
                 !(argT === Any) && print(io, "::", argT)
             end
-            print(io, ") at ", meth.file)
+            print(io, ") at ", _print_full_path[] ? meth.file : basename(String(meth.file)), ":",meth.line)
         else
             println("not yet implemented")
         end
