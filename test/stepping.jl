@@ -105,13 +105,13 @@ function g_exc()
     end
 end
 
-stack = @make_stack f_exc()
+stack = @make_frame f_exc()
 state = dummy_state(stack)
 
 execute_command(state, Val{:n}(), "n")
 @test isempty(state.stack)
 
-stack = @make_stack g_exc()
+stack = @make_frame g_exc()
 state = dummy_state(stack)
 
 execute_command(state, Val{:n}(), "n")
@@ -132,7 +132,7 @@ function f_exc_outer()
     end
 end
 
-stack = @make_stack f_exc_outer()
+stack = @make_frame f_exc_outer()
 state = dummy_state(stack)
 
 execute_command(state, Val{:s}(), "s")
@@ -144,7 +144,7 @@ execute_command(state, Val{:n}(), "n")
 # Test that symbols don't get an extra QuoteNode
 f_symbol() = :limit => true
 
-stack = @make_stack f_symbol()
+stack = @make_frame f_symbol()
 state = dummy_state(stack)
 
 execute_command(state, Val{:s}(), "s")
@@ -157,7 +157,7 @@ execute_command(state, Val{:finish}(), "finish")
 f_va_inner(x) = x + 1
 f_va_outer(args...) = f_va_inner(args...)
 
-stack = @make_stack f_va_outer(1)
+stack = @make_frame f_va_outer(1)
 state = dummy_state(stack)
 
 execute_command(state, Val{:s}(), "s")
@@ -170,7 +170,7 @@ execute_command(state, Val{:finish}(), "finish")
 
 # Test that we step through kw wrappers
 f(foo; bar=3) = foo+bar
-stack = @make_stack f(2, bar=4)
+stack = @make_frame f(2, bar=4)
 @test length(stack) > 1
 state = dummy_state(stack)
 execute_command(state, Val{:n}(), "nc")
@@ -183,7 +183,7 @@ function foo_error(a,b)
     a > b && error()
     return a*b
 end
-stack = @make_stack foo_error(3,1)
+stack = @make_frame foo_error(3,1)
 state = dummy_state(stack)
 try
     execute_command(state, Val{:n}(), "n")
@@ -205,7 +205,7 @@ step_through(JuliaInterpreter.enter_call_expr(:($(B_inst)(10))))
 @info " BEGIN ERRORS -------------------------------------"
 f2(x) = f1(x)
 f1(x) = x
-stack = @make_stack f2(1)
+stack = @make_frame f2(1)
 state = dummy_state(stack)
 execute_command(state, Val{:s}(), "s")
 execute_command(state, Val{:fr}(), "fr 2")

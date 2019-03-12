@@ -11,7 +11,7 @@ function assert_allow_step(state)
     return true
 end
 
-function show_breakpoint(io::IO, bp::JuliaInterpreter.BreakpointRef)
+function show_breakpoint(io::IO, bp::BreakpointRef)
     outbuf = IOContext(IOBuffer(), io)
     if bp.err === nothing
         print(outbuf, "Hit breakpoint: ")
@@ -33,14 +33,14 @@ end
 
 function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:finish}}, cmd::AbstractString)
     assert_allow_step(state) || return false
-    ret = JuliaInterpreter.debug_command(state.frame, cmd)
+    ret = debug_command(state.frame, cmd)
     if ret === nothing
-        state.overall_result = JuliaInterpreter.get_return(JuliaInterpreter.root(state.frame))
+        state.overall_result = get_return(root(state.frame))
         state.frame = nothing
         return false
     else
         state.frame, pc = ret
-        if pc isa JuliaInterpreter.BreakpointRef
+        if pc isa BreakpointRef
             if pc.stmtidx != 0 # This is the dummy breakpoint to stop just after entering a call
                 show_breakpoint(Base.pipe_writer(state.terminal), pc)
             end
@@ -58,7 +58,7 @@ function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
     while frame !== nothing
         num += 1
         print_frame(Base.pipe_writer(state.terminal), num, frame)
-        frame = frame.caller
+        frame = caller(frame)
     end
     println()
     return false

@@ -69,7 +69,7 @@ function print_next_expr(io::IO, frame::Frame)
             end
         end
     end
-    print(io, expr)
+    show(io, expr)
     println(io)
 end
 
