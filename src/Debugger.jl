@@ -30,6 +30,7 @@ using .LineNumbers: SourceFile, compute_line
 mutable struct DebuggerState
     frame::Union{Nothing, Frame}
     level::Int
+    broke_on_error::Bool
     repl
     terminal
     main_mode
@@ -37,14 +38,15 @@ mutable struct DebuggerState
     standard_keymap
     overall_result
 end
-DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
+DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, false, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
 DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
 
 function active_frame(state)
     frame = state.frame
     for i in 1:(state.level - 1)
-        frame = frame.callee
+        frame = frame.caller
     end
+    @assert frame !== nothing
     return frame
 end
 

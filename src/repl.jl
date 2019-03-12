@@ -147,7 +147,7 @@ function eval_code(frame::Frame, command::AbstractString)
     j = 1
     for (i, v) in enumerate(vars)
         if v.isparam
-            frame.sparams[j] = res[i]
+            frame.framedata.sparams[j] = res[i]
             j += 1
         else
             frame.framedata.locals[frame.framedata.last_reference[v.name]] = Some{Any}(res[i])
