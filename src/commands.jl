@@ -33,7 +33,7 @@ end
 
 function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:finish}}, cmd::AbstractString)
     assert_allow_step(state) || return false
-    ret = JuliaInterpreter.debug_command(JuliaInterpreter.finish_and_return!, state.frame, cmd)
+    ret = JuliaInterpreter.debug_command(state.frame, cmd)
     if ret === nothing
         state.overall_result = JuliaInterpreter.get_return(JuliaInterpreter.root(state.frame))
         state.frame = nothing

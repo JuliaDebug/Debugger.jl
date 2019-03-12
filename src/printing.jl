@@ -47,7 +47,15 @@ function print_next_expr(io::IO, frame::Frame)
         expr = expr.args[2]
     end
     if isexpr(expr, :call) || isexpr(expr, :return)
-        expr.args = map(var->maybe_quote(@lookup(frame, var)), expr.args)
+        for i in 1:length(expr.args)
+            val = try 
+                @lookup(frame, expr.args[i])
+            catch err
+                err isa UndefVarError || rethrow(err)
+                expr.args[i]
+            end
+            expr.args[i] = maybe_quote(val)
+        end
     end
     if isa(expr, Expr)
         for (i, arg) in enumerate(expr.args)
