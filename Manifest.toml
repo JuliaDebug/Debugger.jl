@@ -19,8 +19,8 @@ uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "cd41b8bedab1fdcd8fecf9ebc1690aefb25e10cd"
-repo-rev = "kc/return_step"
+git-tree-sha1 = "1ebe1d27567b0bda44fb47e4c1bdee3a58c8cfc0"
+repo-rev = "91911967124e208b96387c8b9bca201064256a46"
 repo-url = "https://github.com/JuliaDebug/JuliaInterpreter.jl"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 version = "0.1.1"
