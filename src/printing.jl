@@ -96,7 +96,7 @@ end
 
 function print_codeinfo(io::IO, frame::Frame)
     buf = IOBuffer()
-    src = frame.framecode.src.code
+    src = frame.framecode.src
     show(buf, src)
     active_line = convert(Int, frame.pc[])
 

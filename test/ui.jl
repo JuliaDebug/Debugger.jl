@@ -92,7 +92,7 @@ end
 
 @testset "REPL completions" begin
     frame = JuliaInterpreter.enter_call_expr(:($(F.f)(1)))
-    state = dummy_state([frame])
+    state = dummy_state(frame)
     prov = Debugger.DebugCompletionProvider(state)
 
     c, r = test_complete(prov, "local")
