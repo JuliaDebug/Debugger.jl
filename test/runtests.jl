@@ -5,6 +5,10 @@ using Test
 using .Meta: isexpr
 import REPL
 
+if !isdefined(Main, :isnothing)
+    isnothing(x) = x === nothing
+end
+
 #@testset "Main tests" begin
     include("utils.jl")
     include("misc.jl")
