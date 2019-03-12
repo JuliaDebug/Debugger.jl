@@ -57,9 +57,8 @@ end
             repl = REPL.LineEditREPL(emuterm, true)
             repl.interface = REPL.setup_interface(repl)
             repl.specialdisplay = REPL.REPLDisplay(repl)
-            stack = @make_frame my_gcd(10, 20)
-            stack[end] = JuliaInterpreter.Frame(stack[end], stack[end].pc[]; fullpath=false)
-            RunDebugger(stack, repl, emuterm)
+            frame = @make_frame my_gcd(10, 20)
+            RunDebugger(frame, repl, emuterm)
         end
         if VERSION == v"1.1.0"
             TerminalRegressionTests.automated_test(
@@ -68,9 +67,8 @@ end
                 repl = REPL.LineEditREPL(emuterm, true)
                 repl.interface = REPL.setup_interface(repl)
                 repl.specialdisplay = REPL.REPLDisplay(repl)
-                stack = @make_frame my_gcd_noinfo(10, 20)
-                stack[end] = JuliaInterpreter.Frame(stack[end], stack[end].pc[]; fullpath=false)
-                RunDebugger(stack, repl, emuterm)
+                frame = @make_frame my_gcd_noinfo(10, 20)
+                RunDebugger(frame, repl, emuterm)
             end
         else
             @warn "Skipping tests for IR display due to mismatched Julia versions."
