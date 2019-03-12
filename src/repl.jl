@@ -1,7 +1,6 @@
 
 promptname(level, name) = "$level|$name> "
-function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl.t)
-
+function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl.t; initial_continue=false)
     state = DebuggerState(frame, repl, terminal)
 
     # Setup debug panel
@@ -74,7 +73,11 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
 
     state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
     panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
-
+    
+    if initial_continue
+        execute_command(state, Val(:c), "c")
+        state.frame === nothing && return state.overall_result
+    end
     print_status(Base.pipe_writer(terminal), active_frame(state))
     REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
 
