@@ -1,20 +1,21 @@
 
 function assert_is_toplevel_frame(state)
     state.level == 1 && return true
-    printstyled(stderr, "Cannot step in a non toplevel frame,\n"; color=:red)
+    printstyled(stderr, "Cannot step in a non leaf frame,\n"; color=:red)
     return false
 end
 
-function execute_command(state::DebuggerState, ::Union{Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:finish}}, cmd::AbstractString)
+function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:finish}}, cmd::AbstractString)
     assert_is_toplevel_frame(state) || return false
     ret = JuliaInterpreter.debug_command(JuliaInterpreter.finish_and_return!, state.frame, cmd)
     if ret === nothing
-        state.overall_result = JuliaInterpreter.get_return(state.frame)
-        state.frame == nothing
+        state.overall_result = JuliaInterpreter.get_return(JuliaInterpreter.root(state.frame))
+        state.frame = nothing
+        return false
     else
         state.frame, pc = ret
+        return true
     end
-    return true
 end
 
 function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
@@ -56,6 +57,7 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     Basic Commands:\\
     - `n` steps to the next line\\
     - `s` steps into the next call\\
+    - `c` continue execution until eventually hitting a breakpoint\\
     - `finish` runs to the end of the function\\
     - `bt` shows a simple backtrace\\
     - ``` `stuff ``` runs `stuff` in the current frame's context\\
