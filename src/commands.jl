@@ -31,8 +31,9 @@ function show_breakpoint(io::IO, bp::BreakpointRef)
     println(io)
 end
 
-function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:finish}}, cmd::AbstractString)
+function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so}}, cmd::AbstractString)
     assert_allow_step(state) || return false
+    cmd == "so" && (cmd = "finish")
     ret = debug_command(state.frame, cmd)
     if ret === nothing
         state.overall_result = get_return(root(state.frame))
@@ -99,7 +100,7 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     Basic Commands:\\
     - `n`: step to the next line\\
     - `s`: step into the next call\\
-    - `finish`: run to the end of the function\\
+    - `so`: step out of the current call\\
     - `bt`: show a simple backtrace\\
     - ``` `stuff ```: run `stuff` in the current function's context\\
     - `fr [v::Int]`: show all variables in the current frame, `v` defaults to `1`\\

@@ -14,10 +14,10 @@ state = dummy_state(frame)
 execute_command(state, Val{:sg}(), "sg")
 
 # Should now be in generated function
-execute_command(state, Val{:finish}(), "finish")
+execute_command(state, Val{:so}(), "so")
 
-# Now finish the regular function
-execute_command(state, Val{:finish}(), "finish")
+# Now so the regular function
+execute_command(state, Val{:so}(), "so")
 
 @test isnothing(state.frame)
 
@@ -88,8 +88,8 @@ execute_command(state, Val{:nc}(), "nc")
 # Step in
 execute_command(state, Val{:s}(), "s")
 # Should get out in two steps
-execute_command(state, Val{:finish}(), "finish")
-execute_command(state, Val{:finish}(), "finish")
+execute_command(state, Val{:so}(), "so")
+execute_command(state, Val{:so}(), "so")
 @test isnothing(state.frame)
 
 # Test stepping into functions with exception frames
@@ -150,8 +150,8 @@ frame = @make_frame f_symbol()
 state = dummy_state(frame)
 
 execute_command(state, Val{:s}(), "s")
-execute_command(state, Val{:finish}(), "finish")
-execute_command(state, Val{:finish}(), "finish")
+execute_command(state, Val{:so}(), "so")
+execute_command(state, Val{:so}(), "so")
 @test isnothing(state.frame)
 @test state.overall_result == f_symbol()
 
@@ -165,8 +165,8 @@ state = dummy_state(frame)
 execute_command(state, Val{:s}(), "s")
 execute_command(state, Val{:n}(), "n")
 @test ! isnothing(state.frame)
-execute_command(state, Val{:finish}(), "finish")
-execute_command(state, Val{:finish}(), "finish")
+execute_command(state, Val{:so}(), "so")
+execute_command(state, Val{:so}(), "so")
 @test isnothing(state.frame)
 @test state.overall_result == 2
 
@@ -217,6 +217,6 @@ execute_command(state, Val{:s}(), "s")
 execute_command(state, Val{:fr}(), "fr 2")
 @test execute_command(state, Val{:s}(), "s") == false
 @test execute_command(state, Val{:n}(), "n") == false
-@test execute_command(state, Val{:finish}(), "finish") == false
+@test execute_command(state, Val{:so}(), "so") == false
 @info " END ERRORS ---------------------------------------"
 

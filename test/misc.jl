@@ -5,7 +5,7 @@ runframe(frame::Frame, pc=frame.pc[]) = Some{Any}(finish_and_return!(Compiled(),
 
 frame = @make_frame map(x->2x, 1:10)
 state = dummy_state(frame)
-execute_command(state, Val{:finish}(), "finish")
+execute_command(state, Val{:so}(), "so")
 @test isnothing(state.frame)
 @test state.overall_result == 2 .* [1:10...]
 
@@ -17,7 +17,7 @@ end
 frame = @make_frame complicated_keyword_stuff(1)
 state = dummy_state(frame)
 execute_command(state, Val{:n}(), "n")
-execute_command(state, Val{:finish}(), "finish")
+execute_command(state, Val{:so}(), "so")
 @test isnothing(state.frame)
 
 @test runframe(JuliaInterpreter.enter_call(complicated_keyword_stuff, 1, 2)) ==
@@ -37,8 +37,8 @@ f_inner_break(x) = x
 JuliaInterpreter.breakpoint(f_inner_break)
 frame = @make_frame f_outer_break(2)
 state = dummy_state(frame)
-execute_command(state, Val{:finish}(), "c")
+execute_command(state, Val{:so}(), "c")
 @test state.frame.framecode.scope.name === :f_inner_break
-execute_command(state, Val{:finish}(), "c")
+execute_command(state, Val{:so}(), "c")
 @test state.frame === nothing
 @test state.overall_result == 2
