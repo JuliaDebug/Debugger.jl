@@ -101,6 +101,7 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     - `n`: step to the next line\\
     - `s`: step into the next call\\
     - `so`: step out of the current call\\
+    - `c`: continue execution until a breakpoint is hit\\
     - `bt`: show a simple backtrace\\
     - ``` `stuff ```: run `stuff` in the current function's context\\
     - `fr [v::Int]`: show all variables in the current frame, `v` defaults to `1`\\
