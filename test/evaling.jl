@@ -30,6 +30,6 @@ res = eval_code(frame, "T")
 
 # Evaling with keywords
 evalkw(x; bar=true) = x
-stack = @make_stack evalkw(2)
-res = eval_code(stack[end], "x")
+frame = @make_frame evalkw(2)
+res = eval_code(frame, "x")
 @test res == 2

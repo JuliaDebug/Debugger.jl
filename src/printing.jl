@@ -19,9 +19,9 @@ function print_var(io::IO, var::JuliaInterpreter.Variable)
     println(io, var.name, "::", T, " = ", val)
 end
 
-print_locdesc(io::IO, frame::JuliaStackFrame) = println(io, locdesc(frame))
+print_locdesc(io::IO, frame::Frame) = println(io, locdesc(frame))
 
-function print_locals(io::IO, frame::JuliaStackFrame)
+function print_locals(io::IO, frame::Frame)
     vars = JuliaInterpreter.locals(frame)
     for var in vars
         # Hide gensymmed variables
@@ -30,14 +30,14 @@ function print_locals(io::IO, frame::JuliaStackFrame)
     end
 end
 
-function print_frame(io::IO, num::Integer, frame::JuliaStackFrame)
+function print_frame(io::IO, num::Integer, frame::Frame)
     print(io, "[$num] ")
     print_locdesc(io, frame)
     print_locals(io, frame)
 end
 
 
-function print_next_expr(io::IO, frame::JuliaStackFrame)
+function print_next_expr(io::IO, frame::Frame)
     maybe_quote(x) = (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
 
     print(io, "About to run: ")
@@ -47,7 +47,15 @@ function print_next_expr(io::IO, frame::JuliaStackFrame)
         expr = expr.args[2]
     end
     if isexpr(expr, :call) || isexpr(expr, :return)
-        expr.args = map(var->maybe_quote(@lookup(frame, var)), expr.args)
+        for i in 1:length(expr.args)
+            val = try 
+                @lookup(frame, expr.args[i])
+            catch err
+                err isa UndefVarError || rethrow(err)
+                expr.args[i]
+            end
+            expr.args[i] = maybe_quote(val)
+        end
     end
     if isa(expr, Expr)
         for (i, arg) in enumerate(expr.args)
@@ -65,7 +73,7 @@ function print_next_expr(io::IO, frame::JuliaStackFrame)
     println(io)
 end
 
-function print_status(io::IO, frame::JuliaStackFrame)
+function print_status(io::IO, frame::Frame)
     # Buffer to avoid flickering
     outbuf = IOContext(IOBuffer(), io)
     printstyled(outbuf, "In ", locdesc(frame), "\n"; color=:bold)
@@ -86,9 +94,9 @@ function print_status(io::IO, frame::JuliaStackFrame)
     print(io, String(take!(outbuf.io)))
 end
 
-function print_codeinfo(io::IO, frame::JuliaStackFrame)
+function print_codeinfo(io::IO, frame::Frame)
     buf = IOBuffer()
-    src = frame.code.code
+    src = frame.framecode.src
     show(buf, src)
     active_line = convert(Int, frame.pc[])
 

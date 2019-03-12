@@ -8,7 +8,7 @@
 end
 callgenerated() = generatedfoo(1)
 frame = JuliaInterpreter.enter_call_expr(:($(callgenerated)()))
-state = dummy_state([frame])
+state = dummy_state(frame)
 
 # Step into the generated function itself
 execute_command(state, Val{:sg}(), "sg")
@@ -19,7 +19,7 @@ execute_command(state, Val{:finish}(), "finish")
 # Now finish the regular function
 execute_command(state, Val{:finish}(), "finish")
 
-@test isempty(state.stack)
+@test isnothing(state.frame)
 
 
 # Optional arguments
@@ -29,15 +29,17 @@ function optional(n = sin(1))
 end
 
 frame = JuliaInterpreter.enter_call_expr(:($(optional)()))
-state = dummy_state([frame])
+state = dummy_state(frame)
 # First call steps in
 execute_command(state, Val{:n}(), "n")
 # cos(1.0)
 execute_command(state, Val{:n}(), "n")
-# return
+# return to wrapper
+execute_command(state, Val{:n}(), "n")
+# return from wrapper
 execute_command(state, Val{:n}(), "n")
 
-@test isempty(state.stack)
+@test isnothing(state.frame)
 
 # Macros
 macro insert_some_calls()
@@ -60,7 +62,7 @@ end
 ""","file.jl")
 
 frame = JuliaInterpreter.enter_call_expr(:($(test_macro)()))
-state = dummy_state([frame])
+state = dummy_state(frame)
 # a = sin(5)
 execute_command(state, Val{:n}(), "n")
 # b = asin(5)
@@ -72,13 +74,13 @@ execute_command(state, Val{:n}(), "n")
 # return z
 execute_command(state, Val{:n}(), "n")
 execute_command(state, Val{:n}(), "n")
-@test isempty(state.stack)
+@test isnothing(state.frame)
 
 # Test stepping into functions with keyword arguments
 f(x; b = 1) = x+b
 g() = f(1; b = 2)
 frame = JuliaInterpreter.enter_call_expr(:($(g)()));
-state = dummy_state([frame])
+state = dummy_state(frame)
 # Step to the actual call
 execute_command(state, Val{:nc}(), "nc")
 execute_command(state, Val{:nc}(), "nc")
@@ -88,7 +90,7 @@ execute_command(state, Val{:s}(), "s")
 # Should get out in two steps
 execute_command(state, Val{:finish}(), "finish")
 execute_command(state, Val{:finish}(), "finish")
-@test isempty(state.stack)
+@test isnothing(state.frame)
 
 # Test stepping into functions with exception frames
 function f_exc()
@@ -105,18 +107,18 @@ function g_exc()
     end
 end
 
-stack = @make_stack f_exc()
-state = dummy_state(stack)
+frame = @make_frame f_exc()
+state = dummy_state(frame)
 
 execute_command(state, Val{:n}(), "n")
-@test isempty(state.stack)
+@test isnothing(state.frame)
 
-stack = @make_stack g_exc()
-state = dummy_state(stack)
+frame = @make_frame g_exc()
+state = dummy_state(frame)
 
 execute_command(state, Val{:n}(), "n")
 execute_command(state, Val{:n}(), "n")
-@test isempty(state.stack)
+@test isnothing(state.frame)
 @test state.overall_result isa ErrorException
 
 # Test throwing exception across frames
@@ -132,64 +134,68 @@ function f_exc_outer()
     end
 end
 
-stack = @make_stack f_exc_outer()
-state = dummy_state(stack)
+frame = @make_frame f_exc_outer()
+state = dummy_state(frame)
 
 execute_command(state, Val{:s}(), "s")
 execute_command(state, Val{:n}(), "n")
 execute_command(state, Val{:n}(), "n")
-@test isempty(state.stack)
+@test isnothing(state.frame)
 @test state.overall_result isa ErrorException
 
 # Test that symbols don't get an extra QuoteNode
 f_symbol() = :limit => true
 
-stack = @make_stack f_symbol()
-state = dummy_state(stack)
+frame = @make_frame f_symbol()
+state = dummy_state(frame)
 
 execute_command(state, Val{:s}(), "s")
 execute_command(state, Val{:finish}(), "finish")
 execute_command(state, Val{:finish}(), "finish")
-@test isempty(state.stack)
+@test isnothing(state.frame)
 @test state.overall_result == f_symbol()
 
 # Test that we can step through varargs
 f_va_inner(x) = x + 1
 f_va_outer(args...) = f_va_inner(args...)
 
-stack = @make_stack f_va_outer(1)
-state = dummy_state(stack)
+frame = @make_frame f_va_outer(1)
+state = dummy_state(frame)
 
 execute_command(state, Val{:s}(), "s")
 execute_command(state, Val{:n}(), "n")
-@test !isempty(state.stack)
+@test ! isnothing(state.frame)
 execute_command(state, Val{:finish}(), "finish")
 execute_command(state, Val{:finish}(), "finish")
-@test isempty(state.stack)
+@test isnothing(state.frame)
 @test state.overall_result == 2
 
 # Test that we step through kw wrappers
 f(foo; bar=3) = foo+bar
-stack = @make_stack f(2, bar=4)
-@test length(stack) > 1
-state = dummy_state(stack)
+frame = @make_frame f(2, bar=4)
+@test Debugger.stacklength(frame) > 1
+state = dummy_state(frame)
 execute_command(state, Val{:n}(), "nc")
 execute_command(state, Val{:n}(), "nc")
-@test isempty(state.stack)
+# Step out of the wrapper, perhaps should be automatic
+execute_command(state, Val{:n}(), "nc")
+@test isnothing(state.frame)
 @test state.overall_result == 6
 
+#= We no longer throw the error since the backtrace is useless, instead we just display it and return
 # Test that we throw the right error when stepping through error functions
 function foo_error(a,b)
     a > b && error()
     return a*b
 end
-stack = @make_stack foo_error(3,1)
-state = dummy_state(stack)
+frame = @make_frame foo_error(3,1)
+state = dummy_state(frame)
 try
     execute_command(state, Val{:n}(), "n")
 catch e
     @test isa(e, ErrorException)
 end
+=#
 
 # Issue #17
 struct B{T} end
@@ -199,14 +205,14 @@ function (::B)(y)
 end
 
 B_inst = B{Int}()
-step_through(JuliaInterpreter.enter_call_expr(:($(B_inst)(10))))
+@test step_through(JuliaInterpreter.enter_call_expr(:($(B_inst)(10)))) == 42*10 + 10
 
 # Stepping in non toplevel frames
 @info " BEGIN ERRORS -------------------------------------"
 f2(x) = f1(x)
 f1(x) = x
-stack = @make_stack f2(1)
-state = dummy_state(stack)
+frame = @make_frame f2(1)
+state = dummy_state(frame)
 execute_command(state, Val{:s}(), "s")
 execute_command(state, Val{:fr}(), "fr 2")
 @test execute_command(state, Val{:s}(), "s") == false

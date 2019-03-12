@@ -32,9 +32,9 @@ function loc_for_fname(file::String, line::Integer, defline::Integer)
     return nothing
 end
 
-function locinfo(frame::JuliaStackFrame)
-    if frame.code.scope isa Method
-        meth = frame.code.scope
+function locinfo(frame::Frame)
+    if frame.framecode.scope isa Method
+        meth = frame.framecode.scope
         file, def_line = JuliaInterpreter.whereis(meth)
         _, current_line = JuliaInterpreter.whereis(frame)
         return loc_for_fname(file, current_line, def_line)
@@ -43,11 +43,14 @@ function locinfo(frame::JuliaStackFrame)
     end
 end
 
-function locdesc(frame::JuliaStackFrame)
+# Used for the tests
+const _print_full_path = Ref(true)
+
+function locdesc(frame::Frame)
     sprint() do io
-        if frame.code.scope isa Method
-            meth = frame.code.scope
-            argnames = frame.code.code.slotnames[2:meth.nargs]
+        if frame.framecode.scope isa Method
+            meth = frame.framecode.scope
+            argnames = frame.framecode.src.slotnames[2:meth.nargs]
             spectypes = Any[Any for i=1:length(argnames)]
             print(io, meth.name,'(')
             first = true
@@ -57,10 +60,7 @@ function locdesc(frame::JuliaStackFrame)
                 print(io, argname)
                 !(argT === Any) && print(io, "::", argT)
             end
-            print(io, ") at ",
-                frame.code.fullpath ? meth.file :
-                basename(String(meth.file)),
-                ":",meth.line)
+            print(io, ") at ", _print_full_path[] ? meth.file : basename(String(meth.file)), ":",meth.line)
         else
             println("not yet implemented")
         end
