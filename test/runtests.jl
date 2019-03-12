@@ -9,7 +9,7 @@ import REPL
     include("utils.jl")
     include("misc.jl")
     include("stepping.jl")
+    include("interpret.jl")
+    include("evaling.jl")
     #include("ui.jl")
-    #include("interpret.jl")
-    #include("evaling.jl")
 #end
