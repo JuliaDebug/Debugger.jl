@@ -51,26 +51,27 @@ end
         Debugger._print_full_path[] = false
         using TerminalRegressionTests
 
-        thisdir = @__DIR__
-        TerminalRegressionTests.automated_test(
-                        joinpath(thisdir,"ui/history_gcd.multiout"),
-                    ["n\n","`", "a\n", "\e[A", "\e[A", "\x3", "\x4"]) do emuterm
-            repl = REPL.LineEditREPL(emuterm, true)
-            repl.interface = REPL.setup_interface(repl)
-            repl.specialdisplay = REPL.REPLDisplay(repl)
-            frame = @make_frame my_gcd(10, 20)
-            RunDebugger(frame, repl, emuterm)
-        end
-        if VERSION == v"1.1.0"
-            TerminalRegressionTests.automated_test(
-                            joinpath(thisdir,"ui/history_noinfo.multiout"),
-                        ["n\n","`", "a\n", "\e[A", "\e[A", "\x3", "\x4"]) do emuterm
+        function run_terminal_test(frame, commands, validation)
+            TerminalRegressionTests.automated_test(joinpath(@__DIR__, validation), commands) do emuterm
                 repl = REPL.LineEditREPL(emuterm, true)
                 repl.interface = REPL.setup_interface(repl)
                 repl.specialdisplay = REPL.REPLDisplay(repl)
-                frame = @make_frame my_gcd_noinfo(10, 20)
                 RunDebugger(frame, repl, emuterm)
             end
+        end
+
+        CTRL_C = "\x3"
+        EOT = "\x4"
+        UP_ARROW = "\e[A"
+
+        run_terminal_test(@make_frame(my_gcd(10, 20)),
+                          ["n\n","`", "a\n", UP_ARROW, UP_ARROW, CTRL_C, EOT],
+                          "ui/history_gcd.multiout")
+        
+        if v"1.1">= VERSION < v"1.2"
+            run_terminal_test(@make_frame(my_gcd_noinfo(10, 20)),
+                            ["n\n","`", "a\n", UP_ARROW, UP_ARROW, CTRL_C, EOT],
+                             "ui/history_noinfo.multiout")
         else
             @warn "Skipping tests for IR display due to mismatched Julia versions."
         end
