@@ -18,7 +18,7 @@ function __init__()
     return nothing
 end
 
-export @enter
+export @enter, @run, break_on_error
 
 include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
@@ -45,6 +45,8 @@ function active_frame(state)
     @assert frame !== nothing
     return frame
 end
+
+break_on_error(v::Bool) = JuliaInterpreter.break_on_error[] = v
 
 include("locationinfo.jl")
 include("repl.jl")
@@ -74,6 +76,14 @@ macro enter(arg)
     quote
         let frame = $(_make_frame(__module__,arg))
             RunDebugger(frame)
+        end
+    end
+end
+
+macro run(arg)
+    quote
+        let frame = $(_make_frame(__module__,arg))
+            RunDebugger(frame; initial_continue=true)
         end
     end
 end
