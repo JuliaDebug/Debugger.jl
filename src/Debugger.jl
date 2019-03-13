@@ -8,8 +8,8 @@ using REPL.REPLCompletions
 
 using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root
 
-using JuliaInterpreter: pc_expr, moduleof, linenumber, extract_args, 
-                        root, caller, whereis, get_return
+using JuliaInterpreter: pc_expr, moduleof, linenumber, extract_args,
+                        root, caller, whereis, get_return, nstatements
 
 const SEARCH_PATH = []
 function __init__()
