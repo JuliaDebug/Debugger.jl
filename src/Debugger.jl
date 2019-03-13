@@ -46,6 +46,15 @@ function active_frame(state)
     return frame
 end
 
+function skip_nothing_statements!(frame)
+    expr = pc_expr(frame)
+    while expr === nothing
+        frame.pc += 1
+        frame.pc <= nstatements(frame.framecode) || return
+        expr = pc_expr(frame)
+    end
+end
+
 break_on_error(v::Bool) = JuliaInterpreter.break_on_error[] = v
 
 include("locationinfo.jl")
@@ -64,6 +73,7 @@ function _make_frame(mod, arg)
         frame = JuliaInterpreter.enter_call_expr(Expr(:call,theargs...))
         frame = JuliaInterpreter.maybe_step_through_wrapper!(frame)
         JuliaInterpreter.maybe_next_call!(frame)
+        skip_nothing_statements!(frame)
         frame
     end
 end

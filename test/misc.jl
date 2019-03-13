@@ -44,7 +44,7 @@ execute_command(state, Val{:so}(), "c")
 @test state.overall_result == 2
 
 @inline fnothing(x) = 1
-frame = JuliaInterpreter.enter_call(fnothing, 0)
+frame = @make_frame fnothing(0)
 io = IOBuffer()
 Debugger.print_next_expr(io, frame)
 @test chomp(String(take!(io))) == "About to run: return 1"
