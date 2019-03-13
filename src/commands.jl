@@ -51,7 +51,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},
                 state.broke_on_error = true
             end
         end
-        skip_nothing_statements!(state.frame)
+        JuliaInterpreter.maybe_next_call!(state.frame)
         return true
     end
 end

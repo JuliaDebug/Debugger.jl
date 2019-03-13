@@ -73,7 +73,6 @@ function _make_frame(mod, arg)
         frame = JuliaInterpreter.enter_call_expr(Expr(:call,theargs...))
         frame = JuliaInterpreter.maybe_step_through_wrapper!(frame)
         JuliaInterpreter.maybe_next_call!(frame)
-        skip_nothing_statements!(frame)
         frame
     end
 end
