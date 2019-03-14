@@ -39,14 +39,8 @@ end
 
 function print_next_expr(io::IO, frame::Frame)
     maybe_quote(x) = (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
-
-    pc = frame.pc
-    expr = pc_expr(frame, pc)
-    while expr === nothing
-        pc += 1
-        pc <= nstatements(frame.framecode) || return nothing
-        expr = pc_expr(frame, pc)
-    end
+    expr = pc_expr(frame)
+    @assert expr !== nothing
     print(io, "About to run: ")
     isa(expr, Expr) && (expr = copy(expr))
     if isexpr(expr, :(=))
