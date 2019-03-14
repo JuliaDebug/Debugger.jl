@@ -17,7 +17,7 @@ function SourceFile(data::AbstractString)
         line = readuntil(buf,'\n')
         !eof(buf) && push!(offsets, position(buf))
     end
-    if !isempty(offsets) && line[end] == '\n'
+    if !isempty(offsets) && !isempty(line) && line[end] == '\n'
         push!(offsets, position(buf))
     end
     SourceFile(copy(codeunits(data)), offsets)
