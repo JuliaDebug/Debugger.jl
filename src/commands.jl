@@ -98,6 +98,34 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
     end
 end
 
+function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
+    # TODO show some info messages?
+    cmds = split(cmd)
+    if length(cmds) == 1
+        io = Base.pipe_writer(state.terminal)
+        show_watch_list(io, state)
+        return false
+    elseif length(cmds) >= 2
+        if cmds[2] == "rm"
+            if length(cmds) == 2
+                clear_watch_list!(state)
+                return false
+            elseif length(cmds) == 3
+                i = parse(Int, cmds[3])
+                clear_watch_list!(state, i)
+                return false
+            end
+        end
+        if cmds[2] == "add"
+            if add_watch_entry!(state, join(cmds[3:end]))
+            end
+            return false
+        end
+    end
+    # Error
+    return execute_command(state, Val(:_), cmd)
+end
+
 function execute_command(state::DebuggerState, _, cmd)
     println("Unknown command `$cmd`. Executing `?` to obtain help.")
     execute_command(state, Val{Symbol("?")}(), "?")
@@ -116,6 +144,10 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     - ``` `stuff ```: run `stuff` in the current function's context\\
     - `fr [v::Int]`: show all variables in the current frame, `v` defaults to `1`\\
     - `f [n::Int]`: go to the `n`-th frame\\
+    - `w`\\
+        - `w add expr`: add an expression to the watch list\\
+        - `w`: show all watch expressions evaluated in the current function's context\\
+        - `w rm [i::Int]`: clear all or the `i`:th watch expression\\
     - `q`: quit the debugger, returning `nothing`\\
     Advanced commands:\\
     - `nc`: step to the next call\\

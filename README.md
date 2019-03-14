@@ -41,6 +41,10 @@ Basic Commands:
 - ``` `stuff ```: run `stuff` in the current function's context
 - `fr [v::Int]`: show all variables in the current function, `v` defaults to `1`
 - `f [n::Int]`: go to the `n`-th function in the call stack
+- `w`
+    - `w add expr`: add an expression to the watch list
+    - `w`: show all watch expressions evaluated in the current function's context
+    - `w rm [i::Int]`: clear all or the `i`:th watch expression
 - `q`: quit the debugger, returning `nothing`
 
 Advanced commands:

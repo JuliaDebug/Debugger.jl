@@ -48,7 +48,7 @@ function print_next_expr(io::IO, frame::Frame)
     end
     if isexpr(expr, :call) || isexpr(expr, :return)
         for i in 1:length(expr.args)
-            val = try 
+            val = try
                 @lookup(frame, expr.args[i])
             catch err
                 err isa UndefVarError || rethrow(err)

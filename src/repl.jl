@@ -73,7 +73,7 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
 
     state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
     panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
-    
+
     if initial_continue
         execute_command(state, Val(:c), "c")
         state.frame === nothing && return state.overall_result
