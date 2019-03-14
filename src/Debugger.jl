@@ -20,6 +20,10 @@ end
 
 export @enter, @run, break_on_error
 
+# reexport some useful things from JuliaInterpreter
+using JuliaInterpreter: @bp, @breakpoint, breakpoint
+export @bp, @breakpoint, breakpoint
+
 include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
 
