@@ -74,6 +74,8 @@ function stacklength(frame)
     return s
 end
 
+execute_command(state::DebuggerState, ::Val{:st}, cmd) = true
+
 function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
     subcmds = split(cmd,' ')[2:end]
     if isempty(subcmds) || subcmds[1] == "v"
@@ -99,6 +101,7 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     display(
             @md_str """
     Basic Commands:\\
+    - `st`: show the status\\
     - `n`: step to the next line\\
     - `s`: step into the next call\\
     - `so`: step out of the current call\\

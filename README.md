@@ -33,6 +33,7 @@ out of functions, line stepping, showing local variables, and evaluating code in
 the context of functions.
 
 Basic Commands:
+- `st`: show the status
 - `n`: step to the next line
 - `s`: step into the next call
 - `so`: step out of the current call
