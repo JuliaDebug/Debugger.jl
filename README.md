@@ -50,7 +50,7 @@ Advanced commands:
 - `si`: same as `se` but step into a call if a call is the next expression
 - `sg`: step into a generated function
 
-## Breakpoints
+### Breakpoints
 
 There are currently no designated commands in the debug mode for adding and removing breakpoints, instead they are manipulated using the API from the package JuliaInterpreter (which need to be installed). The different ways of manipulating breakpoints are documented [here](https://juliadebug.github.io/JuliaInterpreter.jl/latest/dev_reference/#Breakpoints-1).
 
@@ -78,7 +78,7 @@ About to run: (abs_float)(2.0)
   | T::DataType = Float64
 ```
 
-### Breakpoint on error
+#### Breakpoint on error
 
 It is possible to halt execution when an error is thrown. This is done by calling the exported function `break_on_error(true)`.
 
@@ -113,6 +113,18 @@ About to run: (throw)(StringIndexError("αβ", 2))
   | u::UInt32 = 0xb1000000
 [4] f() at REPL[17]:1
 ```
+
+## Syntax highlighting
+
+The source code preview is syntax highlighted and this highlighting has some options.
+The theme can be set by calling `Debugger.set_theme(theme)` where `theme` is a [Highlights.jl theme](https://juliadocs.github.io/Highlights.jl/stable/demo/themes.html).
+It can be completely turned off or alternatively, different quality settings for the colors might be chosen by calling `Debugger.set_highlight(opt)` where `opt` is a `Debugger.HighlightOption` enum.
+The choices are `HIGHLIGHT_OFF` `HIGHLIGHT_SYSTEM_COLORS`, `HIGHLIGHT_256_COLORS`, `HIGHLIGHT_16_BIT`. System colors works in pretty much all terminals, 256 in most terminals (with the exception of Windows)
+and 24 bit in some terminals.
+
+The options for the syntax highlighting are:
+
+
 
 [travis-img]: https://travis-ci.org/JuliaDebug/Debugger.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/JuliaDebug/Debugger.jl
