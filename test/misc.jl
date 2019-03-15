@@ -45,6 +45,14 @@ execute_command(state, Val{:so}(), "c")
 
 @inline fnothing(x) = 1
 frame = @make_frame fnothing(0)
-io = IOBuffer()
-Debugger.print_next_expr(io, frame)
-@test chomp(String(take!(io))) == "About to run: return 1"
+@test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: return 1"
+
+function f()
+    x = 1 + 1
+    @info "hello"
+end
+# https://github.com/JuliaDebug/Debugger.jl/issues/71
+frame = Debugger.@make_frame f()
+state = dummy_state(frame)
+execute_command(state, Val{:n}(), "n")
+@test isfile(Debugger.locinfo(state.frame).filepath)

@@ -35,8 +35,10 @@ end
 function locinfo(frame::Frame)
     if frame.framecode.scope isa Method
         meth = frame.framecode.scope
-        file, def_line = JuliaInterpreter.whereis(meth)
+        file2, def_line = JuliaInterpreter.whereis(meth)
         _, current_line = JuliaInterpreter.whereis(frame)
+         # Swap out the _ for file and delete line below after https://github.com/JuliaDebug/JuliaInterpreter.jl/issues/150 is fixed
+        file = JuliaInterpreter.getfile(frame)
         return loc_for_fname(file, current_line, def_line)
     else
         println("not yet implemented")
