@@ -3,6 +3,8 @@
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
 |7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|9     k = min(za, zb)
 |
 |About to run: (==)(10, 0)
 |1|debug> 
@@ -11,6 +13,8 @@
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
 |EEEEEEEEE
@@ -19,14 +23,18 @@
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
 |7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|9     k = min(za, zb)
 |
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5     a == 0 && return abs(b)
-|6     b == 0 && return abs(a)
-|7     za = trailing_zeros(a)
-|8     zb = trailing_zeros(b)
+|5      a == 0 && return abs(b)
+|6      b == 0 && return abs(a)
+|7      za = trailing_zeros(a)
+|8      zb = trailing_zeros(b)
+|9      k = min(za, zb)
+|10      u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|debug> 
@@ -35,14 +43,18 @@
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
 |EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |EEEEEEEEE
@@ -51,14 +63,18 @@
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
 |7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|9     k = min(za, zb)
 |
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5     a == 0 && return abs(b)
-|6     b == 0 && return abs(a)
-|7     za = trailing_zeros(a)
-|8     zb = trailing_zeros(b)
+|5      a == 0 && return abs(b)
+|6      b == 0 && return abs(a)
+|7      za = trailing_zeros(a)
+|8      zb = trailing_zeros(b)
+|9      k = min(za, zb)
+|10      u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|julia> 
@@ -67,14 +83,18 @@
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
 |EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |IIIIIIIII
@@ -83,14 +103,18 @@
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
 |7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|9     k = min(za, zb)
 |
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5     a == 0 && return abs(b)
-|6     b == 0 && return abs(a)
-|7     za = trailing_zeros(a)
-|8     zb = trailing_zeros(b)
+|5      a == 0 && return abs(b)
+|6      b == 0 && return abs(a)
+|7      za = trailing_zeros(a)
+|8      zb = trailing_zeros(b)
+|9      k = min(za, zb)
+|10      u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|julia> a
@@ -102,14 +126,18 @@
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
 |EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |IIIIIIIIIF
@@ -121,14 +149,18 @@
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
 |7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|9     k = min(za, zb)
 |
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5     a == 0 && return abs(b)
-|6     b == 0 && return abs(a)
-|7     za = trailing_zeros(a)
-|8     zb = trailing_zeros(b)
+|5      a == 0 && return abs(b)
+|6      b == 0 && return abs(a)
+|7      za = trailing_zeros(a)
+|8      zb = trailing_zeros(b)
+|9      k = min(za, zb)
+|10      u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|julia> a
@@ -140,14 +172,18 @@
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
 |EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |IIIIIIIIIF
@@ -159,14 +195,18 @@
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
 |7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|9     k = min(za, zb)
 |
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5     a == 0 && return abs(b)
-|6     b == 0 && return abs(a)
-|7     za = trailing_zeros(a)
-|8     zb = trailing_zeros(b)
+|5      a == 0 && return abs(b)
+|6      b == 0 && return abs(a)
+|7      za = trailing_zeros(a)
+|8      zb = trailing_zeros(b)
+|9      k = min(za, zb)
+|10      u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|julia> a
@@ -178,14 +218,18 @@
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
 |EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |IIIIIIIIIF
@@ -197,14 +241,18 @@
 |5     a == 0 && return abs(b)
 |6     b == 0 && return abs(a)
 |7     za = trailing_zeros(a)
+|8     zb = trailing_zeros(b)
+|9     k = min(za, zb)
 |
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5     a == 0 && return abs(b)
-|6     b == 0 && return abs(a)
-|7     za = trailing_zeros(a)
-|8     zb = trailing_zeros(b)
+|5      a == 0 && return abs(b)
+|6      b == 0 && return abs(a)
+|7      za = trailing_zeros(a)
+|8      zb = trailing_zeros(b)
+|9      k = min(za, zb)
+|10      u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|julia> a
@@ -218,14 +266,18 @@
 |BBCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCCC
 |DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCCCCCCCCC
+|DDCCCCCCCCCCCCCCCCCCC
 |
 |CCCCCCCCCCCCCCCCCCCCCCCCC
 |EEEEEEEEEF
 |GGGGGGGGGGGGGGGGGGGGGGGGGG
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|HHFFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
-|GGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|HHHFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |IIIIIIIIIF

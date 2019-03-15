@@ -120,3 +120,58 @@ function print_codeinfo(io::IO, frame::Frame)
     end
     println(io)
 end
+
+
+const NUM_SOURCE_LINES_UP_DOWN = Ref(5)
+
+"""
+Determine the offsets in the source code to print, based on the offset of the
+currently highlighted part of the code, and the start and stop line of the
+entire function.
+"""
+function compute_source_offsets(code::String, offset::Integer, startline::Integer, stopline::Integer; file::SourceFile = SourceFile(code))
+    offsetline = compute_line(file, offset)
+    if offsetline - NUM_SOURCE_LINES_UP_DOWN[] > length(file.offsets) || startline > length(file.offsets)
+        return -1, -1
+    end
+    startoffset = max(file.offsets[max(offsetline - NUM_SOURCE_LINES_UP_DOWN[], 1)], file.offsets[startline])
+    stopoffset = lastindex(code)-1
+    if offsetline + NUM_SOURCE_LINES_UP_DOWN[] < lastindex(file.offsets)
+        stopoffset = min(stopoffset, file.offsets[offsetline + NUM_SOURCE_LINES_UP_DOWN[]] - 1)
+    end
+    if stopline + 1 < lastindex(file.offsets)
+        stopoffset = min(stopoffset, file.offsets[stopline + 1] - 1)
+    end
+    startoffset, stopoffset
+end
+
+function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer; file::SourceFile = SourceFile(code))
+    startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, line+NUM_SOURCE_LINES_UP_DOWN[]; file=file)
+
+    if startoffset == -1
+        printstyled(io, "Line out of file range (bad debug info?)", color=:bold)
+        return
+    end
+
+    # Compute necessary data for line numbering
+    startline = compute_line(file, startoffset)
+    stopline = compute_line(file, stopoffset)
+    current_line = line
+    stoplinelength = length(string(stopline))
+
+    code = split(code[(startoffset+1):(stopoffset+1)],'\n')
+    lineno = startline
+
+    if !isempty(code) && isempty(code[end])
+        pop!(code)
+    end
+
+    for textline in code
+        printstyled(io,
+            string(lineno, " "^(stoplinelength-length(lineno)+1));
+            color = lineno == current_line ? :yellow : :bold)
+        println(io, textline)
+        lineno += 1
+    end
+    println(io)
+end
