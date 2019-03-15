@@ -76,8 +76,10 @@ end
 function print_status(io::IO, frame::Frame)
     # Buffer to avoid flickering
     outbuf = IOContext(IOBuffer(), io)
-    printstyled(outbuf, "In ", locdesc(frame), "\n"; color=:bold)
+    printstyled(outbuf, "In ", locdesc(frame); color=:bold)
     loc = locinfo(frame)
+    JuliaInterpreter.is_macro_expansion(frame) && print(outbuf, " (macro expansion)")
+    println(outbuf)
 
     if loc !== nothing
         data = if isa(loc, BufferLocInfo)

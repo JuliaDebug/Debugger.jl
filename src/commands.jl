@@ -31,7 +31,7 @@ function show_breakpoint(io::IO, bp::BreakpointRef)
     println(io)
 end
 
-function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so}}, cmd::AbstractString)
+function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so},Val{:sm}}, cmd::AbstractString)
     assert_allow_step(state) || return false
     cmd == "so" && (cmd = "finish")
     ret = debug_command(state.frame, cmd)
@@ -114,6 +114,7 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     - `q`: quit the debugger, returning `nothing`\\
     Advanced commands:\\
     - `nc`: step to the next call\\
+    - `sm`: step out of the current macro expansion\\
     - `se`: step one expression step\\
     - `si`: same as `se` but step into a call if a call is the next expression\\
     - `sg`: step into a generated function\\
