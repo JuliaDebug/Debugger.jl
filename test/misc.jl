@@ -25,7 +25,7 @@ execute_command(state, Val{:so}(), "so")
 @test runframe(JuliaInterpreter.enter_call(complicated_keyword_stuff, 1, 2; x=7, y=33)) ==
       runframe(@make_frame(complicated_keyword_stuff(1, 2; x=7, y=33)))
 
-# Issue #22
+      # Issue #22
 f22() = string(:(a+b))
 @test step_through(enter_call_expr(:($f22()))) == "a + b"
 f22() = string(QuoteNode(:a))
@@ -45,6 +45,16 @@ execute_command(state, Val{:so}(), "c")
 
 @inline fnothing(x) = 1
 frame = @make_frame fnothing(0)
-io = IOBuffer()
-Debugger.print_next_expr(io, frame)
-@test chomp(String(take!(io))) == "About to run: return 1"
+@test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: return 1"
+
+function f()
+    x = 1 + 1
+    @info "hello"
+end
+# https://github.com/JuliaDebug/Debugger.jl/issues/71
+frame = Debugger.@make_frame f()
+state = dummy_state(frame)
+execute_command(state, Val{:n}(), "n")
+loc = Debugger.locinfo(state.frame)
+@test isfile(loc.filepath)
+@test occursin("logging.jl", loc.filepath)
