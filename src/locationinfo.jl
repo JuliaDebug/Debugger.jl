@@ -37,7 +37,9 @@ function locinfo(frame::Frame)
         meth = frame.framecode.scope
         def_file, def_line = JuliaInterpreter.whereis(meth)
         current_file, current_line = JuliaInterpreter.whereis(frame)
-        def_line > current_line && (def_line = 0) # We are in another file so not sure where the context start
+        if def_file != current_file || def_line > current_line
+            def_line = 0 # We are not sure where the context start in cases like these, could be improved?
+        end
         return loc_for_fname(current_file, current_line, def_line)
     else
         println("not yet implemented")
