@@ -164,9 +164,9 @@ function Format.render(io::IO, ::MIME"text/ansi-debugger", tokens::Format.TokenI
         crayon = Crayon(
             foreground = fg,
             background = bg,
-            bold       = style.bold,
-            italics    = style.italic,
-            underline  = style.underline,
+            bold       = style.bold ? true : :nothing,
+            italics    = style.italic ? true : :nothing,
+            underline  = style.underline ? true : :nothing,
         )
         if _syntax_highlighting[] == HIGHLIGHT_256_COLORS
             crayon = Crayons.to_256_colors(crayon)

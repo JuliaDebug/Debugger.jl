@@ -122,9 +122,6 @@ It can be completely turned off or alternatively, different quality settings for
 The choices are `HIGHLIGHT_OFF` `HIGHLIGHT_SYSTEM_COLORS`, `HIGHLIGHT_256_COLORS`, `HIGHLIGHT_16_BIT`. System colors works in pretty much all terminals, 256 in most terminals (with the exception of Windows)
 and 24 bit in some terminals.
 
-The options for the syntax highlighting are:
-
-
 
 [travis-img]: https://travis-ci.org/JuliaDebug/Debugger.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/JuliaDebug/Debugger.jl
