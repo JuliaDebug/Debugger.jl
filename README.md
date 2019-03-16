@@ -114,12 +114,12 @@ About to run: (throw)(StringIndexError("αβ", 2))
 [4] f() at REPL[17]:1
 ```
 
-## Syntax highlighting
+### Syntax highlighting
 
 The source code preview is syntax highlighted and this highlighting has some options.
 The theme can be set by calling `Debugger.set_theme(theme)` where `theme` is a [Highlights.jl theme](https://juliadocs.github.io/Highlights.jl/stable/demo/themes.html).
 It can be completely turned off or alternatively, different quality settings for the colors might be chosen by calling `Debugger.set_highlight(opt)` where `opt` is a `Debugger.HighlightOption` enum.
-The choices are `HIGHLIGHT_OFF` `HIGHLIGHT_SYSTEM_COLORS`, `HIGHLIGHT_256_COLORS`, `HIGHLIGHT_16_BIT`. System colors works in pretty much all terminals, 256 in most terminals (with the exception of Windows)
+The choices are `HIGHLIGHT_OFF` `HIGHLIGHT_SYSTEM_COLORS`, `HIGHLIGHT_256_COLORS`, `HIGHLIGHT_24_BIT`. System colors works in pretty much all terminals, 256 in most terminals (with the exception of Windows)
 and 24 bit in some terminals.
 
 
