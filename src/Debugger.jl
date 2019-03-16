@@ -6,6 +6,7 @@ using REPL
 using REPL.LineEdit
 using REPL.REPLCompletions
 
+using CodeTracking
 using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root
 
 using JuliaInterpreter: pc_expr, moduleof, linenumber, extract_args,

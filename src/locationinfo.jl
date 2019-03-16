@@ -63,7 +63,9 @@ function locdesc(frame::Frame)
                 print(io, argname)
                 !(argT === Any) && print(io, "::", argT)
             end
-            print(io, ") at ", _print_full_path[] ? meth.file : basename(String(meth.file)), ":",meth.line)
+            path = _print_full_path[] ? meth.file : string(basename(String(meth.file)), ":", meth.line)
+            path = CodeTracking.replace_buildbot_stdlibpath(String(path))
+            print(io, ") at ", path)
         else
             println("not yet implemented")
         end

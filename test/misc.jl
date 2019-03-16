@@ -58,3 +58,7 @@ execute_command(state, Val{:n}(), "n")
 loc = Debugger.locinfo(state.frame)
 @test isfile(loc.filepath)
 @test occursin("logging.jl", loc.filepath)
+
+frame = @make_frame Test.eval(1)
+desc = Debugger.locdesc(frame)
+@test occursin(Sys.STDLIB, desc)
