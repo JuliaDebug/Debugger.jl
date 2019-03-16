@@ -5,7 +5,7 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
 
     # Setup debug panel
     panel = LineEdit.Prompt(promptname(state.level, "debug");
-        prompt_prefix = "\e[38;5;166m",
+        prompt_prefix = Sys.iswindows() ? "\e[33m" : "\e[38;5;166m",
         prompt_suffix = Base.text_colors[:normal],
         on_enter = s->true)
 
