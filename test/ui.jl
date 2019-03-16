@@ -53,6 +53,7 @@ end
 
         function run_terminal_test(frame, commands, validation)
             TerminalRegressionTests.automated_test(joinpath(@__DIR__, validation), commands) do emuterm
+            #TerminalRegressionTests.create_automated_test(joinpath(@__DIR__, validation), commands) do emuterm                
                 repl = REPL.LineEditREPL(emuterm, true)
                 repl.interface = REPL.setup_interface(repl)
                 repl.specialdisplay = REPL.REPLDisplay(repl)
