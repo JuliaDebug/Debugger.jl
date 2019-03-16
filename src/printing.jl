@@ -133,7 +133,7 @@ function compute_source_offsets(code::String, offset::Integer, startline::Intege
     if offsetline - NUM_SOURCE_LINES_UP_DOWN[] > length(file.offsets) || startline > length(file.offsets)
         return -1, -1
     end
-    startoffset = max(file.offsets[max(offsetline - NUM_SOURCE_LINES_UP_DOWN[], 1)], file.offsets[startline])
+    startoffset = max(file.offsets[max(offsetline - NUM_SOURCE_LINES_UP_DOWN[], 1)], startline == 0 ? 0 : file.offsets[startline])
     stopoffset = lastindex(code)-1
     if offsetline + NUM_SOURCE_LINES_UP_DOWN[] < lastindex(file.offsets)
         stopoffset = min(stopoffset, file.offsets[offsetline + NUM_SOURCE_LINES_UP_DOWN[]] - 1)
