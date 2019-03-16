@@ -1,6 +1,5 @@
 name = "Debugger"
 uuid = "31a5f54b-26ea-5ae9-a837-f05ce5417438"
-authors = ["Kristoffer Carlsson <kcarlsson89@gmail.com>"]
 version = "0.1.0"
 
 [deps]
@@ -10,6 +9,13 @@ Highlights = "eafb193a-b7ab-5a9e-9068-77385905fa72"
 JuliaInterpreter = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+
+[compat]
+CodeTracking = "0.3.2"
+Crayons = "3"
+Highligts = "0.3.1"
+JuliaInterpreter = "0.2"
+julia = "1"
 
 [extras]
 TerminalRegressionTests = "98bfdc55-cc95-5876-a49a-74609291cbe0"
