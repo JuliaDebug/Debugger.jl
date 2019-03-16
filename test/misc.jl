@@ -25,7 +25,7 @@ execute_command(state, Val{:so}(), "so")
 @test runframe(JuliaInterpreter.enter_call(complicated_keyword_stuff, 1, 2; x=7, y=33)) ==
       runframe(@make_frame(complicated_keyword_stuff(1, 2; x=7, y=33)))
 
-      # Issue #22
+# Issue #22
 f22() = string(:(a+b))
 @test step_through(enter_call_expr(:($f22()))) == "a + b"
 f22() = string(QuoteNode(:a))
