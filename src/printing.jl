@@ -151,7 +151,7 @@ end
     HIGHLIGHT_16_BIT
 end
 
-const _syntax_highlighting = Ref(HIGHLIGHT_SYSTEM_COLORS)
+const _syntax_highlighting = Ref(Sys.iswindows() ? HIGHLIGHT_SYSTEM_COLORS : HIGHLIGHT_256_COLORS)
 const _current_theme = Ref{Type{<:Highlights.AbstractTheme}}(Highlights.Themes.MonokaiTheme)
 
 set_theme(theme::Type{<:Highlights.AbstractTheme}) = _current_theme[] = theme
