@@ -34,7 +34,7 @@
 |7      za = trailing_zeros(a)
 |8      zb = trailing_zeros(b)
 |9      k = min(za, zb)
-|10      u = unsigned(abs(a >> za))
+|10     u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|debug> 
@@ -54,7 +54,7 @@
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFF
-|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |EEEEEEEEE
@@ -74,7 +74,7 @@
 |7      za = trailing_zeros(a)
 |8      zb = trailing_zeros(b)
 |9      k = min(za, zb)
-|10      u = unsigned(abs(a >> za))
+|10     u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|julia> 
@@ -94,7 +94,7 @@
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFF
-|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |IIIIIIIII
@@ -114,7 +114,7 @@
 |7      za = trailing_zeros(a)
 |8      zb = trailing_zeros(b)
 |9      k = min(za, zb)
-|10      u = unsigned(abs(a >> za))
+|10     u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|julia> a
@@ -137,7 +137,7 @@
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFF
-|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |IIIIIIIIIF
@@ -160,7 +160,7 @@
 |7      za = trailing_zeros(a)
 |8      zb = trailing_zeros(b)
 |9      k = min(za, zb)
-|10      u = unsigned(abs(a >> za))
+|10     u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|julia> a
@@ -183,7 +183,7 @@
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFF
-|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |IIIIIIIIIF
@@ -206,7 +206,7 @@
 |7      za = trailing_zeros(a)
 |8      zb = trailing_zeros(b)
 |9      k = min(za, zb)
-|10      u = unsigned(abs(a >> za))
+|10     u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|julia> a
@@ -229,7 +229,7 @@
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFF
-|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |IIIIIIIIIF
@@ -252,7 +252,7 @@
 |7      za = trailing_zeros(a)
 |8      zb = trailing_zeros(b)
 |9      k = min(za, zb)
-|10      u = unsigned(abs(a >> za))
+|10     u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|julia> a
@@ -277,7 +277,7 @@
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |GGGFFFFFFFFFFFFFFFFFFF
-|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
 |IIIIIIIIIF
