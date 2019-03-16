@@ -1,5 +1,8 @@
 module Debugger
 
+using Highlights
+using Crayons
+
 using Markdown
 using Base.Meta: isexpr
 using REPL

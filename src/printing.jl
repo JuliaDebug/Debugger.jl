@@ -16,7 +16,7 @@ function print_var(io::IO, var::JuliaInterpreter.Variable)
     catch
         val = Suppressed("printing error")
     end
-    println(io, var.name, "::", T, " = ", val)
+    println(io, highlight_code(string(var.name, "::", T, " = ", val); context=io))
 end
 
 print_locdesc(io::IO, frame::Frame) = println(io, locdesc(frame))
@@ -69,7 +69,7 @@ function print_next_expr(io::IO, frame::Frame)
             end
         end
     end
-    print(io, expr)
+    print(io, highlight_code(string(expr); context=io))
     println(io)
 end
 
@@ -85,8 +85,7 @@ function print_status(io::IO, frame::Frame)
             else
                 read(loc.filepath, String)
             end
-        print_sourcecode(outbuf, data,
-            loc.line, loc.defline)
+        print_sourcecode(outbuf, data, loc.line, loc.defline)
     else
         print_codeinfo(outbuf, frame)
     end
@@ -134,7 +133,7 @@ function compute_source_offsets(code::String, offset::Integer, startline::Intege
     if offsetline - NUM_SOURCE_LINES_UP_DOWN[] > length(file.offsets) || startline > length(file.offsets)
         return -1, -1
     end
-    startoffset = max(file.offsets[max(offsetline - NUM_SOURCE_LINES_UP_DOWN[], 1)], file.offsets[startline])
+    startoffset = max(file.offsets[max(offsetline - NUM_SOURCE_LINES_UP_DOWN[], 1)], startline == 0 ? 0 : file.offsets[startline])
     stopoffset = lastindex(code)-1
     if offsetline + NUM_SOURCE_LINES_UP_DOWN[] < lastindex(file.offsets)
         stopoffset = min(stopoffset, file.offsets[offsetline + NUM_SOURCE_LINES_UP_DOWN[]] - 1)
@@ -145,7 +144,53 @@ function compute_source_offsets(code::String, offset::Integer, startline::Intege
     startoffset, stopoffset
 end
 
-function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer; file::SourceFile = SourceFile(code))
+@enum HighlightOption begin
+    HIGHLIGHT_OFF
+    HIGHLIGHT_SYSTEM_COLORS
+    HIGHLIGHT_256_COLORS
+    HIGHLIGHT_24_BIT
+end
+
+const _syntax_highlighting = Ref(Sys.iswindows() ? HIGHLIGHT_SYSTEM_COLORS : HIGHLIGHT_256_COLORS)
+const _current_theme = Ref{Type{<:Highlights.AbstractTheme}}(Highlights.Themes.MonokaiTheme)
+
+set_theme(theme::Type{<:Highlights.AbstractTheme}) = _current_theme[] = theme
+set_highlight(opt::HighlightOption) = _syntax_highlighting[] = opt
+
+function Format.render(io::IO, ::MIME"text/ansi-debugger", tokens::Format.TokenIterator)
+    for (str, id, style) in tokens
+        fg = style.fg.active ? map(Int, (style.fg.r, style.fg.g, style.fg.b)) : :nothing
+        bg = style.bg.active ? map(Int, (style.bg.r, style.bg.g, style.bg.b)) : :nothing
+        crayon = Crayon(
+            foreground = fg,
+            background = bg,
+            bold       = style.bold ? true : :nothing,
+            italics    = style.italic ? true : :nothing,
+            underline  = style.underline ? true : :nothing,
+        )
+        if _syntax_highlighting[] == HIGHLIGHT_256_COLORS
+            crayon = Crayons.to_256_colors(crayon)
+        elseif _syntax_highlighting[] == HIGHLIGHT_SYSTEM_COLORS
+            crayon = Crayons.to_system_colors(crayon)
+        end
+        print(io, crayon, str, inv(crayon))
+    end
+end
+
+function highlight_code(code; context=nothing)
+    if _syntax_highlighting[] != HIGHLIGHT_OFF
+        return sprint(highlight, MIME("text/ansi-debugger"), code, Lexers.JuliaLexer, _current_theme[]; context=context)
+    else
+        return code
+    end
+end
+
+
+const RESET = Crayon(reset = true)
+
+function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer)
+    code = highlight_code(code; context=io)
+    file = SourceFile(code)
     startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, line+NUM_SOURCE_LINES_UP_DOWN[]; file=file)
 
     if startoffset == -1
@@ -173,5 +218,6 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer;
         println(io, textline)
         lineno += 1
     end
+    _syntax_highlighting[] == HIGHLIGHT_OFF || print(io, RESET)
     println(io)
 end

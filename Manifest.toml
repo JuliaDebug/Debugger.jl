@@ -9,9 +9,32 @@ git-tree-sha1 = "983f5f7a57c604322917ab8bc5b86ba914d3c345"
 uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
 version = "0.3.2"
 
+[[Crayons]]
+git-tree-sha1 = "416737eea5c50ee5a08c588ea73d77d5eebc94e7"
+repo-rev = "master"
+repo-url = "https://github.com/KristofferC/Crayons.jl.git"
+uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
+version = "3.0.0"
+
+[[Dates]]
+deps = ["Printf"]
+uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
+
 [[Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+
+[[DocStringExtensions]]
+deps = ["LibGit2", "Markdown", "Pkg", "Test"]
+git-tree-sha1 = "4d30e889c9f106a51ffa4791a88ffd4765bf20c3"
+uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+version = "0.7.0"
+
+[[Highlights]]
+deps = ["DocStringExtensions", "InteractiveUtils", "REPL", "Test"]
+git-tree-sha1 = "286ff83d696dd92748e603a3219618d9e407e872"
+uuid = "eafb193a-b7ab-5a9e-9068-77385905fa72"
+version = "0.3.1"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
@@ -25,12 +48,23 @@ repo-url = "https://github.com/JuliaDebug/JuliaInterpreter.jl"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 version = "0.1.1"
 
+[[LibGit2]]
+uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
+
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
+
+[[Pkg]]
+deps = ["Dates", "LibGit2", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
+uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+
+[[Printf]]
+deps = ["Unicode"]
+uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [[REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets"]
@@ -56,3 +90,6 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 [[UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+
+[[Unicode]]
+uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"

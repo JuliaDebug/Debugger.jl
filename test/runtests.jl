@@ -9,6 +9,8 @@ if !isdefined(Main, :isnothing)
     isnothing(x) = x === nothing
 end
 
+Debugger.set_highlight(Debugger.HIGHLIGHT_OFF)
+
 #@testset "Main tests" begin
     include("utils.jl")
     include("misc.jl")
