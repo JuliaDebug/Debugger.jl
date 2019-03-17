@@ -44,7 +44,7 @@ Basic Commands:
 - `w`
     - `w add expr`: add an expression to the watch list
     - `w`: show all watch expressions evaluated in the current function's context
-    - `w rm [i::Int]`: clear all or the `i`:th watch expression
+    - `w rm [i::Int]`: remove all or the `i`:th watch expression
 - `q`: quit the debugger, returning `nothing`
 
 Advanced commands:
