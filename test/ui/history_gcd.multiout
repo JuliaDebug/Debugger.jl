@@ -117,6 +117,55 @@
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIII
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
 |1|julia> a
 |10
 |
@@ -140,6 +189,9 @@
 |GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
 |IIIIIIIIIF
 |FF
 |
@@ -163,6 +215,9 @@
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
 |1|julia> a
 |10
 |
@@ -186,6 +241,9 @@
 |GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
 |IIIIIIIIIF
 |FF
 |
@@ -209,6 +267,61 @@
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|julia> my_gcd
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIIIF
+|FF
+|
+|IIIIIIIIIFFFFFF
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
 |1|julia> a
 |10
 |
@@ -232,6 +345,9 @@
 |GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
 |IIIIIIIIIF
 |FF
 |
@@ -255,6 +371,9 @@
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
 |1|julia> a
 |10
 |
@@ -280,9 +399,280 @@
 |GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
 |
 |FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
 |IIIIIIIIIF
 |FF
 |
 |EEEEEEEEEFFF
 |
+|EEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> bt
+|[1] my_gcd(a, b) at ui.jl:5
+|  | a::Int64 = 10
+|  | b::Int64 = 20
+|  | T::DataType = Int64
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIIIF
+|FF
+|
+|EEEEEEEEEFFF
+|
+|EEEEEEEEEFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFFFFFFFFFFF
+|FFFFFFFFFFFFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFF
+|EEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> bt
+|[1] my_gcd(a, b) at ui.jl:5
+|  | a::Int64 = 10
+|  | b::Int64 = 20
+|  | T::DataType = Int64
+|1|debug> st
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIIIF
+|FF
+|
+|EEEEEEEEEFFF
+|
+|EEEEEEEEEFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFFFFFFFFFFF
+|FFFFFFFFFFFFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFF
+|EEEEEEEEEFF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|EEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> bt
+|[1] my_gcd(a, b) at ui.jl:5
+|  | a::Int64 = 10
+|  | b::Int64 = 20
+|  | T::DataType = Int64
+|1|debug> st
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|debug> c
+|Hit breakpoint: my_gcd(a, b) at ui.jl:5, line 12
+|In my_gcd(a, b) at ui.jl:5
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|11  v = unsigned(abs(b >> zb))
+|12  Debugger.@bp
+|13  while u != v
+|14      if u > v
+|15          u, v = v, u
+|16      end
+|17      v -= u
+|
+|About to run: (!=)(0x0000000000000005, 0x0000000000000005)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIIIF
+|FF
+|
+|EEEEEEEEEFFF
+|
+|EEEEEEEEEFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFFFFFFFFFFF
+|FFFFFFFFFFFFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFF
+|EEEEEEEEEFF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|EEEEEEEEEF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFF
+|GGGGFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 |EEEEEEEEE
