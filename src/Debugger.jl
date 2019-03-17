@@ -31,10 +31,15 @@ export @bp, @breakpoint, breakpoint
 include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
 
+# We make WATCH_LIST a global since it is likely useful to keep
+# watch expressions between invocations of the debugger interface
+const WATCH_LIST = []
+
 mutable struct DebuggerState
     frame::Union{Nothing, Frame}
     level::Int
     broke_on_error::Bool
+    watch_list::Vector
     repl
     terminal
     main_mode
@@ -42,7 +47,7 @@ mutable struct DebuggerState
     standard_keymap
     overall_result
 end
-DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, false, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
+DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, false, WATCH_LIST, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
 DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
 
 function active_frame(state)
@@ -60,6 +65,7 @@ include("locationinfo.jl")
 include("repl.jl")
 include("commands.jl")
 include("printing.jl")
+include("watch.jl")
 
 function _make_frame(mod, arg)
     args = try

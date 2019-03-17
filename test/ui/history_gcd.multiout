@@ -435,6 +435,427 @@
 |
 |1|debug> n^C
 |
+|1|debug> w add a
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIIIF
+|FF
+|
+|EEEEEEEEEFFF
+|
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIIIF
+|FF
+|
+|EEEEEEEEEFFF
+|
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEFFFFFFFFFFFF
+|EEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIIIF
+|FF
+|
+|EEEEEEEEEFFF
+|
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEFFFFFFFFFFFF
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIIIF
+|FF
+|
+|EEEEEEEEEFFF
+|
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEFFFFFFFFFFFF
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEF
+|FFFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFF
+|
+|EEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIIIF
+|FF
+|
+|EEEEEEEEEFFF
+|
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEFFFFFFFFFFFF
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEF
+|FFFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFF
+|
+|EEEEEEEEEFFFFFF
+|EEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1|debug> w
+|1] sin(a): -0.5440211108893698
+|2] b: 20
+|
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCCCCCCCCC
+|DDDCCCCCCCCCCCCCCC
+|
+|CCCCCCCCCCCCCCCCCCCCCCCCC
+|EEEEEEEEEF
+|GGGGGGGGGGGGGGGGGGGGGGGGGG
+|GGGGFFFFFFFFFFFFFFFFFFFFFFF
+|HHHHFFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFF
+|GGGGFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|FFFFFFFFFFFFFFFFFFFFFFFFF
+|IIIIIIIIIFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|
+|IIIIIIIIIF
+|FF
+|
+|EEEEEEEEEFFF
+|
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEFFFFFFFFFFFF
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEF
+|FFFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFF
+|
+|EEEEEEEEEFFFFFF
+|EEEEEEEEEF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFF
+|
+|EEEEEEEEE
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|5  a == 0 && return abs(b)
+|6  b == 0 && return abs(a)
+|7  za = trailing_zeros(a)
+|8  zb = trailing_zeros(b)
+|9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|5   a == 0 && return abs(b)
+|6   b == 0 && return abs(a)
+|7   za = trailing_zeros(a)
+|8   zb = trailing_zeros(b)
+|9   k = min(za, zb)
+|10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1|debug> w
+|1] sin(a): -0.5440211108893698
+|2] b: 20
+|
 |1|debug> bt
 |[1] my_gcd(a, b) at ui.jl:5
 |  | a::Int64 = 10
@@ -468,6 +889,19 @@
 |
 |EEEEEEEEEFFF
 |
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEFFFFFFFFFFFF
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEF
+|FFFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFF
+|
+|EEEEEEEEEFFFFFF
+|EEEEEEEEEF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFF
+|
 |EEEEEEEEEFF
 |FFFFFFFFFFFFFFFFFFFFFFFFFFF
 |FFFFFFFFFFFFFFFFF
@@ -500,6 +934,19 @@
 |10
 |
 |1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1|debug> w
+|1] sin(a): -0.5440211108893698
+|2] b: 20
 |
 |1|debug> bt
 |[1] my_gcd(a, b) at ui.jl:5
@@ -544,6 +991,19 @@
 |
 |EEEEEEEEEFFF
 |
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEFFFFFFFFFFFF
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEF
+|FFFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFF
+|
+|EEEEEEEEEFFFFFF
+|EEEEEEEEEF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFF
+|
 |EEEEEEEEEFF
 |FFFFFFFFFFFFFFFFFFFFFFFFFFF
 |FFFFFFFFFFFFFFFFF
@@ -586,6 +1046,19 @@
 |10
 |
 |1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1|debug> w
+|1] sin(a): -0.5440211108893698
+|2] b: 20
 |
 |1|debug> bt
 |[1] my_gcd(a, b) at ui.jl:5
@@ -644,6 +1117,19 @@
 |FF
 |
 |EEEEEEEEEFFF
+|
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEFFFFFFFFFFFF
+|EEEEEEEEEFFFFFFF
+|EEEEEEEEEF
+|FFFFFFFF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFF
+|
+|EEEEEEEEEFFFFFF
+|EEEEEEEEEF
+|FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+|FFFFFFFF
 |
 |EEEEEEEEEFF
 |FFFFFFFFFFFFFFFFFFFFFFFFFFF

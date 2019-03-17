@@ -68,6 +68,7 @@ end
 
         run_terminal_test(@make_frame(my_gcd(10, 20)),
                           ["n\n","`", "my_gc\t\n", "a\n", UP_ARROW, UP_ARROW, UP_ARROW, CTRL_C, 
+                           "w add a\n", "w add sin(a)\n", "w add b\n", "w\n", "w rm 1\n", "w\n",
                            "bt\n", "st\n", "c\n", "c\n"],
                           "ui/history_gcd.multiout")
         
