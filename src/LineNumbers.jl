@@ -7,7 +7,6 @@ struct SourceFile
     data::Vector{UInt8}
     offsets::Vector{UInt64}
 end
-Base.length(file::SourceFile) = length(file.offsets)
 
 function SourceFile(data::AbstractString)
     offsets = UInt64[0]
@@ -28,53 +27,6 @@ function compute_line(file::SourceFile, offset::Integer)
     ind <= length(file.offsets) && file.offsets[ind] == offset ? ind : ind - 1
 end
 
-function Base.getindex(file::SourceFile, line::Int)
-    if line == length(file.offsets)
-        return file.data[(file.offsets[end]+1):end]
-    else
-        # - 1 to skip the '\n'
-        return file.data[(file.offsets[line]+1):(file.offsets[line+1]-1)]
-    end
-end
-Base.getindex(file::SourceFile, arr::AbstractArray) = [file[x] for x in arr]
 
-# LineBreaking
-
-"""
-Indexing adaptor to map from a flat byte offset to a `[line][offset]` pair.
-Optionally, off may specify a byte offset relative to which the line number and
-offset should be computed
-"""
-struct LineBreaking{T}
-    off::UInt64
-    file::SourceFile
-    obj::T
-end
-
-function indtransform(lb::LineBreaking, x::Int)
-    offline = compute_line(lb.file, lb.off)
-    line = compute_line(lb.file, x)
-    lineoffset = lb.file.offsets[line]
-    off = x - lineoffset + 1
-    if lineoffset < lb.off
-        off -= lb.off - lineoffset
-    end
-    (line - offline + 1), off
-end
-
-function Base.getindex(lb::LineBreaking, x::Int)
-    l, o = indtransform(lb, x)
-    lb.obj[l][o]
-end
-
-function Base.setindex!(lb::LineBreaking, y, x::Int)
-    l, o = indtransform(lb, x)
-    lb.obj[l][o] = y
-end
-function Base.setindex!(lb::LineBreaking, y, x::AbstractArray)
-    for i in x
-        lb[i] = y
-    end
-end
 
 end # module
