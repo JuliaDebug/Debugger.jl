@@ -5,7 +5,7 @@ end
 Base.show(io::IO, x::Suppressed) = print(io, "<suppressed ", x.item, '>')
 
 function print_var(io::IO, var::JuliaInterpreter.Variable)
-    print("  | ")
+    print(io, "  | ")
     T = typeof(var.value)
     local val
     try
