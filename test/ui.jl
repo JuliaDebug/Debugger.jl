@@ -9,6 +9,7 @@ function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UInt32,
     k = min(za, zb)
     u = unsigned(abs(a >> za))
     v = unsigned(abs(b >> zb))
+    Debugger.@bp
     while u != v
         if u > v
             u, v = v, u
@@ -66,7 +67,8 @@ end
         UP_ARROW = "\e[A"
 
         run_terminal_test(@make_frame(my_gcd(10, 20)),
-                          ["n\n","`", "a\n", UP_ARROW, UP_ARROW, CTRL_C, EOT],
+                          ["n\n","`", "my_gc\t\n", "a\n", UP_ARROW, UP_ARROW, UP_ARROW, CTRL_C, 
+                           "bt\n", "st\n", "c\n", "c\n"],
                           "ui/history_gcd.multiout")
         
         if v"1.1">= VERSION < v"1.2"

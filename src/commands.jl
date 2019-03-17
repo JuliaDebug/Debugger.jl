@@ -18,11 +18,17 @@ function show_breakpoint(io::IO, bp::BreakpointRef)
     else
         print(outbuf, "Breaking on error: ")
     end
+    code = bp.framecode
+    if code.scope isa Method
+        scope_str = sprint(locdesc, code)
+    else
+        scope_str = repr(code.scope)
+    end
     if checkbounds(Bool, bp.framecode.breakpoints, bp.stmtidx)
         lineno = linenumber(bp.framecode, bp.stmtidx)
-        print(outbuf, bp.framecode.scope, ", line ", lineno)
+        print(outbuf, scope_str, ", line ", lineno)
     else
-        print(outbuf, bp.framecode.scope, ", %", bp.stmtidx)
+        print(outbuf, scope_str, ", %", bp.stmtidx)
     end
     if bp.err !== nothing
         print(outbuf, ", ", bp.err)

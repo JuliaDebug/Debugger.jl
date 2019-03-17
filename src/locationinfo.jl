@@ -52,22 +52,26 @@ const _print_full_path = Ref(true)
 function locdesc(frame::Frame)
     sprint() do io
         if frame.framecode.scope isa Method
-            meth = frame.framecode.scope
-            argnames = frame.framecode.src.slotnames[2:meth.nargs]
-            spectypes = Any[Any for i=1:length(argnames)]
-            print(io, meth.name,'(')
-            first = true
-            for (argname, argT) in zip(argnames, spectypes)
-                first || print(io, ", ")
-                first = false
-                print(io, argname)
-                !(argT === Any) && print(io, "::", argT)
-            end
-            path = _print_full_path[] ? meth.file : string(basename(String(meth.file)), ":", meth.line)
-            path = CodeTracking.replace_buildbot_stdlibpath(String(path))
-            print(io, ") at ", path)
+            locdesc(io, frame.framecode)
         else
-            println("not yet implemented")
+            println(io, "not yet implemented")
         end
     end
+end
+
+function locdesc(io, framecode::FrameCode)
+    meth = framecode.scope
+    argnames = framecode.src.slotnames[2:meth.nargs]
+    spectypes = Any[Any for i=1:length(argnames)]
+    print(io, meth.name,'(')
+    first = true
+    for (argname, argT) in zip(argnames, spectypes)
+        first || print(io, ", ")
+        first = false
+        print(io, argname)
+        !(argT === Any) && print(io, "::", argT)
+    end
+    path = _print_full_path[] ? meth.file : string(basename(String(meth.file)), ":", meth.line)
+    path = CodeTracking.replace_buildbot_stdlibpath(String(path))
+    print(io, ") at ", path)
 end
