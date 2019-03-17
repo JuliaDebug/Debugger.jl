@@ -15,14 +15,14 @@ branches:
 
 notifications:
   email: false
- 
+
 script:
   - julia --project --color=yes -e 'using Pkg;
                         Pkg.instantiate();
                         Pkg.add([PackageSpec(name = "TerminalRegressionTests", rev = "master"),
                                  PackageSpec(name = "VT100", rev = "master")]);
                         Pkg.build();
-                        Pkg.test()'
+                        Pkg.test(coverage=true)'
 
 after_success:
   # push coverage results to Codecov
