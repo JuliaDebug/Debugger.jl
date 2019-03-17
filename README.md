@@ -4,12 +4,11 @@
 
 **Build Status**                                                                                |
 |:-----------------------------------------------------------------------------------------------:|
-| [![][travis-img]][travis-url]  |
+| [![][travis-img]][travis-url]  [![][codecov-img]][codecov-url] |
 
 ## Installation
 
 ```jl
-]add https://github.com/JuliaDebug/JuliaInterpreter.jl
 ]add https://github.com/JuliaDebug/Debugger.jl
 ```
 
