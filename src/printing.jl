@@ -211,9 +211,23 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer)
         pop!(code)
     end
 
+    # Count indentation level (only count spaces for now)
+    min_indentation = typemax(Int)
+    for textline in code
+        indent_line = 0
+        for char in textline
+            char != ' ' && break
+            indent_line += 1
+        end
+        min_indentation = min(min_indentation, indent_line)
+    end
+    for i in 1:length(code)
+        code[i] = code[i][min_indentation+1:end]
+    end
+
     for textline in code
         printstyled(io,
-            string(rpad(lineno, stoplinelength), " ");
+            string(rpad(lineno, stoplinelength), "  ");
             color = lineno == current_line ? :yellow : :bold)
         println(io, textline)
         lineno += 1
