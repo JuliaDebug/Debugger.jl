@@ -1,6 +1,6 @@
 # Issue #14
 
-using JuliaInterpreter: JuliaInterpreter, pc_expr, evaluate_call!, finish_and_return!, @lookup, enter_call_expr
+using JuliaInterpreter: JuliaInterpreter, finish_and_return!, enter_call_expr
 runframe(frame::Frame, pc=frame.pc[]) = Some{Any}(finish_and_return!(Compiled(), frame))
 
 frame = @make_frame map(x->2x, 1:10)
@@ -37,9 +37,9 @@ f_inner_break(x) = x
 JuliaInterpreter.breakpoint(f_inner_break)
 frame = @make_frame f_outer_break(2)
 state = dummy_state(frame)
-execute_command(state, Val{:so}(), "c")
+execute_command(state, Val{:c}(), "c")
 @test state.frame.framecode.scope.name === :f_inner_break
-execute_command(state, Val{:so}(), "c")
+execute_command(state, Val{:c}(), "c")
 @test state.frame === nothing
 @test state.overall_result == 2
 
@@ -72,3 +72,18 @@ end
 frame = @make_frame Test.eval(1)
 desc = Debugger.locdesc(frame)
 @test occursin(Sys.STDLIB, desc)
+
+# Test run in compiled mode
+i = Debugger.always_run_recursive_interpret[]
+try
+    JuliaInterpreter.remove()
+    Debugger.always_run_recursive_interpret[] = false
+    @test Debugger.run_in_compiled()
+    @show JuliaInterpreter._breakpoints
+    @show JuliaInterpreter.break_on_error
+    frame = @make_frame sin(2.0)
+    state = dummy_state(frame)
+    execute_command(state, Val{:c}(), "c")
+finally
+    Debugger.always_run_recursive_interpret[] = i
+end

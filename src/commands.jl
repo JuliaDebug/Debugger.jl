@@ -37,10 +37,17 @@ function show_breakpoint(io::IO, bp::BreakpointRef)
     println(io)
 end
 
+const always_run_recursive_interpret = Ref(false)
+no_chance_of_breaking() = isempty(JuliaInterpreter._breakpoints) && !JuliaInterpreter.break_on_error[]
+function run_in_compiled()
+    return no_chance_of_breaking() && !(always_run_recursive_interpret[])
+end
+
 function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so}}, cmd::AbstractString)
     assert_allow_step(state) || return false
     cmd == "so" && (cmd = "finish")
-    ret = debug_command(state.frame, Symbol(cmd))
+    mode = run_in_compiled() ? Compiled() : finish_and_return!
+    ret = debug_command(mode, state.frame, Symbol(cmd))
     if ret === nothing
         state.overall_result = get_return(root(state.frame))
         state.frame = nothing

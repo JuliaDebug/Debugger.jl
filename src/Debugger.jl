@@ -10,7 +10,7 @@ using REPL.LineEdit
 using REPL.REPLCompletions
 
 using CodeTracking
-using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root
+using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root, Compiled, finish_and_return!
 
 using JuliaInterpreter: pc_expr, moduleof, linenumber, extract_args,
                         root, caller, whereis, get_return, nstatements

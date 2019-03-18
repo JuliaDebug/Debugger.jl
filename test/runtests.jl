@@ -10,6 +10,7 @@ if !isdefined(Main, :isnothing)
 end
 
 Debugger.set_highlight(Debugger.HIGHLIGHT_OFF)
+Debugger.always_run_recursive_interpret[] = true
 
 #@testset "Main tests" begin
     include("utils.jl")
