@@ -75,11 +75,12 @@ end
 
 function breakpoint_linenumbers(frame::Frame)
     framecode = frame.framecode
-    breakpoint_lines = Int[]
+    breakpoint_lines = Dict{Int, BreakpointState}()
     for stmtidx in 1:length(framecode.breakpoints)
         isassigned(framecode.breakpoints, stmtidx) || continue
         bp = framecode.breakpoints[stmtidx]
-        push!(breakpoint_lines, JuliaInterpreter.linenumber(frame, stmtidx))
+        line = JuliaInterpreter.linenumber(frame, stmtidx)
+        breakpoint_lines[line] = bp 
     end
     return breakpoint_lines
 end
@@ -199,8 +200,14 @@ end
 
 
 const RESET = Crayon(reset = true)
+function breakpoint_char(bp::BreakpointState)
+    if bp.isactive
+        return bp.condition === JuliaInterpreter.truecondition ? '●' : '◐'
+    end
+    return bp.condition === JuliaInterpreter.falsecondition ? ' ' : '○'
+end
 
-function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer, breakpoint_lines::Vector{Int} = [])
+function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer, breakpoint_lines::Dict{Int, BreakpointState} = Dict{Int, BreakpointState}())
     code = highlight_code(code; context=io)
     file = SourceFile(code)
     startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, line+NUM_SOURCE_LINES_UP_DOWN[]; file=file)
@@ -238,12 +245,10 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer,
         code[i] = code[i][min_indentation+1:end]
     end
 
-    filter!(x -> x in(startline:stopline), breakpoint_lines)
-
     for textline in code
-        break_on_line = lineno in breakpoint_lines
+        break_on_line = haskey(breakpoint_lines, lineno)
         prefix = (" ", :normal)
-        break_on_line           && (prefix = ("●", :light_red))
+        break_on_line           && (prefix = (breakpoint_char(breakpoint_lines[lineno]), :light_red))
         lineno == current_line  && (prefix = (">", :yellow))
         printstyled(io,
             string(prefix[1], lpad(lineno, stoplinelength), "  "),
