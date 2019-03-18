@@ -202,7 +202,7 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer)
     startline = compute_line(file, startoffset)
     stopline = compute_line(file, stopoffset)
     current_line = line
-    stoplinelength = length(string(stopline))
+    stoplinelength = ndigits(stopline)
 
     code = split(code[(startoffset+1):(stopoffset+1)],'\n')
     lineno = startline
@@ -225,9 +225,14 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer)
         code[i] = code[i][min_indentation+1:end]
     end
 
+    stoplinelength += stoplinelength == ndigits(current_line)
     for textline in code
+        prefix = lineno == current_line ? ">" : 
+                        ndigits(lineno) > ndigits(current_line) ? 
+                        "" :
+                        " "
         printstyled(io,
-            string(lpad(lineno, stoplinelength), "  ");
+            string(lpad(string(prefix, lineno), stoplinelength , " "), "  "),
             color = lineno == current_line ? :yellow : :bold)
         println(io, textline)
         lineno += 1
