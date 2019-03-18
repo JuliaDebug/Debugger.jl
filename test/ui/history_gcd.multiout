@@ -29,11 +29,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -69,11 +69,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -109,11 +109,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -155,11 +155,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -207,11 +207,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -259,11 +259,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -311,11 +311,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -363,11 +363,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -419,11 +419,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -477,11 +477,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -537,11 +537,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -599,11 +599,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -671,11 +671,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -745,11 +745,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -827,11 +827,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -919,11 +919,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -955,11 +955,11 @@
 |  | T::DataType = Int64
 |1|debug> st
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -1031,11 +1031,11 @@
 |About to run: (==)(10, 0)
 |1|debug> n
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
@@ -1067,19 +1067,19 @@
 |  | T::DataType = Int64
 |1|debug> st
 |In my_gcd(a, b) at ui.jl:5
-|5   a == 0 && return abs(b)
-|6   b == 0 && return abs(a)
-|7   za = trailing_zeros(a)
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
 |1|debug> c
 |Hit breakpoint: my_gcd(a, b) at ui.jl:5, line 12
 |In my_gcd(a, b) at ui.jl:5
-|8   zb = trailing_zeros(b)
-|9   k = min(za, zb)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
 |10  u = unsigned(abs(a >> za))
 |11  v = unsigned(abs(b >> zb))
 |12  Debugger.@bp
