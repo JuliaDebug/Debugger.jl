@@ -227,7 +227,7 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer)
 
     for textline in code
         printstyled(io,
-            string(rpad(lineno, stoplinelength), "  ");
+            string(lpad(lineno, stoplinelength), "  ");
             color = lineno == current_line ? :yellow : :bold)
         println(io, textline)
         lineno += 1
