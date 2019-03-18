@@ -73,10 +73,21 @@ function print_next_expr(io::IO, frame::Frame)
     println(io)
 end
 
+function breakpoint_linenumbers(frame::Frame)
+    framecode = frame.framecode
+    breakpoint_lines = Int[]
+    for stmtidx in 1:length(framecode.breakpoints)
+        isassigned(framecode.breakpoints, stmtidx) || continue
+        bp = framecode.breakpoints[stmtidx]
+        push!(breakpoint_lines, JuliaInterpreter.linenumber(frame, stmtidx))
+    end
+    return breakpoint_lines
+end
+
 function print_status(io::IO, frame::Frame)
     # Buffer to avoid flickering
     outbuf = IOContext(IOBuffer(), io)
-    printstyled(outbuf, "In ", locdesc(frame), "\n"; color=:bold)
+    printstyled(outbuf, "In ", locdesc(frame), "\n")
     loc = locinfo(frame)
 
     if loc !== nothing
@@ -85,7 +96,8 @@ function print_status(io::IO, frame::Frame)
             else
                 read(loc.filepath, String)
             end
-        print_sourcecode(outbuf, data, loc.line, loc.defline)
+        breakpoint_lines = breakpoint_linenumbers(frame)
+        print_sourcecode(outbuf, data, loc.line, loc.defline, breakpoint_lines)
     else
         print_codeinfo(outbuf, frame)
     end
@@ -110,9 +122,9 @@ function print_codeinfo(io::IO, frame::Frame)
 
         color = (lineno < active_line) ? :white : :normal
         if lineno == active_line
-            printstyled(io, rpad(lineno, 4), bold = true, color = :yellow)
+            printstyled(io, rpad(lineno, 4), color = :yellow)
         else
-            printstyled(io, rpad(lineno, 4), bold = true, color = color)
+            printstyled(io, rpad(lineno, 4), color = color)
         end
         printstyled(io, line, color = color)
         println(io)
@@ -188,13 +200,13 @@ end
 
 const RESET = Crayon(reset = true)
 
-function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer)
+function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer, breakpoint_lines::Vector{Int} = [])
     code = highlight_code(code; context=io)
     file = SourceFile(code)
     startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, line+NUM_SOURCE_LINES_UP_DOWN[]; file=file)
 
     if startoffset == -1
-        printstyled(io, "Line out of file range (bad debug info?)", color=:bold)
+        printstyled(io, "Line out of file range (bad debug info?)")
         return
     end
 
@@ -214,6 +226,7 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer)
     # Count indentation level (only count spaces for now)
     min_indentation = typemax(Int)
     for textline in code
+        isempty(textline) && continue
         indent_line = 0
         for char in textline
             char != ' ' && break
@@ -225,15 +238,17 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer)
         code[i] = code[i][min_indentation+1:end]
     end
 
-    stoplinelength += stoplinelength == ndigits(current_line)
+    filter!(x -> x in(startline:stopline), breakpoint_lines)
+
     for textline in code
-        prefix = lineno == current_line ? ">" : 
-                        ndigits(lineno) > ndigits(current_line) ? 
-                        "" :
-                        " "
+        break_on_line = lineno in breakpoint_lines
+        prefix = (" ", :normal)
+        break_on_line           && (prefix = ("●", :light_red))
+        lineno == current_line  && (prefix = (">", :yellow))
         printstyled(io,
-            string(lpad(string(prefix, lineno), stoplinelength , " "), "  "),
-            color = lineno == current_line ? :yellow : :bold)
+            string(prefix[1], lpad(lineno, stoplinelength), "  "),
+            color = prefix[2])
+
         println(io, textline)
         lineno += 1
     end
