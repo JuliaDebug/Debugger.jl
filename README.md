@@ -68,11 +68,13 @@ julia> using Debugger, JuliaInterpreter
 julia> breakpoint(abs);
 
 julia> @run sin(2.0)
-Hit breakpoint: abs(x::Float64) in Base at float.jl:522, line 522
-In abs(x) at float.jl:522
-522   abs(x::Float64) = abs_float(x)
-523
-524   """
+Hit breakpoint:
+In abs(x) at float.jl
+>522  abs(x::Float64) = abs_float(x)
+ 523  
+ 524  """
+ 525      isnan(f) -> Bool
+ 526
 
 About to run: (abs_float)(2.0)
 1|debug> bt
@@ -94,12 +96,15 @@ julia> break_on(:error)
 
 julia> f() = "αβ"[2];
 
-> @run f()
-Breaking on error: string_index_err(s::AbstractString, i::Integer) in Base at strings/string.jl:12, line 12, StringIndexError("αβ", 2)
-In string_index_err(s, i) at strings/string.jl:12
-12  @noinline string_index_err(s::AbstractString, i::Integer) =
-13      throw(StringIndexError(s, Int(i)))
-14
+julia> @run f()
+Breaking for error:
+ERROR: StringIndexError("αβ", 2)
+In string_index_err(s, i) at strings/string.jl
+>12  @noinline string_index_err(s::AbstractString, i::Integer) =
+ 13      throw(StringIndexError(s, Int(i)))
+ 14  
+ 15  const ByteArray = Union{Vector{UInt8},Vector{Int8}}
+ 16  
 
 About to run: (throw)(StringIndexError("αβ", 2))
 1|debug> bt

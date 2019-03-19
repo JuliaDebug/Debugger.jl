@@ -2105,7 +2105,7 @@
 |
 |About to run: (===)(20, 0)
 |1|debug> c
-|Hit breakpoint: my_gcd(a, b) at ui.jl:5, line 12
+|Hit breakpoint:
 |In my_gcd(a, b) at ui.jl:5
 |  8  zb = trailing_zeros(b)
 |  9  k = min(za, zb)
@@ -2217,7 +2217,7 @@
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |EEEEEEEEEA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAA
@@ -2329,7 +2329,7 @@
 |
 |About to run: (===)(20, 0)
 |1|debug> c
-|Hit breakpoint: my_gcd(a, b) at ui.jl:5, line 12
+|Hit breakpoint:
 |In my_gcd(a, b) at ui.jl:5
 |  8  zb = trailing_zeros(b)
 |  9  k = min(za, zb)
@@ -2441,7 +2441,7 @@
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |EEEEEEEEEA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAA
