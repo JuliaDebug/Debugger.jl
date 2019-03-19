@@ -12,7 +12,7 @@ using REPL.REPLCompletions
 
 using CodeTracking
 using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState, 
-                        finish_and_return!, Compiled
+                        finish_and_return!, Compiled, callee
 
 using JuliaInterpreter: pc_expr, moduleof, linenumber, extract_args,
                         root, caller, whereis, get_return, nstatements
@@ -42,6 +42,7 @@ mutable struct DebuggerState
     level::Int
     broke_on_error::Bool
     watch_list::Vector
+    wrapper_frames::Set
     mode
     repl
     terminal
@@ -50,7 +51,7 @@ mutable struct DebuggerState
     standard_keymap
     overall_result
 end
-DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, false, WATCH_LIST, finish_and_return!, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
+DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, false, WATCH_LIST, Set(), finish_and_return!, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
 DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
 
 function toggle_mode(state)
@@ -85,6 +86,7 @@ function _make_frame(mod, arg)
         frame = JuliaInterpreter.enter_call_expr(Expr(:call,theargs...))
         frame = JuliaInterpreter.maybe_step_through_kwprep!(frame)
         frame = JuliaInterpreter.maybe_step_through_wrapper!(frame)
+        frame = JuliaInterpreter.maybe_step_through_kwprep!(frame)
         JuliaInterpreter.maybe_next_call!(frame)
         frame
     end

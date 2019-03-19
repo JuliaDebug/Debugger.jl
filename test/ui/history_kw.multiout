@@ -56,3 +56,133 @@
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In outer(a, b, c, d) at ui.jl:52
+|>52      inner_kw(a, b; c = c)
+| 53  end
+| 54  
+| 55  function inner_kw(a, b; c = 3, d = 10)
+| 56      return a + b + c + d
+|
+|About to run: (inner_kw)(1, 2; c=5)
+|1|debug> s
+|In #inner_kw#13(c, d, , a, b) at ui.jl:56
+|>56      return a + b + c + d
+| 57  end
+| 58  
+| 59  
+| 60  
+|
+|About to run: (+)(1, 2, 5, 10)
+|1|debug> n
+|In #inner_kw#13(c, d, , a, b) at ui.jl:56
+|>56      return a + b + c + d
+| 57  end
+| 58  
+| 59  
+| 60  
+|
+|About to run: return 18
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|AAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|AAAAA
+|AAAAA
+|AAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|AAAAA
+|AAAAA
+|AAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In outer(a, b, c, d) at ui.jl:52
+|>52      inner_kw(a, b; c = c)
+| 53  end
+| 54  
+| 55  function inner_kw(a, b; c = 3, d = 10)
+| 56      return a + b + c + d
+|
+|About to run: (inner_kw)(1, 2; c=5)
+|1|debug> s
+|In #inner_kw#13(c, d, , a, b) at ui.jl:56
+|>56      return a + b + c + d
+| 57  end
+| 58  
+| 59  
+| 60  
+|
+|About to run: (+)(1, 2, 5, 10)
+|1|debug> n
+|In #inner_kw#13(c, d, , a, b) at ui.jl:56
+|>56      return a + b + c + d
+| 57  end
+| 58  
+| 59  
+| 60  
+|
+|About to run: return 18
+|1|debug> n
+|In outer(a, b, c, d) at ui.jl:52
+|>52      inner_kw(a, b; c = c)
+| 53  end
+| 54  
+| 55  function inner_kw(a, b; c = 3, d = 10)
+| 56      return a + b + c + d
+|
+|About to run: return 18
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|AAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|AAAAA
+|AAAAA
+|AAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|AAAAA
+|AAAAA
+|AAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|AAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC

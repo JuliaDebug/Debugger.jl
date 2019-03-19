@@ -25,6 +25,7 @@ end
 function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so}}, cmd::AbstractString)
     assert_allow_step(state) || return false
     cmd == "so" && (cmd = "finish")
+    prev_frame = state.frame
     ret = debug_command(state.mode, state.frame, Symbol(cmd))
     if ret === nothing
         state.overall_result = get_return(root(state.frame))
@@ -32,6 +33,18 @@ function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},
         return false
     else
         state.frame, pc = ret
+
+        # Step out of wrapper calls
+        if state.frame in state.wrapper_frames
+            delete!(state.wrapper_frames, state.frame)
+            return execute_command(state, Val(:so), "so")
+        end
+
+        # Record if this was a wrapper frame
+        if cmd == "s" && prev_frame !== state.frame && prev_frame !== caller(state.frame)
+            push!(state.wrapper_frames, caller(state.frame))
+        end
+
         if pc isa BreakpointRef
             if pc.stmtidx != 0 # This is the dummy breakpoint to stop just after entering a call
                 if state.terminal !== nothing # fix this, it happens when a test hits this and hasnt set a terminal

@@ -85,7 +85,7 @@ end
                           "ui/history_gcd.multiout")
 
         run_terminal_test(@make_frame(outer(1, 2, 5, 20)),
-                          ["s\n", "c\n"],
+                          ["s\n", "n\n", "n\n", "\n"],
                           "ui/history_kw.multiout")
         
         if v"1.1">= VERSION < v"1.2"
