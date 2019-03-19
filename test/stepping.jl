@@ -214,7 +214,7 @@ f1(x) = x
 frame = @make_frame f2(1)
 state = dummy_state(frame)
 execute_command(state, Val{:s}(), "s")
-execute_command(state, Val{:fr}(), "fr 2")
+execute_command(state, Val{:fr}(), "f 2")
 @test execute_command(state, Val{:s}(), "s") == false
 @test execute_command(state, Val{:n}(), "n") == false
 @test execute_command(state, Val{:so}(), "so") == false

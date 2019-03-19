@@ -102,7 +102,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
         return false
     end
 
-    if subcmds[1] == "f"
+    if subcmds[1] == "fr"
         print_frame(Base.pipe_writer(state.terminal), new_level, state.frame)
         return false
     else
