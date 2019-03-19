@@ -36,6 +36,18 @@ function print_frame(io::IO, num::Integer, frame::Frame)
     print_locals(io, frame)
 end
 
+function pattern_match_kw_call(expr)
+    is_kw = isexpr(expr, :call) && occursin("#kw#", string(expr.args[1]))
+    is_kw || return expr
+    args = length(expr.args) >= 4 ? expr.args[4:end] : []
+    kws_nt = expr.args[2]
+    kws = []
+    for (k, w) in pairs(kws_nt)
+        push!(kws, Expr(:kw, k, w))
+    end
+    f = expr.args[3]
+    return :($f($(args...); $(kws...)))
+end
 
 function print_next_expr(io::IO, frame::Frame)
     maybe_quote(x) = (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
@@ -57,6 +69,7 @@ function print_next_expr(io::IO, frame::Frame)
             expr.args[i] = maybe_quote(val)
         end
     end
+    expr = pattern_match_kw_call(expr)
     if isa(expr, Expr)
         for (i, arg) in enumerate(expr.args)
             try
