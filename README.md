@@ -84,12 +84,12 @@ About to run: (abs_float)(2.0)
 
 #### Breakpoint on error
 
-It is possible to halt execution when an error is thrown. This is done by calling the exported function `break_on_error(true)`.
+It is possible to halt execution when an error is thrown. This is done by calling the exported function `break_on(:error)`.
 
 ```jl
 julia> using Debugger
 
-julia> break_on_error(true)
+julia> break_on(:error)
 
 julia> f() = "αβ"[2];
 
@@ -116,6 +116,13 @@ About to run: (throw)(StringIndexError("αβ", 2))
   | b::UInt8 = 0xb1
   | u::UInt32 = 0xb1000000
 [4] f() at REPL[17]:1
+
+julia> JuliaInterpreter.break_off(:error)
+
+julia> @run f()
+ERROR: StringIndexError("αβ", 2)
+Stacktrace:
+[...]
 ```
 
 ### Syntax highlighting

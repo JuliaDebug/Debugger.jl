@@ -23,11 +23,11 @@ function __init__()
     return nothing
 end
 
-export @enter, @run, break_on_error
+export @enter, @run
 
 # reexport some useful things from JuliaInterpreter
-using JuliaInterpreter: @bp, @breakpoint, breakpoint
-export @bp, @breakpoint, breakpoint
+using JuliaInterpreter: @bp, @breakpoint, breakpoint, break_on, break_off
+export @bp, @breakpoint, breakpoint, break_on, break_off
 
 include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
@@ -60,7 +60,7 @@ function active_frame(state)
     return frame
 end
 
-break_on_error(v::Bool) = JuliaInterpreter.break_on_error[] = v
+@deprecate break_on_error(v::Bool) (v ? break_on(:error) : break_off(:error))
 
 include("locationinfo.jl")
 include("repl.jl")
