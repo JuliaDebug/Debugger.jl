@@ -26,6 +26,10 @@ end
 
 @enter foo(20)
 ```
+Note: If you get the following error: ```WARNING: both Debugger and Juno export "@enter";
+ uses of it in module Main must be qualified ERROR: LoadError: LoadError: UndefVarError:
+ @enter not defined```, simply prefix your ```@enter``` command with Debugger as
+ follows: ```Debugger.@enter```. 
 
 This interface allows for manipulating program execution, such as stepping in and
 out of functions, line stepping, showing local variables, and evaluating code in
