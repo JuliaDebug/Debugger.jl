@@ -11,7 +11,8 @@ using REPL.LineEdit
 using REPL.REPLCompletions
 
 using CodeTracking
-using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState
+using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState, 
+                        finish_and_return!, Compiled
 
 using JuliaInterpreter: pc_expr, moduleof, linenumber, extract_args,
                         root, caller, whereis, get_return, nstatements
@@ -41,6 +42,7 @@ mutable struct DebuggerState
     level::Int
     broke_on_error::Bool
     watch_list::Vector
+    mode
     repl
     terminal
     main_mode
@@ -48,8 +50,12 @@ mutable struct DebuggerState
     standard_keymap
     overall_result
 end
-DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, false, WATCH_LIST, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
+DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, false, WATCH_LIST, finish_and_return!, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
 DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
+
+function toggle_mode(state)
+    state.mode = (state.mode === finish_and_return! ? (state.mode = Compiled()) : (state.mode = finish_and_return!))
+end
 
 function active_frame(state)
     frame = state.frame

@@ -47,6 +47,7 @@ Basic Commands:
     - `w rm [i::Int]`: remove all or the `i`:th watch expression
 - `o`: open the current line in an editor
 - `q`: quit the debugger, returning `nothing`
+- `C`: toggle compiled mode
 
 Advanced commands:
 - `nc`: step to the next call
@@ -117,6 +118,16 @@ About to run: (throw)(StringIndexError("αβ", 2))
   | u::UInt32 = 0xb1000000
 [4] f() at REPL[17]:1
 ```
+
+### Compiled mode
+
+In order to fully support breakpoints, the debugger interprets all code, even code that is stepped over.
+Currently, there are cases where the interpreter is too slow for this to be feasible.
+A workaround is to use "compiled mode" which is toggled by pressing `C` in the debug REPL mode (note the change of prompt color).
+When using compiled mode, code that is stepped over will be executed
+by the normal julia compiler and run just as fast as normally.
+The drawback is of course that breakpoints in code that is stepped over are missed.
+
 
 ### Syntax highlighting
 

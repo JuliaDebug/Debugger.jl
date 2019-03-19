@@ -53,8 +53,8 @@ end
         using TerminalRegressionTests
 
         function run_terminal_test(frame, commands, validation)
-            TerminalRegressionTests.automated_test(joinpath(@__DIR__, validation), commands) do emuterm
-            #TerminalRegressionTests.create_automated_test(joinpath(@__DIR__, validation), commands) do emuterm                
+            #TerminalRegressionTests.automated_test(joinpath(@__DIR__, validation), commands) do emuterm
+            TerminalRegressionTests.create_automated_test(joinpath(@__DIR__, validation), commands) do emuterm                
                 repl = REPL.LineEditREPL(emuterm, true)
                 repl.interface = REPL.setup_interface(repl)
                 repl.specialdisplay = REPL.REPLDisplay(repl)
@@ -70,7 +70,7 @@ end
                           ["n\n","`", "my_gc\t\n", "a\n", UP_ARROW, UP_ARROW, UP_ARROW, CTRL_C, 
                            "w add a\n", "w add sin(a)\n", "w add b\n", "w\n", "w rm 1\n", "w\n",
                            "s\n", "fr 1\n", "fr 2\n", "f 2\n", "f 1\n",
-                           "bt\n", "st\n", "c\n", "c\n"],
+                           "bt\n", "st\n", "C", "c\n", "C", "c\n"],
                           "ui/history_gcd.multiout")
         
         if v"1.1">= VERSION < v"1.2"
