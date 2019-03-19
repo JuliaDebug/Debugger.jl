@@ -40,7 +40,7 @@ end
 function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so}}, cmd::AbstractString)
     assert_allow_step(state) || return false
     cmd == "so" && (cmd = "finish")
-    ret = debug_command(state.frame, Symbol(cmd))
+    ret = debug_command(state.mode, state.frame, Symbol(cmd))
     if ret === nothing
         state.overall_result = get_return(root(state.frame))
         state.frame = nothing
@@ -163,6 +163,7 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
         - `w rm [i::Int]`: remove all or the `i`:th watch expression\\
     - `o`: open the current line in an editor\\
     - `q`: quit the debugger, returning `nothing`\\
+    - `C`: toggle compiled mode\\
     Advanced commands:\\
     - `nc`: step to the next call\\
     - `se`: step one expression step\\

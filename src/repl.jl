@@ -4,8 +4,10 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
     state = DebuggerState(frame, repl, terminal)
 
     # Setup debug panel
+    normal_prefix = Sys.iswindows() ? "\e[33m" : "\e[38;5;166m"
+    compiled_prefix = "\e[96m"
     panel = LineEdit.Prompt(promptname(state.level, "debug");
-        prompt_prefix = Sys.iswindows() ? "\e[33m" : "\e[38;5;166m",
+        prompt_prefix = () -> state.mode == Compiled() ? compiled_prefix : normal_prefix,
         prompt_suffix = Base.text_colors[:normal],
         on_enter = s->true)
 
@@ -65,6 +67,15 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
                 LineEdit.transition(s, prompt) do
                     LineEdit.state(s, prompt).input_buffer = buf
                 end
+            else
+                LineEdit.edit_insert(s,key)
+            end
+        end,
+        "C" => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                toggle_mode(state)
+                write(state.terminal, '\r')
+                LineEdit.write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s,key)
             end
