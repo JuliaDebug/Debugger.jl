@@ -14,27 +14,12 @@ end
 function show_breakpoint(io::IO, bp::BreakpointRef)
     outbuf = IOContext(IOBuffer(), io)
     if bp.err === nothing
-        print(outbuf, "Hit breakpoint: ")
+        print(outbuf, "Hit breakpoint:\n")
     else
-        print(outbuf, "Breaking on error: ")
-    end
-    code = bp.framecode
-    if code.scope isa Method
-        scope_str = sprint(locdesc, code)
-    else
-        scope_str = repr(code.scope)
-    end
-    if checkbounds(Bool, bp.framecode.breakpoints, bp.stmtidx)
-        lineno = linenumber(bp.framecode, bp.stmtidx)
-        print(outbuf, scope_str, ", line ", lineno)
-    else
-        print(outbuf, scope_str, ", %", bp.stmtidx)
-    end
-    if bp.err !== nothing
-        print(outbuf, ", ", bp.err)
+        print(outbuf, "Breaking for error:\n")
+        Base.display_error(outbuf, bp.err, [])
     end
     print(io, String(take!(outbuf.io)))
-    println(io)
 end
 
 function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so}}, cmd::AbstractString)
