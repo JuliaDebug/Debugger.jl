@@ -47,6 +47,17 @@ function my_gcd_noinfo(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,
 end
 """, "nope.jl")
 
+
+function outer(a, b, c, d)
+    inner_kw(a, b; c = c)
+end
+
+function inner_kw(a, b; c = 3, d = 10)
+    return a + b + c + d
+end
+
+
+
 @testset "UI" begin
     if Sys.isunix() && VERSION >= v"1.1.0"
         Debugger._print_full_path[] = false
@@ -72,6 +83,10 @@ end
                            "s\n", "fr 1\n", "fr 2\n", "f 2\n", "f 1\n",
                            "bt\n", "st\n", "C", "c\n", "C", "c\n"],
                           "ui/history_gcd.multiout")
+
+        run_terminal_test(@make_frame(outer(1, 2, 5, 20)),
+                          ["s\n", "c\n"],
+                          "ui/history_kw.multiout")
         
         if v"1.1">= VERSION < v"1.2"
             run_terminal_test(@make_frame(my_gcd_noinfo(10, 20)),
