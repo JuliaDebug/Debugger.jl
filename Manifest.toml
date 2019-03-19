@@ -5,9 +5,9 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[CodeTracking]]
 deps = ["InteractiveUtils", "Test", "UUIDs"]
-git-tree-sha1 = "983f5f7a57c604322917ab8bc5b86ba914d3c345"
+git-tree-sha1 = "2c46bc2429c88b43d80caf53151f22b85ba5a4b2"
 uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
-version = "0.3.2"
+version = "0.3.4"
 
 [[Crayons]]
 deps = ["Test"]
@@ -41,11 +41,11 @@ uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "9c1dfb5bb6b9f5fedcc873e9cbe6fe8765f70701"
+git-tree-sha1 = "1d4df77f80cb7ff450ac0c59e0b906a3713537b2"
 repo-rev = "master"
 repo-url = "https://github.com/JuliaDebug/JuliaInterpreter.jl.git"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.2.0"
+version = "0.2.1"
 
 [[LibGit2]]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
