@@ -92,7 +92,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
     else
         new_level = tryparse(Int, subcmds[2])
         if new_level == nothing
-            printstyled(stderr, "Failed to parse $(subcmds[2]) as an integer\n"; color=:red)
+            printstyled(stderr, "Failed to parse $(repr(subcmds[2])) as an integer\n"; color=:red)
             return false
         end
     end
