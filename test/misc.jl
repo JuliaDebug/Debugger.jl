@@ -65,10 +65,24 @@ try
     st = chomp(sprint(Debugger.print_status, frame; context = :color => true))
     x_1_plus_1_colored = "\e[39m\e[97mx\e[39m\e[97m \e[39m\e[91m=\e[39m\e[97m \e[39m1\e[97m \e[39m\e[91m+\e[39m\e[97m \e[39m1\e[97m"
     @test occursin(x_1_plus_1_colored, st)
-finally 
+finally
     Debugger.set_highlight(Debugger.HIGHLIGHT_OFF)
 end
 
 frame = @make_frame Test.eval(1)
 desc = Debugger.locdesc(frame)
 @test occursin(Sys.STDLIB, desc)
+
+import InteractiveUtils
+@testset "`o` command" begin
+    g() = nothing
+    LINE = (@__LINE__) - 1
+    frame = Debugger.@make_frame g()
+    state = dummy_state(frame)
+    JuliaInterpreter.breakpoint(InteractiveUtils.edit)
+    frame, bp = JuliaInterpreter.@interpret execute_command(state, Val{:o}(), "o")
+    JuliaInterpreter.remove()
+    locals = JuliaInterpreter.locals(frame)
+    @test JuliaInterpreter.Variable(@__FILE__, :file, false) in locals
+    @test JuliaInterpreter.Variable(LINE, :line, false) in locals
+end

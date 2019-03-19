@@ -28,7 +28,7 @@ end
 ```
 
 This interface allows for manipulating program execution, such as stepping in and
-out of functions, line stepping, showing local variables, and evaluating code in 
+out of functions, line stepping, showing local variables, and evaluating code in
 the context of functions.
 
 Basic Commands:
@@ -45,6 +45,7 @@ Basic Commands:
     - `w add expr`: add an expression to the watch list
     - `w`: show all watch expressions evaluated in the current function's context
     - `w rm [i::Int]`: remove all or the `i`:th watch expression
+- `o`: open the current line in an editor
 - `q`: quit the debugger, returning `nothing`
 
 Advanced commands:
@@ -69,7 +70,7 @@ julia> @run sin(2.0)
 Hit breakpoint: abs(x::Float64) in Base at float.jl:522, line 522
 In abs(x) at float.jl:522
 522   abs(x::Float64) = abs_float(x)
-523   
+523
 524   """
 
 About to run: (abs_float)(2.0)
@@ -97,7 +98,7 @@ Breaking on error: string_index_err(s::AbstractString, i::Integer) in Base at st
 In string_index_err(s, i) at strings/string.jl:12
 12  @noinline string_index_err(s::AbstractString, i::Integer) =
 13      throw(StringIndexError(s, Int(i)))
-14  
+14
 
 About to run: (throw)(StringIndexError("αβ", 2))
 1|debug> bt

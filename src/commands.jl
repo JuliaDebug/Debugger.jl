@@ -148,6 +148,7 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
         - `w add expr`: add an expression to the watch list\\
         - `w`: show all watch expressions evaluated in the current function's context\\
         - `w rm [i::Int]`: remove all or the `i`:th watch expression\\
+    - `o`: open the current line in an editor\\
     - `q`: quit the debugger, returning `nothing`\\
     Advanced commands:\\
     - `nc`: step to the next call\\
@@ -155,5 +156,21 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     - `si`: same as `se` but step into a call if a call is the next expression\\
     - `sg`: step into a generated function\\
     """)
+    return false
+end
+
+function execute_command(state::DebuggerState, ::Val{:o}, cmd::AbstractString)
+    frame = active_frame(state)
+    loc = JuliaInterpreter.whereis(frame)
+    if loc === nothing
+        printstyled(stderr, "Could not find source location\n"; color=:red)
+        return false
+    end
+    file, line = loc
+    if !isfile(file)
+        printstyled(stderr, "Could not find file: $(repr(file))\n"; color=:red)
+        return false
+    end
+    InteractiveUtils.edit(file, line)
     return false
 end
