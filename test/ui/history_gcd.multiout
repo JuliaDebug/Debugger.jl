@@ -856,8 +856,678 @@
 |1] sin(a): -0.5440211108893698
 |2] b: 20
 |
+|1|debug> s
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|DDDDDDDDDAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|DDDDDDDDDA
+|AA
+|
+|CCCCCCCCCAAA
+|
+|CCCCCCCCCAAAAAAA
+|CCCCCCCCCAAAAAAAAAAAA
+|CCCCCCCCCAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|>5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|  5  a == 0 && return abs(b)
+|> 6  b == 0 && return abs(a)
+|  7  za = trailing_zeros(a)
+|  8  zb = trailing_zeros(b)
+|  9  k = min(za, zb)
+| 10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1|debug> w
+|1] sin(a): -0.5440211108893698
+|2] b: 20
+|
+|1|debug> s
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> f 1
+|[1] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|DDDDDDDDDAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|DDDDDDDDDA
+|AA
+|
+|CCCCCCCCCAAA
+|
+|CCCCCCCCCAAAAAAA
+|CCCCCCCCCAAAAAAAAAAAA
+|CCCCCCCCCAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|>5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|  5  a == 0 && return abs(b)
+|> 6  b == 0 && return abs(a)
+|  7  za = trailing_zeros(a)
+|  8  zb = trailing_zeros(b)
+|  9  k = min(za, zb)
+| 10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1|debug> w
+|1] sin(a): -0.5440211108893698
+|2] b: 20
+|
+|1|debug> s
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> f 1
+|[1] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> f 2
+|[2] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|DDDDDDDDDAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|DDDDDDDDDA
+|AA
+|
+|CCCCCCCCCAAA
+|
+|CCCCCCCCCAAAAAAA
+|CCCCCCCCCAAAAAAAAAAAA
+|CCCCCCCCCAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|>5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|  5  a == 0 && return abs(b)
+|> 6  b == 0 && return abs(a)
+|  7  za = trailing_zeros(a)
+|  8  zb = trailing_zeros(b)
+|  9  k = min(za, zb)
+| 10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1|debug> w
+|1] sin(a): -0.5440211108893698
+|2] b: 20
+|
+|1|debug> s
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> f 1
+|[1] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> f 2
+|[2] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> fr 2
+|In my_gcd(a, b) at ui.jl:5
+|  5  a == 0 && return abs(b)
+|> 6  b == 0 && return abs(a)
+|  7  za = trailing_zeros(a)
+|  8  zb = trailing_zeros(b)
+|  9  k = min(za, zb)
+| 10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|2|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|DDDDDDDDDAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|DDDDDDDDDA
+|AA
+|
+|CCCCCCCCCAAA
+|
+|CCCCCCCCCAAAAAAA
+|CCCCCCCCCAAAAAAAAAAAA
+|CCCCCCCCCAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|>5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|  5  a == 0 && return abs(b)
+|> 6  b == 0 && return abs(a)
+|  7  za = trailing_zeros(a)
+|  8  zb = trailing_zeros(b)
+|  9  k = min(za, zb)
+| 10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1|debug> w
+|1] sin(a): -0.5440211108893698
+|2] b: 20
+|
+|1|debug> s
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> f 1
+|[1] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> f 2
+|[2] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> fr 2
+|In my_gcd(a, b) at ui.jl:5
+|  5  a == 0 && return abs(b)
+|> 6  b == 0 && return abs(a)
+|  7  za = trailing_zeros(a)
+|  8  zb = trailing_zeros(b)
+|  9  k = min(za, zb)
+| 10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|2|debug> fr 1
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|DDDDDDDDDAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|DDDDDDDDDA
+|AA
+|
+|CCCCCCCCCAAA
+|
+|CCCCCCCCCAAAAAAA
+|CCCCCCCCCAAAAAAAAAAAA
+|CCCCCCCCCAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:5
+|>5  a == 0 && return abs(b)
+| 6  b == 0 && return abs(a)
+| 7  za = trailing_zeros(a)
+| 8  zb = trailing_zeros(b)
+| 9  k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:5
+|  5  a == 0 && return abs(b)
+|> 6  b == 0 && return abs(a)
+|  7  za = trailing_zeros(a)
+|  8  zb = trailing_zeros(b)
+|  9  k = min(za, zb)
+| 10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1|debug> w add sin(a)
+|1|debug> w add b
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1|debug> w
+|1] sin(a): -0.5440211108893698
+|2] b: 20
+|
+|1|debug> s
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> f 1
+|[1] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> f 2
+|[2] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> fr 2
+|In my_gcd(a, b) at ui.jl:5
+|  5  a == 0 && return abs(b)
+|> 6  b == 0 && return abs(a)
+|  7  za = trailing_zeros(a)
+|  8  zb = trailing_zeros(b)
+|  9  k = min(za, zb)
+| 10  u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|2|debug> fr 1
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
 |1|debug> bt
-|[1] my_gcd(a, b) at ui.jl:5
+|[1] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|[2] my_gcd(a, b) at ui.jl:5
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
@@ -902,7 +1572,49 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAA
@@ -948,12 +1660,26 @@
 |1] sin(a): -0.5440211108893698
 |2] b: 20
 |
-|1|debug> bt
-|[1] my_gcd(a, b) at ui.jl:5
-|  | a::Int64 = 10
-|  | b::Int64 = 20
+|1|debug> s
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> f 1
+|[1] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
 |  | T::DataType = Int64
-|1|debug> st
+|1|debug> f 2
+|[2] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> fr 2
 |In my_gcd(a, b) at ui.jl:5
 |  5  a == 0 && return abs(b)
 |> 6  b == 0 && return abs(a)
@@ -963,6 +1689,33 @@
 | 10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
+|2|debug> fr 1
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> bt
+|[1] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|[2] my_gcd(a, b) at ui.jl:5
+|  | a::Int64 = 10
+|  | b::Int64 = 20
+|  | T::DataType = Int64
+|1|debug> st
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
 |1|debug> 
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -1004,12 +1757,26 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
-|CCCCCCCCCAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAAAA
@@ -1019,6 +1786,33 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 |In my_gcd(a, b) at ui.jl:5
@@ -1060,12 +1854,26 @@
 |1] sin(a): -0.5440211108893698
 |2] b: 20
 |
-|1|debug> bt
-|[1] my_gcd(a, b) at ui.jl:5
-|  | a::Int64 = 10
-|  | b::Int64 = 20
+|1|debug> s
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> f 1
+|[1] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
 |  | T::DataType = Int64
-|1|debug> st
+|1|debug> f 2
+|[2] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> fr 2
 |In my_gcd(a, b) at ui.jl:5
 |  5  a == 0 && return abs(b)
 |> 6  b == 0 && return abs(a)
@@ -1075,6 +1883,33 @@
 | 10  u = unsigned(abs(a >> za))
 |
 |About to run: (==)(20, 0)
+|2|debug> fr 1
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
+|1|debug> bt
+|[1] ==(x, y) at promotion.jl:403
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|[2] my_gcd(a, b) at ui.jl:5
+|  | a::Int64 = 10
+|  | b::Int64 = 20
+|  | T::DataType = Int64
+|1|debug> st
+|In ==(x, y) at promotion.jl:403
+|>403  (==)(x::T, y::T) where {T<:Number} = x === y
+| 404  (< )(x::T, y::T) where {T<:Real} = no_op_err("<" , T)
+| 405  (<=)(x::T, y::T) where {T<:Real} = no_op_err("<=", T)
+| 406  
+| 407  rem(x::T, y::T) where {T<:Real} = no_op_err("rem", T)
+|
+|About to run: (===)(20, 0)
 |1|debug> c
 |Hit breakpoint: my_gcd(a, b) at ui.jl:5, line 12
 |In my_gcd(a, b) at ui.jl:5
@@ -1131,12 +1966,26 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
-|CCCCCCCCCAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAAAA
@@ -1146,6 +1995,33 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCCA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAA

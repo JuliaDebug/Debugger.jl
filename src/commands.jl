@@ -76,23 +76,36 @@ end
 
 function stacklength(frame)
     s = 0
-    JuliaInterpreter.traverse(fr -> (s += 1; JuliaInterpreter.caller(fr)), JuliaInterpreter.leaf(frame))
+    while frame !== nothing
+        s += 1
+        frame = caller(frame)
+    end
     return s
 end
 
 execute_command(state::DebuggerState, ::Val{:st}, cmd) = true
 
 function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
-    subcmds = split(cmd,' ')[2:end]
-    if isempty(subcmds) || subcmds[1] == "v"
-        print_frame(Base.pipe_writer(state.terminal), state.level, active_frame(state))
-        return false
+    subcmds = split(cmd, ' ')
+    if length(subcmds) == 1
+        new_level = 1
     else
-        new_level = parse(Int, subcmds[1])
-        if new_level > stacklength(state.frame) || new_level < 1
-            printstyled(stderr, "Not a valid frame index\n"; color=:red)
+        new_level = tryparse(Int, subcmds[2])
+        if new_level == nothing
+            printstyled(stderr, "Failed to parse $(subcmds[2]) as an integer\n"; color=:red)
             return false
         end
+    end
+
+    if new_level > stacklength(state.frame) || new_level < 1
+        printstyled(stderr, "Not a valid frame index\n"; color=:red)
+        return false
+    end
+
+    if subcmds[1] == "f"
+        print_frame(Base.pipe_writer(state.terminal), new_level, state.frame)
+        return false
+    else
         state.level = new_level
         return true
     end
