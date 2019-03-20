@@ -58,24 +58,20 @@ Advanced commands:
 
 ### Breakpoints
 
-There are currently no designated commands in the debug mode for adding and removing breakpoints, instead they are manipulated using the API from the package JuliaInterpreter (which need to be installed). The different ways of manipulating breakpoints are documented [here](https://juliadebug.github.io/JuliaInterpreter.jl/latest/dev_reference/#Breakpoints-1).
+There are currently no designated commands in the debug mode for adding and removing breakpoints, instead they are manipulated using the API from the package JuliaInterpreter (which is reexported from Debugger). The different ways of manipulating breakpoints are documented [here](https://juliadebug.github.io/JuliaInterpreter.jl/latest/dev_reference/#Breakpoints-1).
 
 It is common to want to run a function until a breakpoint is hit. Therefore, the "shortcut macro" `@run` is provided which is equivalent
 of starting the debug mode with `@enter` and then executing the continue command (`c`):
 
 ```jl
-julia> using Debugger, JuliaInterpreter
+julia> using Debugger
 
 julia> breakpoint(abs);
 
 julia> @run sin(2.0)
 Hit breakpoint:
-In abs(x) at float.jl
+In abs(x) at float.jl:522
 >522  abs(x::Float64) = abs_float(x)
- 523  
- 524  """
- 525      isnan(f) -> Bool
- 526
 
 About to run: (abs_float)(2.0)
 1|debug> bt
@@ -100,29 +96,25 @@ julia> f() = "αβ"[2];
 julia> @run f()
 Breaking for error:
 ERROR: StringIndexError("αβ", 2)
-In string_index_err(s, i) at strings/string.jl
+In string_index_err(s, i) at strings/string.jl:12
 >12  @noinline string_index_err(s::AbstractString, i::Integer) =
- 13      throw(StringIndexError(s, Int(i)))
- 14  
- 15  const ByteArray = Union{Vector{UInt8},Vector{Int8}}
- 16  
 
 About to run: (throw)(StringIndexError("αβ", 2))
 1|debug> bt
 [1] string_index_err(s, i) at strings/string.jl:12
   | s::String = "αβ"
   | i::Int64 = 2
-[2] getindex_continued(s, i, u) at strings/string.jl:215
+[2] getindex_continued(s, i, u) at strings/string.jl:218
   | s::String = "αβ"
   | i::Int64 = 2
   | u::UInt32 = 0xb1000000
   | val::Bool = false
-[3] getindex(s, i) at strings/string.jl:208
+[3] getindex(s, i) at strings/string.jl:211
   | s::String = "αβ"
   | i::Int64 = 2
   | b::UInt8 = 0xb1
   | u::UInt32 = 0xb1000000
-[4] f() at REPL[17]:1
+[4] f() at REPL[5]:1
 
 julia> JuliaInterpreter.break_off(:error)
 
