@@ -91,25 +91,25 @@ function print_next_expr(io::IO, frame::Frame)
     println(io)
 end
 
-function breakpoint_linenumbers(frame::Frame)
+function breakpoint_linenumbers(frame::Frame; lowered=false)
     framecode = frame.framecode
     breakpoint_lines = Dict{Int, BreakpointState}()
     for stmtidx in 1:length(framecode.breakpoints)
         isassigned(framecode.breakpoints, stmtidx) || continue
         bp = framecode.breakpoints[stmtidx]
-        line = JuliaInterpreter.linenumber(frame, stmtidx)
+        line = lowered ? stmtidx : JuliaInterpreter.linenumber(frame, stmtidx)
         breakpoint_lines[line] = bp 
     end
     return breakpoint_lines
 end
 
-function print_status(io::IO, frame::Frame)
+function print_status(io::IO, frame::Frame; force_lowered=false)
     # Buffer to avoid flickering
     outbuf = IOContext(IOBuffer(), io)
     printstyled(outbuf, "In ", locdesc(frame), "\n")
     loc = locinfo(frame)
 
-    if loc !== nothing
+    if loc !== nothing && !force_lowered
         data = if isa(loc, BufferLocInfo)
                 loc.data
             else
@@ -124,6 +124,8 @@ function print_status(io::IO, frame::Frame)
     print(io, String(take!(outbuf.io)))
 end
 
+const NUM_SOURCE_LINES_UP_DOWN = Ref(5)
+
 function print_codeinfo(io::IO, frame::Frame)
     buf = IOBuffer()
     src = frame.framecode.src
@@ -133,26 +135,12 @@ function print_codeinfo(io::IO, frame::Frame)
     code = filter!(split(String(take!(buf)), '\n')) do line
         !(line == "CodeInfo(" || line == ")" || isempty(line))
     end
-
+    startline, endline = max(1, active_line - NUM_SOURCE_LINES_UP_DOWN[] + 1), min(length(code), active_line + NUM_SOURCE_LINES_UP_DOWN[]-1)
+    code = code[startline:endline]
     code .= replace.(code, Ref(r"\$\(QuoteNode\((.+?)\)\)" => s"\1"))
-
-    for (lineno, line) in enumerate(code)
-        (lineno < active_line - 3 || lineno > active_line + 2) && continue
-
-        color = (lineno < active_line) ? :white : :normal
-        if lineno == active_line
-            printstyled(io, rpad(lineno, 4), color = :yellow)
-        else
-            printstyled(io, rpad(lineno, 4), color = color)
-        end
-        printstyled(io, line, color = color)
-        println(io)
-    end
-    println(io)
+    breakpoint_lines = breakpoint_linenumbers(frame; lowered=true)
+    print_lines(io, code, active_line, breakpoint_lines, startline)
 end
-
-
-const NUM_SOURCE_LINES_UP_DOWN = Ref(5)
 
 """
 Determine the offsets in the source code to print, based on the offset of the
@@ -164,7 +152,7 @@ function compute_source_offsets(code::String, offset::Integer, startline::Intege
     if offsetline - NUM_SOURCE_LINES_UP_DOWN[] > length(file.offsets) || startline > length(file.offsets)
         return -1, -1
     end
-    startoffset = max(file.offsets[max(offsetline - NUM_SOURCE_LINES_UP_DOWN[], 1)], startline == 0 ? 0 : file.offsets[startline])
+    startoffset = max(file.offsets[max(offsetline - NUM_SOURCE_LINES_UP_DOWN[] + 1, 1)], startline == 0 ? 0 : file.offsets[startline])
     stopoffset = lastindex(code)-1
     if offsetline + NUM_SOURCE_LINES_UP_DOWN[] < lastindex(file.offsets)
         stopoffset = min(stopoffset, file.offsets[offsetline + NUM_SOURCE_LINES_UP_DOWN[]] - 1)
@@ -237,16 +225,16 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer,
 
     # Compute necessary data for line numbering
     startline = compute_line(file, startoffset)
-    stopline = compute_line(file, stopoffset)
-    current_line = line
-    stoplinelength = ndigits(stopline)
 
     code = split(code[(startoffset+1):(stopoffset+1)],'\n')
-    lineno = startline
+    print_lines(io, code, line, breakpoint_lines, startline)
+end
 
+function print_lines(io, code, current_line, breakpoint_lines, startline)
     if !isempty(code) && isempty(code[end])
         pop!(code)
     end
+    stopline = startline + length(code) - 1
 
     # Count indentation level (only count spaces for now)
     min_indentation = typemax(Int)
@@ -262,7 +250,8 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer,
     for i in 1:length(code)
         code[i] = code[i][min_indentation+1:end]
     end
-
+    lineno = startline
+    stoplinelength = ndigits(stopline)
     for textline in code
         break_on_line = haskey(breakpoint_lines, lineno)
         prefix = (" ", :normal)

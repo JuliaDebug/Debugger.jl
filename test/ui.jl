@@ -27,6 +27,7 @@ end
 include_string(@__MODULE__, """
 function my_gcd_noinfo(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UInt32,Int64,UInt64,Int128,UInt128}
     a == 0 && return abs(b)
+    Debugger.@bp
     b == 0 && return abs(a)
     za = trailing_zeros(a)
     zb = trailing_zeros(b)
@@ -46,7 +47,6 @@ function my_gcd_noinfo(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,
     r % T
 end
 """, "nope.jl")
-
 
 function outer(a, b, c, d)
     inner_kw(a, b; c = c)

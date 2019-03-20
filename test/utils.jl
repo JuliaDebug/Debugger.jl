@@ -1,4 +1,4 @@
-dummy_state(stack) = Debugger.DebuggerState(stack, nothing)
+dummy_state(frame) = Debugger.DebuggerState(; frame=frame)
 
 # Steps through the whole expression using `s`
 function step_through(frame)
