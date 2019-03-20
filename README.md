@@ -9,7 +9,7 @@
 ## Installation
 
 ```jl
-]add https://github.com/JuliaDebug/Debugger.jl
+]add Debugger
 ```
 
 ## Usage
