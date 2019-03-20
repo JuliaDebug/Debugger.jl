@@ -65,18 +65,20 @@ end
 # Used for the tests
 const _print_full_path = Ref(true)
 
-function locdesc(frame::Frame)
+function locdesc(frame::Frame; current_line=false)
     sprint() do io
         if frame.framecode.scope isa Method
-            locdesc(io, frame.framecode)
+            locdesc(io, frame; current_line=current_line)
         else
             println(io, "not yet implemented")
         end
     end
 end
 
-function locdesc(io, framecode::FrameCode)
+function locdesc(io, frame::Frame; current_line=false)
+    framecode = frame.framecode
     meth = framecode.scope
+    @assert meth isa Method
     argnames = framecode.src.slotnames[2:meth.nargs]
     spectypes = Any[Any for i=1:length(argnames)]
     print(io, meth.name,'(')
@@ -87,7 +89,8 @@ function locdesc(io, framecode::FrameCode)
         print(io, argname)
         !(argT === Any) && print(io, "::", argT)
     end
-    path = _print_full_path[] ? meth.file : string(basename(String(meth.file)), ":", meth.line)
+    line = current_line ? JuliaInterpreter.linenumber(frame) : meth.line
+    path = string(_print_full_path[] ? meth.file : basename(String(meth.file)), ":", line)
     path = CodeTracking.replace_buildbot_stdlibpath(String(path))
     print(io, ") at ", path)
 end

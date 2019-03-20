@@ -54,7 +54,7 @@ function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
     frame = state.frame
     while frame !== nothing
         num += 1
-        print_frame(Base.pipe_writer(state.terminal), num, frame)
+        print_frame(Base.pipe_writer(state.terminal), num, frame; current_line=true)
         frame = caller(frame)
     end
     println()
