@@ -1,7 +1,7 @@
 
 promptname(level, name) = "$level|$name> "
 function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl.t; initial_continue=false)
-    state = DebuggerState(frame, repl, terminal)
+    state = DebuggerState(; frame=frame, repl=repl, terminal=terminal)
 
     # Setup debug panel
     normal_prefix = Sys.iswindows() ? "\e[33m" : "\e[38;5;166m"

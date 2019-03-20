@@ -37,21 +37,19 @@ using .LineNumbers: SourceFile, compute_line
 # watch expressions between invocations of the debugger interface
 const WATCH_LIST = []
 
-mutable struct DebuggerState
+Base.@kwdef mutable struct DebuggerState
     frame::Union{Nothing, Frame}
-    level::Int
-    broke_on_error::Bool
-    watch_list::Vector
-    mode
-    repl
-    terminal
-    main_mode
-    julia_prompt::Ref{LineEdit.Prompt}
-    standard_keymap
-    overall_result
+    level::Int = 1
+    broke_on_error::Bool = false
+    watch_list::Vector = WATCH_LIST
+    mode = finish_and_return!
+    repl = nothing
+    terminal = nothing
+    main_mode = nothing
+    julia_prompt::Ref{LineEdit.Prompt} = Ref{LineEdit.Prompt}()
+    standard_keymap = nothing
+    overall_result = nothing
 end
-DebuggerState(stack, repl, terminal) = DebuggerState(stack, 1, false, WATCH_LIST, finish_and_return!, repl, terminal, nothing, Ref{LineEdit.Prompt}(), nothing, nothing)
-DebuggerState(stack, repl) = DebuggerState(stack, repl, nothing)
 
 function toggle_mode(state)
     state.mode = (state.mode === finish_and_return! ? (state.mode = Compiled()) : (state.mode = finish_and_return!))
