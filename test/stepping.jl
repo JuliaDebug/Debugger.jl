@@ -177,8 +177,6 @@ frame = @make_frame f(2, bar=4)
 state = dummy_state(frame)
 execute_command(state, Val{:n}(), "nc")
 execute_command(state, Val{:n}(), "nc")
-# Step out of the wrapper, perhaps should be automatic
-execute_command(state, Val{:n}(), "nc")
 @test isnothing(state.frame)
 @test state.overall_result == 6
 
