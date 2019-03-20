@@ -19,8 +19,6 @@ function print_var(io::IO, var::JuliaInterpreter.Variable)
     println(io, highlight_code(string(var.name, "::", T, " = ", val); context=io))
 end
 
-print_locdesc(io::IO, frame::Frame) = println(io, locdesc(frame))
-
 function print_locals(io::IO, frame::Frame)
     vars = JuliaInterpreter.locals(frame)
     for var in vars
@@ -30,9 +28,9 @@ function print_locals(io::IO, frame::Frame)
     end
 end
 
-function print_frame(io::IO, num::Integer, frame::Frame)
+function print_frame(io::IO, num::Integer, frame::Frame; current_line=false)
     print(io, "[$num] ")
-    print_locdesc(io, frame)
+    println(io, locdesc(frame; current_line=current_line))
     print_locals(io, frame)
 end
 

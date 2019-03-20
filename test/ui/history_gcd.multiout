@@ -1471,7 +1471,7 @@
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:6
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
@@ -1631,7 +1631,7 @@
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:6
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
@@ -1801,7 +1801,7 @@
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:6
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
@@ -1971,7 +1971,7 @@
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:6
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
@@ -2169,7 +2169,7 @@
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:6
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
