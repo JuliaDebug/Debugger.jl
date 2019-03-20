@@ -2107,7 +2107,6 @@
 |1|debug> c
 |Hit breakpoint:
 |In my_gcd(a, b) at ui.jl:5
-|  8  zb = trailing_zeros(b)
 |  9  k = min(za, zb)
 | 10  u = unsigned(abs(a >> za))
 | 11  v = unsigned(abs(b >> zb))
@@ -2219,7 +2218,6 @@
 |EEEEEEEEEA
 |AAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -2331,7 +2329,6 @@
 |1|debug> c
 |Hit breakpoint:
 |In my_gcd(a, b) at ui.jl:5
-|  8  zb = trailing_zeros(b)
 |  9  k = min(za, zb)
 | 10  u = unsigned(abs(a >> za))
 | 11  v = unsigned(abs(b >> zb))
@@ -2443,7 +2440,6 @@
 |EEEEEEEEEA
 |AAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA

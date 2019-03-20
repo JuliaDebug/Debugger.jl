@@ -48,6 +48,7 @@ Basic Commands:
 - `o`: open the current line in an editor
 - `q`: quit the debugger, returning `nothing`
 - `C`: toggle compiled mode
+- `L`: toggle showing lowered code instead of source code
 
 Advanced commands:
 - `nc`: step to the next call

@@ -42,6 +42,7 @@ Base.@kwdef mutable struct DebuggerState
     level::Int = 1
     broke_on_error::Bool = false
     watch_list::Vector = WATCH_LIST
+    lowered_status::Bool = false
     mode = finish_and_return!
     repl = nothing
     terminal = nothing
@@ -54,6 +55,8 @@ end
 function toggle_mode(state)
     state.mode = (state.mode === finish_and_return! ? (state.mode = Compiled()) : (state.mode = finish_and_return!))
 end
+
+toggle_lowered(state) = state.lowered_status = !state.lowered_status
 
 function active_frame(state)
     frame = state.frame

@@ -42,7 +42,9 @@ function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},
                 state.broke_on_error = true
             end
         end
-        JuliaInterpreter.maybe_next_call!(state.frame)
+        if pc_expr(state.frame) === nothing # happens when stopping for @bp
+            JuliaInterpreter.maybe_next_call!(state.frame)
+        end
         return true
     end
 end

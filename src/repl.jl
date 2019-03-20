@@ -53,7 +53,7 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
             return false
         end
         if do_print_status
-            print_status(Base.pipe_writer(terminal), active_frame(state))
+            print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered = state.lowered_status)
         end
         return true
     end
@@ -79,7 +79,17 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
             else
                 LineEdit.edit_insert(s,key)
             end
+        end,
+        "L" => function (s, args...)
+        if isempty(s) || position(LineEdit.buffer(s)) == 0
+            toggle_lowered(state)
+            println(Base.pipe_writer(terminal))
+            print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+            LineEdit.write_prompt(state.terminal, panel)
+        else
+            LineEdit.edit_insert(s,key)
         end
+    end
     )
 
     state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
@@ -89,7 +99,7 @@ function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl
         execute_command(state, Val(:c), "c")
         state.frame === nothing && return state.overall_result
     end
-    print_status(Base.pipe_writer(terminal), active_frame(state))
+    print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
     REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
 
     return state.overall_result
