@@ -83,6 +83,7 @@ function _make_frame(mod, arg)
     quote
         theargs = $(esc(args))
         frame = JuliaInterpreter.enter_call_expr(Expr(:call,theargs...))
+        frame = JuliaInterpreter.maybe_step_through_kwprep!(frame)
         frame = JuliaInterpreter.maybe_step_through_wrapper!(frame)
         JuliaInterpreter.maybe_next_call!(frame)
         frame
