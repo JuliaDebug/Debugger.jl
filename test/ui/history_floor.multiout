@@ -1,0 +1,90 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_end(x) at ui.jl:63
+|>63      x = 3 + 3
+| 64      return sin(x)
+| 65  end
+|
+|About to run: (+)(3, 3)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_end(x) at ui.jl:63
+|>63      x = 3 + 3
+| 64      return sin(x)
+| 65  end
+|
+|About to run: (+)(3, 3)
+|1|debug> n
+|In f_end(x) at ui.jl:63
+| 63      x = 3 + 3
+|>64      return sin(x)
+| 65  end
+|
+|About to run: (sin)(6)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_end(x) at ui.jl:63
+|>63      x = 3 + 3
+| 64      return sin(x)
+| 65  end
+|
+|About to run: (+)(3, 3)
+|1|debug> n
+|In f_end(x) at ui.jl:63
+| 63      x = 3 + 3
+|>64      return sin(x)
+| 65  end
+|
+|About to run: (sin)(6)
+|1|debug> n
+|In f_end(x) at ui.jl:63
+| 63      x = 3 + 3
+|>64      return sin(x)
+| 65  end
+|
+|About to run: return -0.27941549819892586
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC

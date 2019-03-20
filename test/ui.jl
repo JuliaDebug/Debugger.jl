@@ -58,6 +58,14 @@ end
 
 
 
+
+function f_end(x)
+    x = 3 + 3
+    return sin(x)
+end
+"we don't want to see this in the source code printing"
+
+
 @testset "UI" begin
     if Sys.isunix() && VERSION >= v"1.1.0"
         Debugger._print_full_path[] = false
@@ -87,6 +95,10 @@ end
         run_terminal_test(@make_frame(outer(1, 2, 5, 20)),
                           ["s\n", "c\n"],
                           "ui/history_kw.multiout")
+
+        run_terminal_test(@make_frame(f_end(2)),
+                          ["n\n", "n\n", "n\n"],
+                          "ui/history_floor.multiout")
         
         if v"1.1">= VERSION < v"1.2"
             run_terminal_test(@make_frame(my_gcd_noinfo(10, 20)),

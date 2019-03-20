@@ -116,7 +116,7 @@ function print_status(io::IO, frame::Frame; force_lowered=false)
                 read(loc.filepath, String)
             end
         breakpoint_lines = breakpoint_linenumbers(frame)
-        print_sourcecode(outbuf, data, loc.line, loc.defline, breakpoint_lines)
+        print_sourcecode(outbuf, data, loc.line, loc.defline, loc.endline, breakpoint_lines)
     else
         print_codeinfo(outbuf, frame)
     end
@@ -157,7 +157,7 @@ function compute_source_offsets(code::String, offset::Integer, startline::Intege
     if offsetline + NUM_SOURCE_LINES_UP_DOWN[] < lastindex(file.offsets)
         stopoffset = min(stopoffset, file.offsets[offsetline + NUM_SOURCE_LINES_UP_DOWN[]] - 1)
     end
-    if stopline + 1 < lastindex(file.offsets)
+    if stopline + 1 <= lastindex(file.offsets)
         stopoffset = min(stopoffset, file.offsets[stopline + 1] - 1)
     end
     startoffset, stopoffset
@@ -213,10 +213,11 @@ function breakpoint_char(bp::BreakpointState)
     return bp.condition === JuliaInterpreter.falsecondition ? ' ' : '○'
 end
 
-function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer, breakpoint_lines::Dict{Int, BreakpointState} = Dict{Int, BreakpointState}())
+function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer, endline::Integer, breakpoint_lines::Dict{Int, BreakpointState} = Dict{Int, BreakpointState}())
     code = highlight_code(code; context=io)
     file = SourceFile(code)
-    startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, line+NUM_SOURCE_LINES_UP_DOWN[]; file=file)
+    stopline = min(endline, line + NUM_SOURCE_LINES_UP_DOWN[])
+    startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, stopline; file=file)
 
     if startoffset == -1
         printstyled(io, "Line out of file range (bad debug info?)")
