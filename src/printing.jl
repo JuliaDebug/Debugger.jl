@@ -37,7 +37,12 @@ function print_frame(io::IO, num::Integer, frame::Frame)
 end
 
 function pattern_match_kw_call(expr)
-    is_kw = isexpr(expr, :call) && occursin("#kw#", string(expr.args[1]))
+    if isexpr(expr, :call)
+        f = string(expr.args[1])
+        is_kw = occursin("#kw#", f) || (startswith(f, "#") && endswith(f, "_kw"))
+    else
+        is_kw = false
+    end
     is_kw || return expr
     args = length(expr.args) >= 4 ? expr.args[4:end] : []
     kws_nt = expr.args[2]
