@@ -90,7 +90,13 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
     end
 
     if subcmds[1] == "fr"
-        print_frame(Base.pipe_writer(state.terminal), new_level, state.frame)
+        old_level = state.level
+        try
+            state.level = new_level
+            print_frame(Base.pipe_writer(state.terminal), new_level, active_frame(state))
+        finally
+            state.level = old_level
+        end
         return false
     else
         state.level = new_level
