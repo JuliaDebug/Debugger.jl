@@ -7,6 +7,10 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         end
         repl = Base.active_repl
     end
+    if !isa(repl, REPL.LineEditREPL)
+        error("Debugger.jl requires a LineEditREPL type of REPL")
+    end
+
     if terminal === nothing
         terminal = Base.active_repl.t
     end
