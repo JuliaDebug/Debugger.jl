@@ -11,7 +11,7 @@ end
 function SourceFile(data::AbstractString)
     offsets = UInt64[0]
     buf = IOBuffer(data)
-    local line
+    line = ""
     while !eof(buf)
         line = readuntil(buf,'\n')
         !eof(buf) && push!(offsets, position(buf))
