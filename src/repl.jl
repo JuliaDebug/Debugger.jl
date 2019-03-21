@@ -1,6 +1,15 @@
 
 promptname(level, name) = "$level|$name> "
-function RunDebugger(frame, repl = Base.active_repl, terminal = Base.active_repl.t; initial_continue=false)
+function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue=false)
+    if repl === nothing
+        if !isdefined(Base, :active_repl)
+            error("Debugger.jl needs to be run in a Julia REPL")
+        end
+        repl = Base.active_repl
+    end
+    if terminal === nothing
+        terminal = Base.active_repl.t
+    end
     state = DebuggerState(; frame=frame, repl=repl, terminal=terminal)
 
     # Setup debug panel
