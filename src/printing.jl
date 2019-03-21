@@ -55,7 +55,6 @@ function pattern_match_kw_call(expr)
 end
 
 function print_next_expr(io::IO, frame::Frame)
-    maybe_quote(x) = (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
     expr = pc_expr(frame)
     @assert expr !== nothing
     print(io, "About to run: ")
@@ -98,7 +97,7 @@ function breakpoint_linenumbers(frame::Frame; lowered=false)
         isassigned(framecode.breakpoints, stmtidx) || continue
         bp = framecode.breakpoints[stmtidx]
         line = lowered ? stmtidx : JuliaInterpreter.linenumber(frame, stmtidx)
-        breakpoint_lines[line] = bp 
+        breakpoint_lines[line] = bp
     end
     return breakpoint_lines
 end

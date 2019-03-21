@@ -33,3 +33,9 @@ evalkw(x; bar=true) = x
 frame = @make_frame evalkw(2)
 res = eval_code(frame, "x")
 @test res == 2
+
+# Evaling with symbols
+evalsym() = (x = :foo)
+frame = @make_frame evalkw(2)
+res = eval_code(frame, "x")
+@test res == :foo
