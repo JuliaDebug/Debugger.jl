@@ -69,6 +69,8 @@ end
 
 @deprecate break_on_error(v::Bool) (v ? break_on(:error) : break_off(:error))
 
+maybe_quote(x) = (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
+
 include("locationinfo.jl")
 include("repl.jl")
 include("commands.jl")

@@ -179,7 +179,7 @@ function eval_code(frame::Frame, command::AbstractString)
     vars = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
     res = gensym()
     eval_expr = Expr(:let,
-        Expr(:block, map(x->Expr(:(=), x...), [(v.name, v.value) for v in vars])...),
+        Expr(:block, map(x->Expr(:(=), x...), [(v.name, maybe_quote(v.value)) for v in vars])...),
         Expr(:block,
             Expr(:(=), res, expr),
             Expr(:tuple, res, Expr(:tuple, [v.name for v in vars]...))

@@ -16,7 +16,7 @@ function show_watch_list(io, state::DebuggerState)
     for (i, expr) in enumerate(state.watch_list)
         vars = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
         eval_expr = Expr(:let,
-            Expr(:block, map(x->Expr(:(=), x...), [(v.name, v.value) for v in vars])...),
+            Expr(:block, map(x->Expr(:(=), x...), [(v.name, maybe_quote(v.value)) for v in vars])...),
             expr)
         errored = false
         res = try

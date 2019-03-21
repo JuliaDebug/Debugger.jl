@@ -33,3 +33,16 @@ evalkw(x; bar=true) = x
 frame = @make_frame evalkw(2)
 res = eval_code(frame, "x")
 @test res == 2
+
+# Evaling with symbols
+evalsym() = (x = :foo)
+frame = @make_frame evalsym()
+res = eval_code(frame, "x")
+@test res == :foo
+
+frame = Debugger.@make_frame evalsym()
+state = dummy_state(frame)
+Debugger.add_watch_entry!(state, "x")
+watch_str = sprint(Debugger.show_watch_list, state)
+@test occursin("1] x: :foo", watch_str)
+Debugger.clear_watch_list!(state)
