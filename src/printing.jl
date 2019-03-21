@@ -113,7 +113,11 @@ function print_status(io::IO, frame::Frame; force_lowered=false)
                 read(loc.filepath, String)
             end
         breakpoint_lines = breakpoint_linenumbers(frame)
-        print_sourcecode(outbuf, data, loc.line, loc.defline, loc.endline, breakpoint_lines)
+        ok = print_sourcecode(outbuf, data, loc.line, loc.defline, loc.endline, breakpoint_lines)
+        if !ok
+            printstyled(io, "failed to lookup source code in $(repr(loc.filepath)), showing lowered code:\n"; color=Base.warn_color())
+            print_codeinfo(outbuf, frame)
+        end
     else
         print_codeinfo(outbuf, frame)
     end
@@ -214,6 +218,9 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer,
     code = highlight_code(code; context=io)
     file = SourceFile(code)
     stopline = min(endline, line + NUM_SOURCE_LINES_UP_DOWN[])
+    if !checkbounds(Bool, file.offsets, line)
+        return false
+    end
     startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, stopline; file=file)
 
     if startoffset == -1
@@ -226,6 +233,7 @@ function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer,
 
     code = split(code[(startoffset+1):(stopoffset+1)],'\n')
     print_lines(io, code, line, breakpoint_lines, startline)
+    return true
 end
 
 function print_lines(io, code, current_line, breakpoint_lines, startline)
