@@ -101,26 +101,28 @@ end
 function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
     # TODO show some info messages?
     cmds = split(cmd)
+    success_and_show = false
     if length(cmds) == 1
-        io = Base.pipe_writer(state.terminal)
-        show_watch_list(io, state)
-        return false
+        success_and_show = true
     elseif length(cmds) >= 2
         if cmds[2] == "rm"
             if length(cmds) == 2
                 clear_watch_list!(state)
-                return false
+                success_and_show = true
             elseif length(cmds) == 3
                 i = parse(Int, cmds[3])
                 clear_watch_list!(state, i)
-                return false
+                success_and_show = true
             end
         end
         if cmds[2] == "add"
-            if add_watch_entry!(state, join(cmds[3:end]))
-            end
-            return false
+            success_and_show = add_watch_entry!(state, join(cmds[3:end]))
         end
+    end
+    if success_and_show
+        io = Base.pipe_writer(state.terminal)
+        show_watch_list(io, state)
+        return false
     end
     # Error
     return execute_command(state, Val(:_), cmd)

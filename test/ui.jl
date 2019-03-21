@@ -86,7 +86,7 @@ end
         UP_ARROW = "\e[A"
 
         run_terminal_test(@make_frame(my_gcd(10, 20)),
-                          ["n\n","`", "my_gc\t\n", "a\n", UP_ARROW, UP_ARROW, UP_ARROW, CTRL_C, 
+                          ["n\n","`", "my_gc\t\n", "a\n", UP_ARROW, UP_ARROW, UP_ARROW, CTRL_C,
                            "w add a\n", "w add sin(a)\n", "w add b\n", "w\n", "w rm 1\n", "w\n",
                            "s\n", "fr 1\n", "fr 2\n", "f 2\n", "f 1\n",
                            "bt\n", "st\n", "C", "c\n", "C", "c\n"],
@@ -99,7 +99,7 @@ end
         run_terminal_test(@make_frame(f_end(2)),
                           ["n\n", "n\n", "n\n"],
                           "ui/history_floor.multiout")
-        
+
         if v"1.1">= VERSION < v"1.2"
             run_terminal_test(@make_frame(my_gcd_noinfo(10, 20)),
                             ["n\n","`", "a\n", UP_ARROW, UP_ARROW, CTRL_C, EOT],
