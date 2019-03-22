@@ -157,8 +157,9 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
         - `w`: show all watch expressions evaluated in the current function's context\\
         - `w rm [i::Int]`: remove all or the `i`:th watch expression\\
     - `o`: open the current line in an editor\\
-    - `q`: quit the debugger, returning `nothing`\\
     - `C`: toggle compiled mode\\
+    - `L`: toggle showing lowered code instead of source code\\
+    - `q`: quit the debugger, returning `nothing`\\
     Advanced commands:\\
     - `nc`: step to the next call\\
     - `se`: step one expression step\\
