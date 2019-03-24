@@ -1,11 +1,11 @@
 
 function assert_allow_step(state)
     if state.broke_on_error
-        printstyled(stderr, "Cannot step after breaking on error\n"; color=:red)
+        printstyled(stderr, "Cannot step after breaking on error\n"; color=Base.error_color())
         return false
     end
     if state.level != 1
-        printstyled(stderr, "Cannot step in a non leaf frame\n"; color=:red)
+        printstyled(stderr, "Cannot step in a non leaf frame\n"; color=Base.error_color())
         return false
     end
     return true
@@ -83,13 +83,13 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
     else
         new_level = tryparse(Int, subcmds[2])
         if new_level == nothing
-            printstyled(stderr, "Failed to parse $(repr(subcmds[2])) as an integer\n"; color=:red)
+            printstyled(stderr, "Failed to parse $(repr(subcmds[2])) as an integer\n"; color=Base.error_color())
             return false
         end
     end
 
     if new_level > stacklength(state.frame) || new_level < 1
-        printstyled(stderr, "Not a valid frame index\n"; color=:red)
+        printstyled(stderr, "Not a valid frame index\n"; color=Base.error_color())
         return false
     end
 
@@ -177,12 +177,12 @@ function execute_command(state::DebuggerState, ::Val{:o}, cmd::AbstractString)
     frame = active_frame(state)
     loc = JuliaInterpreter.whereis(frame)
     if loc === nothing
-        printstyled(stderr, "Could not find source location\n"; color=:red)
+        printstyled(stderr, "Could not find source location\n"; color=Base.error_color())
         return false
     end
     file, line = loc
     if !isfile(file)
-        printstyled(stderr, "Could not find file: $(repr(file))\n"; color=:red)
+        printstyled(stderr, "Could not find file: $(repr(file))\n"; color=Base.error_color())
         return false
     end
     InteractiveUtils.edit(file, line)
