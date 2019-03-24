@@ -28,7 +28,7 @@ export @enter, @run
 
 # reexport some useful things from JuliaInterpreter
 using JuliaInterpreter: @bp, @breakpoint, breakpoint, break_on, break_off
-export @bp, @breakpoint, breakpoint, break_on, break_off
+export @bp, @breakpoint, breakpoint, break_on, break_off, remove, disable
 
 include("LineNumbers.jl")
 using .LineNumbers: SourceFile, compute_line
