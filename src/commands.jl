@@ -23,6 +23,8 @@ function show_breakpoint(io::IO, bp::BreakpointRef)
 end
 
 function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so}}, cmd::AbstractString)
+    # These commands take no arguments
+    length(split(cmd)) == 1 || return execute_command(state, Val(:_), cmd) # print error
     assert_allow_step(state) || return false
     cmd == "so" && (cmd = "finish")
     ret = debug_command(state.mode, state.frame, Symbol(cmd))
