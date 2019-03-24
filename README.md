@@ -39,7 +39,7 @@ Basic Commands:
 - `c`: continue execution until a breakpoint is hit
 - `bt`: show a simple backtrace
 - ``` `stuff ```: run `stuff` in the current function's context
-- `fr [v::Int]`: show all variables in the current function, `v` defaults to `1`
+- `fr [v::Int]`: show all variables in the current or `v`th frame
 - `f [n::Int]`: go to the `n`-th function in the call stack
 - `w`
     - `w add expr`: add an expression to the watch list

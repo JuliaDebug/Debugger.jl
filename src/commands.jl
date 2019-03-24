@@ -75,7 +75,11 @@ execute_command(state::DebuggerState, ::Val{:st}, cmd) = true
 function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
     subcmds = split(cmd, ' ')
     if length(subcmds) == 1
-        new_level = 1
+        if cmd == "f"
+            new_level = 1
+        else
+            new_level = state.level
+        end
     else
         new_level = tryparse(Int, subcmds[2])
         if new_level == nothing
@@ -150,7 +154,7 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     - `c`: continue execution until a breakpoint is hit\\
     - `bt`: show a simple backtrace\\
     - ``` `stuff ```: run `stuff` in the current function's context\\
-    - `fr [v::Int]`: show all variables in the current frame, `v` defaults to `1`\\
+    - `fr [v::Int]`: show all variables in the current or `v`th frame\\
     - `f [n::Int]`: go to the `n`-th frame\\
     - `w`\\
         - `w add expr`: add an expression to the watch list\\

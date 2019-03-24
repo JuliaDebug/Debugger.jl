@@ -123,7 +123,7 @@ function julia_prompt(state::DebuggerState)
     # Return early if this has already been called on the state
     isassigned(state.julia_prompt) && return state.julia_prompt[]
 
-    julia_prompt = LineEdit.Prompt(promptname(state.level, "julia");
+    julia_prompt = LineEdit.Prompt(() -> promptname(state.level, "julia");
         # Copy colors from the prompt object
         prompt_prefix = state.repl.prompt_color,
         prompt_suffix = (state.repl.envcolors ? Base.input_color : state.repl.input_color),
