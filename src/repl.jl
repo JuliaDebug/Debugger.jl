@@ -50,11 +50,19 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         do_print_status = try
             execute_command(state, Val{Symbol(cmd1)}(), command)
         catch err
-            # No point showing an internal stacktrace
-            Base.display_error(Base.pipe_writer(terminal), err, [])
+            # This will only show the stacktrae up to the current frame because
+            # currently, the unwinding in JuliaInterpreter unlinks the frames to
+            # where the error is thrown
+
+            # Buffer error printing
+            io = IOContext(IOBuffer(), Base.pipe_writer(terminal))
+            Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
+            print(Base.pipe_writer(terminal), String(take!(io.io)))
+            # Comment below out if you are debugging the Debugger
+            # Base.display_error(Base.pipe_writer(terminal), err, catch_backtrace())
             LineEdit.transition(s, :abort)
             LineEdit.reset_state(s)
-            return false
+           return false
         end
         if old_level != state.level
             panel.prompt = promptname(state.level, "debug")
@@ -109,7 +117,15 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
     if initial_continue
-        execute_command(state, Val(:c), "c")
+        try
+            execute_command(state, Val(:c), "c")
+        catch err
+            # Buffer error printing
+            io = IOContext(IOBuffer(), Base.pipe_writer(terminal))
+            Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
+            print(Base.pipe_writer(terminal), String(take!(io.io)))
+            return
+        end
         state.frame === nothing && return state.overall_result
     end
     print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
