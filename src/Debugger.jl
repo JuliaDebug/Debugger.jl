@@ -11,7 +11,7 @@ using REPL.LineEdit
 using REPL.REPLCompletions
 
 using CodeTracking
-using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState, 
+using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState,
                         finish_and_return!, Compiled
 
 using JuliaInterpreter: pc_expr, moduleof, linenumber, extract_args,
@@ -88,7 +88,6 @@ function _make_frame(mod, arg)
         frame = JuliaInterpreter.enter_call_expr(Expr(:call,theargs...))
         frame = JuliaInterpreter.maybe_step_through_kwprep!(frame)
         frame = JuliaInterpreter.maybe_step_through_wrapper!(frame)
-        JuliaInterpreter.maybe_next_call!(frame)
         frame
     end
 end

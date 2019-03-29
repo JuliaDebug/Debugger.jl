@@ -108,10 +108,12 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
     panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
-    if initial_continue
+    if initial_continue && !JuliaInterpreter.shouldbreak(frame, frame.pc)
         execute_command(state, Val(:c), "c")
         state.frame === nothing && return state.overall_result
     end
+    JuliaInterpreter.maybe_next_call!(frame)
+
     print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
     REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
 
