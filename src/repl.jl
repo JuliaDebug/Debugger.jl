@@ -40,7 +40,11 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             LineEdit.reset_state(s)
             return false
         end
-        if isempty(strip(line)) && length(panel.hist.history) > 0
+        if length(panel.hist.history) == 0
+            printstyled(stderr, "no previous command executed\n"; color=Base.error_color())
+            return false
+        end
+        if isempty(strip(line))
             command = panel.hist.history[end]
         else
             command = strip(line)
