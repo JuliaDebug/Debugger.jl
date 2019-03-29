@@ -56,6 +56,8 @@ Advanced commands:
 - `si`: same as `se` but step into a call if a call is the next expression
 - `sg`: step into a generated function
 
+An empty command will execute the previous command.
+
 ### Breakpoints
 
 There are currently no designated commands in the debug mode for adding and removing breakpoints, instead they are manipulated using the API from the package JuliaInterpreter (which is reexported from Debugger). The different ways of manipulating breakpoints are documented [here](https://juliadebug.github.io/JuliaInterpreter.jl/latest/dev_reference/#Breakpoints-1).
