@@ -11,13 +11,14 @@ function assert_allow_step(state)
     return true
 end
 
-function show_breakpoint(io::IO, bp::BreakpointRef)
+function show_breakpoint(io::IO, bp::BreakpointRef, state::DebuggerState)
     outbuf = IOContext(IOBuffer(), io)
     if bp.err === nothing
         print(outbuf, "Hit breakpoint:\n")
     else
         print(outbuf, "Breaking for error:\n")
-        Base.display_error(outbuf, bp.err, [])
+        Base.display_error(outbuf, bp.err, state.frame)
+        println(outbuf)
     end
     print(io, String(take!(outbuf.io)))
 end
@@ -37,7 +38,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},
         if pc isa BreakpointRef
             if pc.stmtidx != 0 # This is the dummy breakpoint to stop just after entering a call
                 if state.terminal !== nothing # fix this, it happens when a test hits this and hasnt set a terminal
-                    show_breakpoint(Base.pipe_writer(state.terminal), pc)
+                    show_breakpoint(Base.pipe_writer(state.terminal), pc, state)
                 end
             end
             if pc.err !== nothing

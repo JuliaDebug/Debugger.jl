@@ -1,0 +1,82 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In error(s) at error.jl:33
+|>33  error(s::AbstractString) = throw(ErrorException(s))
+|
+|About to run: (ErrorException)("foo")
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In error(s) at error.jl:33
+|>33  error(s::AbstractString) = throw(ErrorException(s))
+|
+|About to run: (ErrorException)("foo")
+|1|debug> c
+|Breaking for error:
+|ERROR: foo
+|Stacktrace:
+| [1] error(::String) at error.jl:33
+|
+|In error(s) at error.jl:33
+|>33  error(s::AbstractString) = throw(ErrorException(s))
+|
+|About to run: (throw)(ErrorException("foo"))
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAA
+|DDDDDDDDDD
+|EEEEEEEEEEE
+|EEEEEEEEEEEAAAAAAAAEAAAAEEEEEEEEEEE
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In error(s) at error.jl:33
+|>33  error(s::AbstractString) = throw(ErrorException(s))
+|
+|About to run: (ErrorException)("foo")
+|1|debug> c
+|Breaking for error:
+|ERROR: foo
+|Stacktrace:
+| [1] error(::String) at error.jl:33
+|
+|In error(s) at error.jl:33
+|>33  error(s::AbstractString) = throw(ErrorException(s))
+|
+|About to run: (throw)(ErrorException("foo"))
+|1|debug> bt
+|[1] error(s) at error.jl:33
+|  | s::String = "foo"
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAA
+|DDDDDDDDDD
+|EEEEEEEEEEE
+|EEEEEEEEEEEAAAAAAAAEAAAAEEEEEEEEEEE
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
