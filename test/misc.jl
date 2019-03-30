@@ -86,3 +86,8 @@ import InteractiveUtils
     @test JuliaInterpreter.Variable(@__FILE__, :file, false) in locals
     @test JuliaInterpreter.Variable(LINE, :line, false) in locals
 end
+
+# These are LoadError because the error happens at macro expansion
+@test_throws LoadError @macroexpand @enter "foo"
+@test_throws LoadError @macroexpand @enter 1
+@test_throws LoadError @macroexpand @run [1,2]
