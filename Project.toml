@@ -15,7 +15,7 @@ REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 CodeTracking = "0.3.2, 0.4"
 Crayons = "3"
 Highlights = "0.3.1"
-JuliaInterpreter = "0.3"
+JuliaInterpreter = "0.4"
 julia = "1"
 
 [extras]
