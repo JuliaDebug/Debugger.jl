@@ -19,7 +19,7 @@ notifications:
 script:
   - julia --project --color=yes -e 'using Pkg;
                         Pkg.instantiate();
-                        Pkg.add([PackageSpec(name = "TerminalRegressionTests", rev = "master"),
+                        Pkg.add([PackageSpec(url = "https://github.com/KristofferC/TerminalRegressionTests.jl", rev = "kc/compat"),
                                  PackageSpec(name = "VT100", rev = "master")]);
                         Pkg.build();
                         Pkg.test(coverage=true)'
