@@ -94,21 +94,25 @@ function _make_frame(mod, arg)
     end
 end
 
+_check_is_call(arg) = !(arg isa Expr && arg.head == :call) && throw(ArgumentError("@enter and @run should be applied to a function call"))
+
 macro make_frame(arg)
     _make_frame(__module__, arg)
 end
 
 macro enter(arg)
+    _check_is_call(arg)
     quote
-        let frame = $(_make_frame(__module__,arg))
+        let frame = $(_make_frame(__module__, arg))
             RunDebugger(frame)
         end
     end
 end
 
 macro run(arg)
+    _check_is_call(arg)
     quote
-        let frame = $(_make_frame(__module__,arg))
+        let frame = $(_make_frame(__module__, arg))
             RunDebugger(frame; initial_continue=true)
         end
     end
