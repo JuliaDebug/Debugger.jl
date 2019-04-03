@@ -5,17 +5,17 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[CodeTracking]]
 deps = ["InteractiveUtils", "UUIDs"]
-git-tree-sha1 = "9e697f312e39a94fc9e0368672662d34b0054a43"
+git-tree-sha1 = "7e19dccd5667e0a8d9327ac76966977dbc0df85f"
 repo-rev = "master"
 repo-url = "https://github.com/timholy/CodeTracking.jl.git"
 uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
-version = "0.4.0"
+version = "0.5.0"
 
 [[Crayons]]
 deps = ["Test"]
-git-tree-sha1 = "416737eea5c50ee5a08c588ea73d77d5eebc94e7"
+git-tree-sha1 = "f621b8ef51fd2004c7cf157ea47f027fdeac5523"
 uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
-version = "3.0.0"
+version = "4.0.0"
 
 [[Dates]]
 deps = ["Printf"]
@@ -42,12 +42,10 @@ deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[JuliaInterpreter]]
-deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "6a53908e8d4038bf846c4cd8ded57a6ae4f840e5"
-repo-rev = "master"
-repo-url = "https://github.com/JuliaDebug/JuliaInterpreter.jl.git"
+deps = ["CodeTracking", "Dates", "Distributed", "InteractiveUtils", "Mmap", "Random", "SHA", "Test", "UUIDs"]
+git-tree-sha1 = "9234d36f3837f0071e209ed338a01e48b1423940"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.4.0"
+version = "0.4.1"
 
 [[LibGit2]]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
@@ -58,6 +56,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 [[Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
+
+[[Mmap]]
+uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[Pkg]]
 deps = ["Dates", "LibGit2", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
