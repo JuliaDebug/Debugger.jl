@@ -1,39 +1,10 @@
-struct FileLocInfo
-    filepath::String
-    line::Int
-    # 0 if unknown
-    column::Int
-    # The line at which the current context starts, 0 if unknown
-    defline::Int
-    # typemax(int) if unknown
-    endline::Int
-end
 
-struct BufferLocInfo
-    data::String
-    line::Int
-    # 0 if unknown
-    column::Int
-    defline::Int
-    # typemax(int) if unknown
-    endline::Int
-end
-
-function loc_for_fname(file::String, line::Integer, defline::Integer, endline::Integer)
-    if startswith(file, "REPL[")
-        hist_idx = parse(Int,string(file)[6:end-1])
-        isdefined(Base, :active_repl) || return nothing, ""
-        hp = Base.active_repl.interface.modes[1].hist
-        return BufferLocInfo(hp.history[hp.start_idx+hist_idx], line, 0, defline, endline)
-    else
-        for path in SEARCH_PATH
-            fullpath = joinpath(path,string(file))
-            if isfile(fullpath)
-                return FileLocInfo(fullpath, line, 0, defline, endline)
-            end
-        end
-    end
-    return nothing
+function compute_corrected_linerange(method::Method)
+    _, line1 = whereis(method)
+    offset = line1 - method.line
+    src = JuliaInterpreter.get_source(method)
+    lastline = src.linetable[end]
+    return line1:JuliaInterpreter.getline(lastline) + offset
 end
 
 function locinfo(frame::Frame)
@@ -41,26 +12,20 @@ function locinfo(frame::Frame)
         meth = frame.framecode.scope
         ret = JuliaInterpreter.whereis(meth)
         ret === nothing && return nothing
-        def_file, def_line = ret
+        deffile, _ = ret
         ret = JuliaInterpreter.whereis(frame)
         ret === nothing && return nothing
         current_file, current_line = ret
-        n_stmts = length(frame.framedata.ssavalues)
-        total_lines = JuliaInterpreter.linenumber(frame, 1n_stmts) - def_line + 1
-        # We currently cannot see a difference between f(x) = x and
-        # function f(x)
-        #     x
-        # end
-        # If we could, we would do the += 1 below only in the second case
-        # This means that we now miss printing the end for cases like the second
-        # (one line bodies)
-        total_lines == 1 || (total_lines += 1)
-        end_line = def_line + total_lines - 1
-        if def_file != current_file || def_line > current_line
-            def_line = 0 # We are not sure where the context start in cases like these, could be improved?
-            end_line = typemax(Int)
+        local body, defline
+        try # https://github.com/timholy/CodeTracking.jl/issues/31
+            body, defline = CodeTracking.definition(String, meth)
+        catch
+            return nothing
         end
-        return loc_for_fname(current_file, current_line, def_line, end_line)
+        if deffile != current_file || defline > current_line
+            defline = 0 # We are not sure where the context start in cases like these, could be improved?
+        end
+        return defline, current_line, body
     else
         println("not yet implemented")
     end
