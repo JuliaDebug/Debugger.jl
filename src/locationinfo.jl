@@ -39,8 +39,12 @@ end
 function locinfo(frame::Frame)
     if frame.framecode.scope isa Method
         meth = frame.framecode.scope
-        def_file, def_line = JuliaInterpreter.whereis(meth)
-        current_file, current_line = JuliaInterpreter.whereis(frame)
+        ret = JuliaInterpreter.whereis(meth)
+        ret === nothing && return nothing
+        def_file, def_line = ret
+        ret = JuliaInterpreter.whereis(frame)
+        ret === nothing && return nothing
+        current_file, current_line = ret
         n_stmts = length(frame.framedata.ssavalues)
         total_lines = JuliaInterpreter.linenumber(frame, 1n_stmts) - def_line + 1
         # We currently cannot see a difference between f(x) = x and
