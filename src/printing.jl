@@ -107,15 +107,11 @@ function print_status(io::IO, frame::Frame; force_lowered=false)
     loc = locinfo(frame)
 
     if loc !== nothing && !force_lowered
-        data = if isa(loc, BufferLocInfo)
-                loc.data
-            else
-                read(loc.filepath, String)
-            end
+        defline, current_line, body = loc
         breakpoint_lines = breakpoint_linenumbers(frame)
-        ok = print_sourcecode(outbuf, data, loc.line, loc.defline, loc.endline, breakpoint_lines)
+        ok = print_sourcecode(outbuf, body, current_line, defline, breakpoint_lines)
         if !ok
-            printstyled(io, "failed to lookup source code in $(repr(loc.filepath)), showing lowered code:\n"; color=Base.warn_color())
+            printstyled(io, "failed to lookup source code, showing lowered code:\n"; color=Base.warn_color())
             print_codeinfo(outbuf, frame)
         end
     else
@@ -125,18 +121,18 @@ function print_status(io::IO, frame::Frame; force_lowered=false)
     print(io, String(take!(outbuf.io)))
 end
 
-const NUM_SOURCE_LINES_UP_DOWN = Ref(5)
+const NUM_SOURCE_LINES_UP_DOWN = Ref(4)
 
 function print_codeinfo(io::IO, frame::Frame)
     buf = IOBuffer()
     src = frame.framecode.src
     show(buf, src)
     active_line = convert(Int, frame.pc[])
-
     code = filter!(split(String(take!(buf)), '\n')) do line
         !(line == "CodeInfo(" || line == ")" || isempty(line))
     end
-    startline, endline = max(1, active_line - NUM_SOURCE_LINES_UP_DOWN[] + 1), min(length(code), active_line + NUM_SOURCE_LINES_UP_DOWN[]-1)
+    startline = max(1, active_line - NUM_SOURCE_LINES_UP_DOWN[])
+    endline = min(length(code), active_line + NUM_SOURCE_LINES_UP_DOWN[])
     code = code[startline:endline]
     code .= replace.(code, Ref(r"\$\(QuoteNode\((.+?)\)\)" => s"\1"))
     breakpoint_lines = breakpoint_linenumbers(frame; lowered=true)
@@ -148,18 +144,17 @@ Determine the offsets in the source code to print, based on the offset of the
 currently highlighted part of the code, and the start and stop line of the
 entire function.
 """
-function compute_source_offsets(code::String, offset::Integer, startline::Integer, stopline::Integer; file::SourceFile = SourceFile(code))
-    offsetline = compute_line(file, offset)
-    if offsetline - NUM_SOURCE_LINES_UP_DOWN[] > length(file.offsets) || startline > length(file.offsets)
+function compute_source_offsets(code::AbstractString, current_offsetline::Integer, file::SourceFile)
+    desired_startline = current_offsetline - NUM_SOURCE_LINES_UP_DOWN[]
+    desired_stopline = current_offsetline + NUM_SOURCE_LINES_UP_DOWN[] + 1
+    if desired_startline > length(file.offsets)
         return -1, -1
     end
-    startoffset = max(file.offsets[max(offsetline - NUM_SOURCE_LINES_UP_DOWN[] + 1, 1)], startline == 0 ? 0 : file.offsets[startline])
+    desired_startline = max(desired_startline, 1)
+    startoffset = file.offsets[desired_startline]
     stopoffset = lastindex(code)-1
-    if offsetline + NUM_SOURCE_LINES_UP_DOWN[] < lastindex(file.offsets)
-        stopoffset = min(stopoffset, file.offsets[offsetline + NUM_SOURCE_LINES_UP_DOWN[]] - 1)
-    end
-    if stopline + 1 <= lastindex(file.offsets)
-        stopoffset = min(stopoffset, file.offsets[stopline + 1] - 1)
+    if desired_stopline < lastindex(file.offsets)
+        stopoffset = file.offsets[desired_stopline]
     end
     startoffset, stopoffset
 end
@@ -219,30 +214,27 @@ function breakpoint_char(bp::BreakpointState)
     return bp.condition === JuliaInterpreter.falsecondition ? ' ' : '○'
 end
 
-function print_sourcecode(io::IO, code::String, line::Integer, defline::Integer, endline::Integer, breakpoint_lines::Dict{Int, BreakpointState} = Dict{Int, BreakpointState}())
+function print_sourcecode(io::IO, code::AbstractString, current_line::Integer, defline::Integer, breakpoint_lines::Dict{Int, BreakpointState} = Dict{Int, BreakpointState}())
     code = highlight_code(code; context=io)
     file = SourceFile(code)
-    stopline = min(endline, line + NUM_SOURCE_LINES_UP_DOWN[])
-    if !checkbounds(Bool, file.offsets, line)
-        return false
-    end
-    startoffset, stopoffset = compute_source_offsets(code, file.offsets[line], defline, stopline; file=file)
+    current_offsetline = current_line - defline + 1
+    checkbounds(Bool, file.offsets, current_offsetline) || return false
 
+    startoffset, stopoffset = compute_source_offsets(code, current_offsetline, file)
     if startoffset == -1
         printstyled(io, "Line out of file range (bad debug info?)")
-        return
+        return false
     end
 
     # Compute necessary data for line numbering
     startline = compute_line(file, startoffset)
-
-    code = split(code[(startoffset+1):(stopoffset+1)],'\n')
-    print_lines(io, code, line, breakpoint_lines, startline)
+    code = split(code[(startoffset+1):(stopoffset+1)], '\n')
+    print_lines(io, code, current_line, breakpoint_lines, startline + defline - 1)
     return true
 end
 
 function print_lines(io, code, current_line, breakpoint_lines, startline)
-    if !isempty(code) && isempty(code[end])
+    if !isempty(code) && all(isspace, code[end])
         pop!(code)
     end
     stopline = startline + length(code) - 1
@@ -250,6 +242,7 @@ function print_lines(io, code, current_line, breakpoint_lines, startline)
     # Count indentation level (only count spaces for now)
     min_indentation = typemax(Int)
     for textline in code
+        all(isspace, textline) && continue
         isempty(textline) && continue
         indent_line = 0
         for char in textline
