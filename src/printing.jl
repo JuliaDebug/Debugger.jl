@@ -52,6 +52,19 @@ function pattern_match_kw_call(expr)
     return :($f($(args...); $(kws...)))
 end
 
+function pattern_match_apply_call(expr, frame)
+    if !(isexpr(expr, :call) && expr.args[1] == Core._apply)
+        return expr
+    end
+    args = [@lookup(frame, expr.args[i+2]) for i in 1:(length(expr.args)-2)]
+    new_expr = Expr(:call, expr.args[2])
+    argsflat = Base.append_any(args...)
+    for x in argsflat
+        push!(new_expr.args, (isa(x, Symbol) || isa(x, Expr) || isa(x, QuoteNode)) ? QuoteNode(x) : x)
+    end
+    return new_expr
+end
+
 function print_next_expr(io::IO, frame::Frame)
     expr = pc_expr(frame)
     @assert expr !== nothing
@@ -72,6 +85,7 @@ function print_next_expr(io::IO, frame::Frame)
         end
     end
     expr = pattern_match_kw_call(expr)
+    expr = pattern_match_apply_call(expr, frame)
     if isa(expr, Expr)
         for (i, arg) in enumerate(expr.args)
             try
@@ -105,7 +119,7 @@ function print_status(io::IO, frame::Frame; force_lowered=false)
     outbuf = IOContext(IOBuffer(), io)
     printstyled(outbuf, "In ", locdesc(frame), "\n")
     loc = locinfo(frame)
-
+    
     if loc !== nothing && !force_lowered
         defline, current_line, body = loc
         breakpoint_lines = breakpoint_linenumbers(frame)

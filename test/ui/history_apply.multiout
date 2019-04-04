@@ -1,0 +1,86 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_invoke(x, y, z) at ui.jl:70
+| 69  function f_invoke(x, y, z)
+|>70      return g_invoke(x..., y, z...)
+| 71  end
+|
+|About to run: (tuple)(3)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_invoke(x, y, z) at ui.jl:70
+| 69  function f_invoke(x, y, z)
+|>70      return g_invoke(x..., y, z...)
+| 71  end
+|
+|About to run: (tuple)(3)
+|1|debug> nc
+|In f_invoke(x, y, z) at ui.jl:70
+| 69  function f_invoke(x, y, z)
+|>70      return g_invoke(x..., y, z...)
+| 71  end
+|
+|About to run: (g_invoke)(1, 2, 3, 4, 5)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_invoke(x, y, z) at ui.jl:70
+| 69  function f_invoke(x, y, z)
+|>70      return g_invoke(x..., y, z...)
+| 71  end
+|
+|About to run: (tuple)(3)
+|1|debug> nc
+|In f_invoke(x, y, z) at ui.jl:70
+| 69  function f_invoke(x, y, z)
+|>70      return g_invoke(x..., y, z...)
+| 71  end
+|
+|About to run: (g_invoke)(1, 2, 3, 4, 5)
+|1|debug> s
+|In g_invoke(a, b, c, d, e) at ui.jl:68
+|>68  g_invoke(a, b, c, d, e) = a + b + c + d + e
+|
+|About to run: (+)(1, 2, 3, 4, 5)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
