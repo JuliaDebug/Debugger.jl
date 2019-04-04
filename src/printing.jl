@@ -121,18 +121,18 @@ function print_status(io::IO, frame::Frame; force_lowered=false)
     print(io, String(take!(outbuf.io)))
 end
 
-const NUM_SOURCE_LINES_UP_DOWN = Ref(5)
+const NUM_SOURCE_LINES_UP_DOWN = Ref(4)
 
 function print_codeinfo(io::IO, frame::Frame)
     buf = IOBuffer()
     src = frame.framecode.src
     show(buf, src)
     active_line = convert(Int, frame.pc[])
-
     code = filter!(split(String(take!(buf)), '\n')) do line
         !(line == "CodeInfo(" || line == ")" || isempty(line))
     end
-    startline, endline = max(1, active_line - NUM_SOURCE_LINES_UP_DOWN[] + 1), min(length(code), active_line + NUM_SOURCE_LINES_UP_DOWN[]-1)
+    startline = max(1, active_line - NUM_SOURCE_LINES_UP_DOWN[])
+    endline = min(length(code), active_line + NUM_SOURCE_LINES_UP_DOWN[])
     code = code[startline:endline]
     code .= replace.(code, Ref(r"\$\(QuoteNode\((.+?)\)\)" => s"\1"))
     breakpoint_lines = breakpoint_linenumbers(frame; lowered=true)
@@ -146,7 +146,7 @@ entire function.
 """
 function compute_source_offsets(code::AbstractString, current_offsetline::Integer, file::SourceFile)
     desired_startline = current_offsetline - NUM_SOURCE_LINES_UP_DOWN[]
-    desired_stopline = current_offsetline + NUM_SOURCE_LINES_UP_DOWN[]
+    desired_stopline = current_offsetline + NUM_SOURCE_LINES_UP_DOWN[] + 1
     if desired_startline > length(file.offsets)
         return -1, -1
     end
@@ -228,14 +228,13 @@ function print_sourcecode(io::IO, code::AbstractString, current_line::Integer, d
 
     # Compute necessary data for line numbering
     startline = compute_line(file, startoffset)
-
-    code = split(code[(startoffset+1):(stopoffset+1)],'\n')
+    code = split(code[(startoffset+1):(stopoffset+1)], '\n')
     print_lines(io, code, current_line, breakpoint_lines, startline + defline - 1)
     return true
 end
 
 function print_lines(io, code, current_line, breakpoint_lines, startline)
-    if !isempty(code) && isempty(code[end])
+    if !isempty(code) && all(isspace, code[end])
         pop!(code)
     end
     stopline = startline + length(code) - 1
