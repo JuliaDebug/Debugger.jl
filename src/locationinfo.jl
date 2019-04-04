@@ -23,6 +23,8 @@ function locinfo(frame::Frame)
             return nothing
         end
         if deffile != current_file || defline > current_line
+            isfile(current_file) || return nothing
+            body = read(current_file, String)
             defline = 0 # We are not sure where the context start in cases like these, could be improved?
         end
         return defline, current_line, body
