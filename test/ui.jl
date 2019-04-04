@@ -65,6 +65,11 @@ function f_end(x)
 end
 "we don't want to see this in the source code printing"
 
+g_invoke(a, b, c, d, e) = a + b + c + d + e
+function f_invoke(x, y, z)
+    return g_invoke(x..., y, z...)
+end
+
 @testset "UI" begin
     if Sys.isunix() && VERSION >= v"1.1.0"
         Debugger._print_full_path[] = false
@@ -98,6 +103,10 @@ end
         run_terminal_test(@make_frame(f_end(2)),
                           ["n\n", "n\n", "n\n"],
                           "ui/history_floor.multiout")
+
+        run_terminal_test(@make_frame(f_invoke((1,2), 3, [4,5])),
+                          ["nc\n", "s\n", "c\n"],
+                          "ui/history_apply.multiout")
 
         Debugger.break_on(:error)
         run_terminal_test(@make_frame(error("foo")),

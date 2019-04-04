@@ -68,6 +68,7 @@ try
     @test occursin(x_1_plus_1_colored, st)
 
     frame = Debugger.@make_frame f_unicode()
+    @info "The eventual warning below is expected:"
     st = chomp(sprint(Debugger.print_status, frame; context = :color => true))
     @test occursin("√", st)
 finally
