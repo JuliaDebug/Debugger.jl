@@ -4,12 +4,10 @@
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[CodeTracking]]
-deps = ["InteractiveUtils", "UUIDs"]
-git-tree-sha1 = "7e19dccd5667e0a8d9327ac76966977dbc0df85f"
-repo-rev = "master"
-repo-url = "https://github.com/timholy/CodeTracking.jl.git"
+deps = ["InteractiveUtils", "Test", "UUIDs"]
+git-tree-sha1 = "fd9c4a8cf1c51516145b686981ee689524bcb458"
 uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
-version = "0.5.0"
+version = "0.5.4"
 
 [[Crayons]]
 deps = ["Test"]

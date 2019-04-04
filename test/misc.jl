@@ -55,9 +55,8 @@ end
 frame = Debugger.@make_frame f()
 state = dummy_state(frame)
 execute_command(state, Val{:n}(), "n")
-loc = Debugger.locinfo(state.frame)
-@test isfile(loc.filepath)
-@test occursin("logging.jl", loc.filepath)
+defline, current_line, body = Debugger.locinfo(state.frame)
+@test occursin("handle_message(logger, level, msg", body)
 
 f_unicode() = √
 
