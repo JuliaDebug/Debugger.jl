@@ -218,8 +218,6 @@ function print_sourcecode(io::IO, code::AbstractString, current_line::Integer, d
     code = highlight_code(code; context=io)
     file = SourceFile(code)
     current_offsetline = current_line - defline + 1
-    @show code
-    @show defline, current_line
     checkbounds(Bool, file.offsets, current_offsetline) || return false
 
     startoffset, stopoffset = compute_source_offsets(code, current_offsetline, file)
@@ -245,6 +243,7 @@ function print_lines(io, code, current_line, breakpoint_lines, startline)
     # Count indentation level (only count spaces for now)
     min_indentation = typemax(Int)
     for textline in code
+        all(isspace, textline) && continue
         isempty(textline) && continue
         indent_line = 0
         for char in textline
