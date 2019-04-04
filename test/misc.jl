@@ -59,12 +59,18 @@ loc = Debugger.locinfo(state.frame)
 @test isfile(loc.filepath)
 @test occursin("logging.jl", loc.filepath)
 
+f_unicode() = √
+
 try
     Debugger.set_highlight(Debugger.HIGHLIGHT_SYSTEM_COLORS)
     frame = Debugger.@make_frame f()
     st = chomp(sprint(Debugger.print_status, frame; context = :color => true))
     x_1_plus_1_colored = "\e[39m\e[97mx\e[39m\e[97m \e[39m\e[91m=\e[39m\e[97m \e[39m1\e[97m \e[39m\e[91m+\e[39m\e[97m \e[39m1\e[97m"
     @test occursin(x_1_plus_1_colored, st)
+
+    frame = Debugger.@make_frame f_unicode()
+    st = chomp(sprint(Debugger.print_status, frame; context = :color => true))
+    @test occursin("√", st)
 finally
     Debugger.set_highlight(Debugger.HIGHLIGHT_OFF)
 end
