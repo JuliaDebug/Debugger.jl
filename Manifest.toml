@@ -5,7 +5,7 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[CodeTracking]]
 deps = ["InteractiveUtils", "UUIDs"]
-git-tree-sha1 = "5a0a70fb41fb377075ff67fa7421d164dfc2c0fa"
+git-tree-sha1 = "1fd1349df852a1b3eac48b8f528088205090910c"
 repo-rev = "kc/lastindex"
 repo-url = "https://github.com/timholy/CodeTracking.jl.git"
 uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
