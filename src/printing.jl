@@ -144,7 +144,7 @@ Determine the offsets in the source code to print, based on the offset of the
 currently highlighted part of the code, and the start and stop line of the
 entire function.
 """
-function compute_source_offsets(code::String, current_offsetline::Integer, file::SourceFile)
+function compute_source_offsets(code::AbstractString, current_offsetline::Integer, file::SourceFile)
     desired_startline = current_offsetline - NUM_SOURCE_LINES_UP_DOWN[]
     desired_stopline = current_offsetline + NUM_SOURCE_LINES_UP_DOWN[]
     if desired_startline > length(file.offsets)
@@ -214,7 +214,7 @@ function breakpoint_char(bp::BreakpointState)
     return bp.condition === JuliaInterpreter.falsecondition ? ' ' : '○'
 end
 
-function print_sourcecode(io::IO, code::String, current_line::Integer, defline::Integer, breakpoint_lines::Dict{Int, BreakpointState} = Dict{Int, BreakpointState}())
+function print_sourcecode(io::IO, code::AbstractString, current_line::Integer, defline::Integer, breakpoint_lines::Dict{Int, BreakpointState} = Dict{Int, BreakpointState}())
     code = highlight_code(code; context=io)
     file = SourceFile(code)
     current_offsetline = current_line - defline + 1
