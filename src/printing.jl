@@ -199,7 +199,12 @@ end
 
 function highlight_code(code; context=nothing)
     if _syntax_highlighting[] != HIGHLIGHT_OFF
-        return sprint(highlight, MIME("text/ansi-debugger"), code, Lexers.JuliaLexer, _current_theme[]; context=context)
+        try
+            sprint(highlight, MIME("text/ansi-debugger"), code, Lexers.JuliaLexer, _current_theme[]; context=context)
+        catch e
+            printstyled(stderr, "failed to highlight code, $e\n"; color=Base.warn_color())
+            return code
+        end
     else
         return code
     end
