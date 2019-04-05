@@ -23,12 +23,25 @@ function show_breakpoint(io::IO, bp::BreakpointRef, state::DebuggerState)
     print(io, String(take!(outbuf.io)))
 end
 
-function execute_command(state::DebuggerState, ::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so}}, cmd::AbstractString)
+function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so},Val{:u}}, cmd::AbstractString)
     # These commands take no arguments
-    length(split(cmd)) == 1 || return execute_command(state, Val(:_), cmd) # print error
+    kwargs = Dict()
+    if v != Val(:u)
+        length(split(cmd)) == 1 || return execute_command(state, Val(:_), cmd) # print error
+    else
+        args = split(cmd)
+        length(args) > 2 && return execute_command(state, Val(:_), cmd) # print error
+        cmd = args[1]
+        if length(args) == 2
+            line = tryparse(Int, args[2])
+            line == nothing && return execute_command(state, Val(:_), cmd) # print error
+            kwargs = Dict(:line => line)
+        end
+    end
     assert_allow_step(state) || return false
     cmd == "so" && (cmd = "finish")
-    ret = debug_command(state.mode, state.frame, Symbol(cmd))
+    cmd == "u" && (cmd = "until")
+    ret = debug_command(state.mode, state.frame, Symbol(cmd); kwargs...)
     if ret === nothing
         state.overall_result = get_return(root(state.frame))
         state.frame = nothing
@@ -152,13 +165,14 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     Basic Commands:\\
     - `st`: show the status\\
     - `n`: step to the next line\\
+    - `u [i::Int]`: step until line `i` or the next line past the current line\\
     - `s`: step into the next call\\
     - `so`: step out of the current call\\
     - `c`: continue execution until a breakpoint is hit\\
     - `bt`: show a simple backtrace\\
     - ``` `stuff ```: run `stuff` in the current function's context\\
-    - `fr [v::Int]`: show all variables in the current or `v`th frame\\
-    - `f [n::Int]`: go to the `n`-th frame\\
+    - `fr [i::Int]`: show all variables in the current or `i`th frame\\
+    - `f [i::Int]`: go to the `i`-th frame\\
     - `w`\\
         - `w add expr`: add an expression to the watch list\\
         - `w`: show all watch expressions evaluated in the current function's context\\

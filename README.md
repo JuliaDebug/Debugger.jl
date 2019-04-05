@@ -34,13 +34,14 @@ the context of functions.
 Basic Commands:
 - `st`: show the status
 - `n`: step to the next line
+- `u [i::Int]`: step until line `i` or the next line past the current line
 - `s`: step into the next call
 - `so`: step out of the current call
 - `c`: continue execution until a breakpoint is hit
 - `bt`: show a simple backtrace
 - ``` `stuff ```: run `stuff` in the current function's context
-- `fr [v::Int]`: show all variables in the current or `v`th frame
-- `f [n::Int]`: go to the `n`-th function in the call stack
+- `fr [i::Int]`: show all variables in the current or `i`th frame
+- `f [i::Int]`: go to the `i`-th function in the call stack
 - `w`
     - `w add expr`: add an expression to the watch list
     - `w`: show all watch expressions evaluated in the current function's context

@@ -70,6 +70,16 @@ function f_invoke(x, y, z)
     return g_invoke(x..., y, z...)
 end
 
+function f_until(x)
+    s = 1 + 1
+    s = 2 + 2
+    s = 3 + 3
+    for v in x
+        s += v
+    end
+    return s
+end
+
 @testset "UI" begin
     if Sys.isunix() && VERSION >= v"1.1.0"
         Debugger._print_full_path[] = false
@@ -107,6 +117,10 @@ end
         run_terminal_test(@make_frame(f_invoke((1,2), 3, [4,5])),
                           ["nc\n", "s\n", "c\n"],
                           "ui/history_apply.multiout")
+
+        run_terminal_test(@make_frame(f_until([1,2,3,4,5,6,7,8])),
+                          ["u 76\n", "u\n", "u\n", "u\n", "c\n"],
+                          "ui/history_until.multiout")
 
         Debugger.break_on(:error)
         run_terminal_test(@make_frame(error("foo")),
