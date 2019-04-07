@@ -83,9 +83,8 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         return true
     end
 
-    key = '`'
     repl_switch = Dict{Any,Any}(
-        key => function (s,args...)
+        '`' => function (s,args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 prompt = julia_prompt(state)
                 buf = copy(LineEdit.buffer(s))
@@ -93,28 +92,48 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
                     LineEdit.state(s, prompt).input_buffer = buf
                 end
             else
-                LineEdit.edit_insert(s,key)
+                LineEdit.edit_insert(s, '`')
             end
         end,
-        "C" => function (s, args...)
+        'C' => function (s, args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 toggle_mode(state)
                 write(state.terminal, '\r')
                 LineEdit.write_prompt(state.terminal, panel)
             else
-                LineEdit.edit_insert(s,key)
+                LineEdit.edit_insert(s, "C")
             end
         end,
-        "L" => function (s, args...)
-        if isempty(s) || position(LineEdit.buffer(s)) == 0
-            toggle_lowered(state)
-            println(Base.pipe_writer(terminal))
-            print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
-            LineEdit.write_prompt(state.terminal, panel)
-        else
-            LineEdit.edit_insert(s,key)
+        'L' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                toggle_lowered(state)
+                println(Base.pipe_writer(terminal))
+                print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+                LineEdit.write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "L")
+            end
+        end,
+        '+' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                NUM_SOURCE_LINES_UP_DOWN[] += 1
+                println(Base.pipe_writer(terminal))
+                print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+                LineEdit.write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "+")
+            end
+        end,
+        '-' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                NUM_SOURCE_LINES_UP_DOWN[] = max(1, NUM_SOURCE_LINES_UP_DOWN[] - 1)
+                println(Base.pipe_writer(terminal))
+                print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+                LineEdit.write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "-")
+            end
         end
-    end
     )
 
     state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
