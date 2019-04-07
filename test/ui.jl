@@ -119,7 +119,7 @@ end
                           "ui/history_apply.multiout")
 
         run_terminal_test(@make_frame(f_until([1,2,3,4,5,6,7,8])),
-                          ["u 76\n", "u\n", "u\n", "u\n", "c\n"],
+                          ["+", "-", "u 76\n", "u\n", "u\n", "u\n", "c\n"],
                           "ui/history_until.multiout")
 
         Debugger.break_on(:error)

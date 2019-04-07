@@ -181,6 +181,7 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     - `C`: toggle compiled mode\\
     - `L`: toggle showing lowered code instead of source code\\
     - `q`: quit the debugger, returning `nothing`\\
+    - `+`/`-`: increase / decrease the number of lines of source code shown\\
     Advanced commands:\\
     - `nc`: step to the next call\\
     - `se`: step one expression step\\
