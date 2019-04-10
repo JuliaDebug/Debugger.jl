@@ -66,14 +66,16 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
 end
 
 function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
+    io = Base.pipe_writer(state.terminal)
+    iob = IOContext(IOBuffer(), io)
     num = 0
     frame = state.frame
     while frame !== nothing
         num += 1
-        print_frame(Base.pipe_writer(state.terminal), num, frame; current_line=true)
+        print_frame(iob, num, frame; current_line=true)
         frame = caller(frame)
     end
-    println()
+    print(io, String(take!(iob.io)))
     return false
 end
 
