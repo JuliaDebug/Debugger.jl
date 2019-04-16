@@ -11,6 +11,8 @@ function assert_allow_step(state)
     return true
 end
 
+invalid_command(state, cmd) = execute_command(state, Val(:_), cmd) # print error
+
 function show_breakpoint(io::IO, bp::BreakpointRef, state::DebuggerState)
     outbuf = IOContext(IOBuffer(), io)
     if bp.err === nothing
@@ -27,14 +29,14 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
     # These commands take no arguments
     kwargs = Dict()
     if v != Val(:u)
-        length(split(cmd)) == 1 || return execute_command(state, Val(:_), cmd) # print error
+        length(split(cmd)) == 1 || return invalid_command(state, cmd)
     else
         args = split(cmd)
-        length(args) > 2 && return execute_command(state, Val(:_), cmd) # print error
+        length(args) > 2 && return invalid_command(state, cmd)
         cmd = args[1]
         if length(args) == 2
             line = tryparse(Int, args[2])
-            line == nothing && return execute_command(state, Val(:_), cmd) # print error
+            line == nothing && return invalid_command(state, cmd)
             kwargs = Dict(:line => line)
         end
     end
@@ -126,6 +128,19 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
     end
 end
 
+function execute_command(state::DebuggerState, v::Union{Val{:up}, Val{:down}}, cmd::AbstractString)
+    args = split(cmd, " ")[2:end]
+    if isempty(args)
+        offset = v == Val(:up) ? -1 : +1
+    else
+        length(args) > 1 && return invalid_command(state, cmd)
+        offset = tryparse(Int, args[1])
+        offset == nothing && return invalid_command(state, cmd)
+        v == Val(:up) && (offset *= -1)
+    end
+    return execute_command(state, Val(:f), string("f ", state.level + offset))
+end
+
 function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
     # TODO show some info messages?
     cmds = split(cmd)
@@ -153,7 +168,7 @@ function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
         return false
     end
     # Error
-    return execute_command(state, Val(:_), cmd)
+    return invalid_command(state, cmd)
 end
 
 function execute_command(state::DebuggerState, _, cmd)
@@ -174,7 +189,8 @@ function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
     - `bt`: show a simple backtrace\\
     - ``` `stuff ```: run `stuff` in the current function's context\\
     - `fr [i::Int]`: show all variables in the current or `i`th frame\\
-    - `f [i::Int]`: go to the `i`-th frame\\
+    - `f [i::Int]`: go to the `i`-th function in the call stack\\
+    - `up/down [i::Int]` go up or down one or `i` functions in the call stack\\
     - `w`\\
         - `w add expr`: add an expression to the watch list\\
         - `w`: show all watch expressions evaluated in the current function's context\\

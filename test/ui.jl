@@ -80,6 +80,16 @@ function f_until(x)
     return s
 end
 
+function f_up_down_1(x, y)
+    f_up_down_2(x, y)
+end
+function f_up_down_2(x, y)
+    f_up_down_3(x, y)
+end
+function f_up_down_3(x, y)
+    return x + y
+end
+
 @testset "UI" begin
     if Sys.isunix() && VERSION >= v"1.1.0"
         Debugger._print_full_path[] = false
@@ -121,6 +131,10 @@ end
         run_terminal_test(@make_frame(f_until([1,2,3,4,5,6,7,8])),
                           ["+", "-", "u 76\n", "u\n", "u\n", "u\n", "c\n"],
                           "ui/history_until.multiout")
+
+        run_terminal_test(@make_frame(f_up_down_1(5, 3)),
+                          ["s\n", "s\n", "down\n", "up\n", "down 2\n", "up 2\n", "c\n"],
+                          "ui/history_updown.multiout")
 
         Debugger.break_on(:error)
         run_terminal_test(@make_frame(error("foo")),
