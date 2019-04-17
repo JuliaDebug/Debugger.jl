@@ -42,6 +42,7 @@ Basic Commands:
 - ``` `stuff ```: run `stuff` in the current function's context
 - `fr [i::Int]`: show all variables in the current or `i`th frame
 - `f [i::Int]`: go to the `i`-th function in the call stack
+- `up/down [i::Int]` go up or down one or `i` functions in the call stack
 - `w`
     - `w add expr`: add an expression to the watch list
     - `w`: show all watch expressions evaluated in the current function's context
