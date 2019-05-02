@@ -1,0 +1,164 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In mysum(x) at ui.jl:95
+|  94  function mysum(x)
+|  95      s = 0
+|> 96      for v in x
+|  97          s += v
+|  98      end
+|  99      return s
+| 100  end
+|
+|About to run: (iterate)([1, 2, 3, 4, 5])
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In mysum(x) at ui.jl:95
+|  94  function mysum(x)
+|  95      s = 0
+|> 96      for v in x
+|  97          s += v
+|  98      end
+|  99      return s
+| 100  end
+|
+|About to run: (iterate)([1, 2, 3, 4, 5])
+|1|debug> bp add mysum:97 v > 3
+|1] mysum:97 v > 3
+|
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In mysum(x) at ui.jl:95
+|  94  function mysum(x)
+|  95      s = 0
+|> 96      for v in x
+|  97          s += v
+|  98      end
+|  99      return s
+| 100  end
+|
+|About to run: (iterate)([1, 2, 3, 4, 5])
+|1|debug> bp add mysum:97 v > 3
+|1] mysum:97 v > 3
+|
+|1|debug> c
+|Hit breakpoint:
+|In mysum(x) at ui.jl:95
+|  94  function mysum(x)
+|  95      s = 0
+|  96      for v in x
+|> 97          s += v
+|  98      end
+|  99      return s
+| 100  end
+|
+|About to run: (+)(6, 4)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In mysum(x) at ui.jl:95
+|  94  function mysum(x)
+|  95      s = 0
+|> 96      for v in x
+|  97          s += v
+|  98      end
+|  99      return s
+| 100  end
+|
+|About to run: (iterate)([1, 2, 3, 4, 5])
+|1|debug> bp add mysum:97 v > 3
+|1] mysum:97 v > 3
+|
+|1|debug> c
+|Hit breakpoint:
+|In mysum(x) at ui.jl:95
+|  94  function mysum(x)
+|  95      s = 0
+|  96      for v in x
+|> 97          s += v
+|  98      end
+|  99      return s
+| 100  end
+|
+|About to run: (+)(6, 4)
+|1|debug> bp rm
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAAA
+|CCCCCCCCC

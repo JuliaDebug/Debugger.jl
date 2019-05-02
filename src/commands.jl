@@ -140,7 +140,6 @@ function execute_command(state::DebuggerState, v::Union{Val{:up}, Val{:down}}, c
     end
     return execute_command(state, Val(:f), string("f ", state.level + offset))
 end
-
 function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
     # TODO show some info messages?
     cmds = split(cmd)
@@ -153,9 +152,11 @@ function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
                 clear_watch_list!(state)
                 success_and_show = true
             elseif length(cmds) == 3
-                i = parse(Int, cmds[3])
-                clear_watch_list!(state, i)
-                success_and_show = true
+                i = tryparse(Int, cmds[3])
+                if i !== nothing
+                    clear_watch_list!(state, i)
+                    success_and_show = true
+                end
             end
         end
         if cmds[2] == "add"
@@ -164,48 +165,136 @@ function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
     end
     if success_and_show
         io = Base.pipe_writer(state.terminal)
-        show_watch_list(io, state)
+        outbuf = IOContext(IOBuffer(), io)
+        show_watch_list(outbuf, state)
+        print(io, String(take!(outbuf.io)))
+        println(io)
         return false
     end
     # Error
     return invalid_command(state, cmd)
 end
 
-function execute_command(state::DebuggerState, _, cmd)
-    println("Unknown command `$cmd`. Executing `?` to obtain help.")
-    execute_command(state, Val{Symbol("?")}(), "?")
+function execute_command(state::DebuggerState, v::Union{Val{:bp}}, cmd::AbstractString)
+    cmds = split(cmd, ' ')
+    function repl_show_breakpoints()
+        if state.terminal !== nothing
+            io = Base.pipe_writer(state.terminal)
+            outbuf = IOContext(IOBuffer(), io)
+            show_breakpoints(outbuf, state)
+            print(io, String(take!(outbuf.io)))
+        end
+    end
+    if length(cmds) == 1
+        repl_show_breakpoints()
+        return false
+    else
+        if cmds[2] == "add"
+            ok = add_breakpoint!(state, join(cmds[3:end], ' '))
+            ok && repl_show_breakpoints()
+            return false
+        elseif length(cmds) == 2 || length(cmds) == 3
+            if cmds[2] == "on" || cmds[2] == "off"
+                break_on_off = cmds[2] == "on" ? JuliaInterpreter.break_on : JuliaInterpreter.break_off
+                s = length(cmds) == 3 ? Symbol(cmds[3]) : :error
+                if s == :error || s == :throw
+                    break_on_off(s)
+                    repl_show_breakpoints()
+                    return false
+                end
+            elseif cmds[2] == "rm" || cmds[2] == "toggle" || cmds[2] == "disable" || cmds[2] == "enable"
+                i = missing
+                if length(cmds) == 3
+                    i = tryparse(Int, cmds[3])
+                end
+                if i !== nothing
+                    ok = begin
+                        cmds[2] == "rm"      ? (i === missing ? remove_breakpoint!(state)  :  remove_breakpoint!(state, i)) :
+                        cmds[2] == "toggle"  ? (i === missing ? toggle_breakpoint!(state)  :  toggle_breakpoint!(state, i)) :
+                        cmds[2] == "disable" ? (i === missing ? disable_breakpoint!(state) :  disable_breakpoint!(state, i)) :
+                        cmds[2] == "enable"  ? (i === missing ? enable_breakpoint!(state)  :  enable_breakpoint!(state, i)) :
+                        true
+                    end
+                    ok && repl_show_breakpoints()
+                    return false
+                end
+            end
+        end
+    end
+
+    # Error
+    return invalid_command(state, cmd)
 end
 
-function execute_command(state::DebuggerState, ::Val{:?}, cmd::AbstractString)
+
+function execute_command(state::DebuggerState, _, cmd)
+    display(Markdown.parse("""Unknown command `$cmd`. Run `?` to obtain help."""))
+    return false
+end
+
+function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd::AbstractString)
     display(
             @md_str """
-    Basic Commands:\\
-    - `st`: show the status\\
-    - `n`: step to the next line\\
-    - `u [i::Int]`: step until line `i` or the next line past the current line\\
-    - `s`: step into the next call\\
-    - `so`: step out of the current call\\
-    - `c`: continue execution until a breakpoint is hit\\
-    - `bt`: show a simple backtrace\\
-    - ``` `stuff ```: run `stuff` in the current function's context\\
-    - `fr [i::Int]`: show all variables in the current or `i`th frame\\
-    - `f [i::Int]`: go to the `i`-th function in the call stack\\
-    - `up/down [i::Int]` go up or down one or `i` functions in the call stack\\
-    - `w`\\
-        - `w add expr`: add an expression to the watch list\\
-        - `w`: show all watch expressions evaluated in the current function's context\\
-        - `w rm [i::Int]`: remove all or the `i`:th watch expression\\
-    - `o`: open the current line in an editor\\
-    - `C`: toggle compiled mode\\
-    - `L`: toggle showing lowered code instead of source code\\
-    - `q`: quit the debugger, returning `nothing`\\
-    - `+`/`-`: increase / decrease the number of lines of source code shown\\
-    Advanced commands:\\
-    - `nc`: step to the next call\\
-    - `se`: step one expression step\\
-    - `si`: same as `se` but step into a call if a call is the next expression\\
-    - `sg`: step into a generated function\\
-    """)
+            # Debugger commands
+            Below, square brackets denote optional arguments.
+
+            Misc:\\
+            - `o`: open the current line in an editor\\
+            - `q`: quit the debugger, returning `nothing`\\
+            - `C`: toggle compiled mode\\
+            - `L`: toggle showing lowered code instead of source code\\
+            - `+`/`-`: increase / decrease the number of lines of source code shown\\
+            
+
+            Stepping (basic):\\
+            - `n`: step to the next line\\
+            - `u [i::Int]`: step until line `i` or the next line past the current line\\
+            - `s`: step into the next call\\
+            - `so`: step out of the current call\\
+            - `c`: continue execution until a breakpoint is hit\\
+            - `f [i::Int]`: go to the `i`-th function in the call stack (stepping is only possible in the function at the top of the call stack)\\
+            - `up/down [i::Int]` go up or down one or `i` functions in the call stack\\
+            
+
+            Stepping (advanced):\\
+            - `nc`: step to the next call\\
+            - `se`: step one expression step\\
+            - `si`: same as `se` but step into a call if a call is the next expression\\
+            - `sg`: step into a generated function\\
+            
+
+            Querying:\\
+            - `st`: show the "status" (current function, source code and current expression to run)\\
+            - `bt`: show a backtrace\\
+            - `fr [i::Int]`: show all variables in the current or `i`th frame\\
+            
+
+            Evaluation:\\
+            - ``` `stuff ```: run `stuff` in the current function's context\\
+            - `w`\\
+                - `w add expr`: add an expression to the watch list\\
+                - `w`: show all watch expressions evaluated in the current function's context\\
+                - `w rm [i::Int]`: remove all or the `i`:th watch expression\\
+            
+            
+            Breakpoints:\\
+            - `bp add`\\
+                - `bp add "file.jl":line`: add a breakpoint att file `file.jl` on line `line`\\
+                - `bp add func`[:line]`: add a breakpoint to function `func` at line `line` (defaulting to first line)\\
+                - `bp add func(::Float64, Int)[:line]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line)\\
+                - `bp add func(x, y)[:line]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc.\\
+                - `bp add line` add a breakpoint to `line` of the file of the current function\\
+            - `bp` show all breakpoints\\
+            - `bp rm [i::Int]`: remove all or the `i`:th breakpoint\\
+            - `bp toggle [i::Int]`: toggle all or the `i`:th breakpoint\\
+            - `bp disable [i::Int]`: disable all or the `i`:th breakpoint\\
+            - `bp enable [i::Int]`: enable all or the `i`:th breakpoint\\
+            - `bp on/off`\\
+                - `bp on/off error` - turn on or off break on error\\
+                - `bp on/off throw` - turn on or off break on throw\\
+        
+
+            An empty command will execute the previous command.""")
     return false
 end
 

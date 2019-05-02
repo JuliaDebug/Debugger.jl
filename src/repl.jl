@@ -63,7 +63,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
             print(Base.pipe_writer(terminal), String(take!(io.io)))
             # Comment below out if you are debugging the Debugger
-            # Base.display_error(Base.pipe_writer(terminal), err, catch_backtrace())
+            #Base.display_error(Base.pipe_writer(terminal), err, catch_backtrace())
             LineEdit.transition(s, :abort)
             LineEdit.reset_state(s)
            return false

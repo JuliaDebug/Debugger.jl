@@ -1,5 +1,7 @@
 using Debugger: Debugger, @enter, execute_command, RunDebugger, @make_frame
 import JuliaInterpreter: JuliaInterpreter, Frame, @lookup, Compiled, pc_expr
+import CodeTracking
+using InteractiveUtils
 
 using Test
 using .Meta: isexpr

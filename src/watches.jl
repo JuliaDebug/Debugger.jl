@@ -9,10 +9,8 @@ function add_watch_entry!(state::DebuggerState, cmd::AbstractString)
     return true
 end
 
-function show_watch_list(io, state::DebuggerState)
+function show_watch_list(io::IO, state::DebuggerState)
     frame = active_frame(state)
-    outbuf = IOContext(IOBuffer(), io)
-
     for (i, expr) in enumerate(state.watch_list)
         vars = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
         eval_expr = Expr(:let,
@@ -31,16 +29,14 @@ function show_watch_list(io, state::DebuggerState)
         else
             res_str = highlight_code(repr(res), context=io)
         end
-        print(outbuf, "$i] $(expr_str): $(res_str)\n")
+        println(io, "$i] $(expr_str): $(res_str)")
     end
-    print(io, String(take!(outbuf.io)))
-    println(io)
 end
 
 clear_watch_list!(state::DebuggerState) = empty!(state.watch_list)
 function clear_watch_list!(state::DebuggerState, i::Int)
     if !checkbounds(Bool, state.watch_list, i)
-        printstyled(stderr, "ERROR: watch entry $i does not exist\n\n"; color=Base.error_color())
+        printstyled(stderr, "ERROR: watch entry $i does not exist\n"; color=Base.error_color())
         return
     end
     deleteat!(state.watch_list, i)
