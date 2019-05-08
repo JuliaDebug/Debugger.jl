@@ -140,6 +140,10 @@ const NUM_SOURCE_LINES_UP_DOWN = Ref(4)
 function print_codeinfo(io::IO, frame::Frame)
     buf = IOBuffer()
     src = frame.framecode.src
+    if isdefined(JuliaInterpreter, Symbol("replace_coretypes!"))
+        src = JuliaInterpreter.copy_codeinfo(src)
+        JuliaInterpreter.replace_coretypes!(src; rev=true)
+    end
     show(buf, src)
     active_line = convert(Int, frame.pc[])
     code = filter!(split(String(take!(buf)), '\n')) do line
