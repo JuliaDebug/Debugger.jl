@@ -75,7 +75,8 @@ include("locationinfo.jl")
 include("repl.jl")
 include("commands.jl")
 include("printing.jl")
-include("watch.jl")
+include("watches.jl")
+include("breakpoints.jl")
 
 function _make_frame(mod, arg)
     args = try

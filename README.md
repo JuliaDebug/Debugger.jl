@@ -12,7 +12,9 @@
 ]add Debugger
 ```
 
-## Usage
+# Usage
+
+## Starting the debugger interface
 
 The debug interface is entered using the `@enter` macro:
 
@@ -28,42 +30,70 @@ end
 ```
 
 This interface allows for manipulating program execution, such as stepping in and
-out of functions, line stepping, showing local variables, and evaluating code in
+out of functions, line stepping, showing local variables, setting breakpoints and evaluating code in
 the context of functions.
 
-Basic Commands:
-- `st`: show the status
-- `n`: step to the next line
-- `u [i::Int]`: step until line `i` or the next line past the current line
-- `s`: step into the next call
-- `so`: step out of the current call
-- `c`: continue execution until a breakpoint is hit
-- `bt`: show a simple backtrace
-- ``` `stuff ```: run `stuff` in the current function's context
-- `fr [i::Int]`: show all variables in the current or `i`th frame
-- `f [i::Int]`: go to the `i`-th function in the call stack
-- `up/down [i::Int]` go up or down one or `i` functions in the call stack
-- `w`
-    - `w add expr`: add an expression to the watch list
-    - `w`: show all watch expressions evaluated in the current function's context
-    - `w rm [i::Int]`: remove all or the `i`:th watch expression
+## Debugger commands
+
+Below, square brackets denote optional arguments.
+
+Misc:
 - `o`: open the current line in an editor
 - `q`: quit the debugger, returning `nothing`
 - `C`: toggle compiled mode
 - `L`: toggle showing lowered code instead of source code
 - `+`/`-`: increase / decrease the number of lines of source code shown
 
-Advanced commands:
+Stepping (basic):
+- `n`: step to the next line
+- `u [i::Int]`: step until line `i` or the next line past the current line
+- `s`: step into the next call
+- `so`: step out of the current call
+- `c`: continue execution until a breakpoint is hit
+- `f [i::Int]`: go to the `i`-th function in the call stack (stepping is only possible in the function at the top of the call stack)
+- `up/down [i::Int]` go up or down one or `i` functions in the call stack
+
+Stepping (advanced):
 - `nc`: step to the next call
 - `se`: step one expression step
 - `si`: same as `se` but step into a call if a call is the next expression
 - `sg`: step into a generated function
 
+Querying:
+- `st`: show the "status" (current function, source code and current expression to run)
+- `bt`: show a backtrace
+- `fr [i::Int]`: show all variables in the current or `i`th frame
+
+Evaluation:
+- ``` `stuff ```: run `stuff` in the current function's context
+- `w`
+    - `w add expr`: add an expression to the watch list
+    - `w`: show all watch expressions evaluated in the current function's context
+    - `w rm [i::Int]`: remove all or the `i`:th watch expression
+
+Breakpoints:
+- `bp`
+    - `bp add`
+        - `bp add "file.jl":line`: add a breakpoint att file `file.jl` on `line`
+        - `bp add func`[:line]`: add a breakpoint to function `func` at `line` (defaulting to first line)
+        - `bp add func(::Float64, Int)[:line]`: add a breakpoint to methods matching the signature at `line` (defaulting to first line)
+        - `bp add func(x, y)[:line]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc.
+        - `bp add line` add a breakpoint to `line` of the file of the current function
+    - `bp` show all breakpoints
+    - `bp rm [i::Int]`: remove all or the `i`:th breakpoint
+    - `bp toggle [i::Int]`: toggle all or the `i`:th breakpoint
+    - `bp disable [i::Int]`: disable all or the `i`:th breakpoint
+    - `bp enable [i::Int]`: enable all or the `i`:th breakpoint
+    - `bp on/off`
+      - `bp on/off error` - turn on or off break on error
+      - `bp on/off throw` - turn on or off break on throw
+
 An empty command will execute the previous command.
 
 ### Breakpoints
 
-There are currently no designated commands in the debug mode for adding and removing breakpoints, instead they are manipulated using the API from the package JuliaInterpreter (which is reexported from Debugger). The different ways of manipulating breakpoints are documented [here](https://juliadebug.github.io/JuliaInterpreter.jl/latest/dev_reference/#Breakpoints-1).
+To add and manipulate breakpoints, either the `bp add` command in the debug interface or the JuliaInterpreter breakpoint API, documented [here](https://juliadebug.github.io/JuliaInterpreter.jl/latest/dev_reference/#Breakpoints-1)
+can be used.
 
 It is common to want to run a function until a breakpoint is hit. Therefore, the "shortcut macro" `@run` is provided which is equivalent
 of starting the debug mode with `@enter` and then executing the continue command (`c`):

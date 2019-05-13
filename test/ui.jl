@@ -90,14 +90,24 @@ function f_up_down_3(x, y)
     return x + y
 end
 
+
+function mysum(x)
+    s = 0
+    for v in x
+        s += v
+    end
+    return s
+end
+
+
 @testset "UI" begin
     if Sys.isunix() && VERSION >= v"1.1.0"
         Debugger._print_full_path[] = false
         using TerminalRegressionTests
 
         function run_terminal_test(frame, commands, validation)
-            TerminalRegressionTests.automated_test(joinpath(@__DIR__, validation), commands) do emuterm
-            #TerminalRegressionTests.create_automated_test(joinpath(@__DIR__, validation), commands) do emuterm
+            #TerminalRegressionTests.automated_test(joinpath(@__DIR__, validation), commands) do emuterm
+            TerminalRegressionTests.create_automated_test(joinpath(@__DIR__, validation), commands) do emuterm
                 repl = REPL.LineEditREPL(emuterm, true)
                 repl.interface = REPL.setup_interface(repl)
                 repl.specialdisplay = REPL.REPLDisplay(repl)
@@ -135,6 +145,10 @@ end
         run_terminal_test(@make_frame(f_up_down_1(5, 3)),
                           ["s\n", "s\n", "down\n", "up\n", "down 2\n", "up 2\n", "c\n"],
                           "ui/history_updown.multiout")
+
+        run_terminal_test(@make_frame(mysum([1,2,3,4,5])),
+                          ["bp add mysum:97 v > 3\n", "c\n", "bp rm\n", "c\n"],
+                          "ui/bp_ui.multiout")
 
         Debugger.break_on(:error)
         run_terminal_test(@make_frame(error("foo")),
