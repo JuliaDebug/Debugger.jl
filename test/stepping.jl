@@ -28,15 +28,13 @@ function optional(n = sin(1))
     cos(x)
 end
 
-frame = JuliaInterpreter.enter_call_expr(:($(optional)()))
+frame = @make_frame optional()
 state = dummy_state(frame)
-# First call steps in
+# asin
 execute_command(state, Val{:n}(), "n")
 # cos(1.0)
 execute_command(state, Val{:n}(), "n")
 # return to wrapper
-execute_command(state, Val{:n}(), "n")
-# return from wrapper
 execute_command(state, Val{:n}(), "n")
 
 @test isnothing(state.frame)

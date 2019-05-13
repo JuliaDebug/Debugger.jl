@@ -40,7 +40,11 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             LineEdit.reset_state(s)
             return false
         end
-        if isempty(strip(line)) && length(panel.hist.history) > 0
+        if length(panel.hist.history) == 0
+            printstyled(stderr, "no previous command executed\n"; color=Base.error_color())
+            return false
+        end
+        if isempty(strip(line))
             command = panel.hist.history[end]
         else
             command = strip(line)
@@ -50,11 +54,19 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         do_print_status = try
             execute_command(state, Val{Symbol(cmd1)}(), command)
         catch err
-            # No point showing an internal stacktrace
-            Base.display_error(Base.pipe_writer(terminal), err, [])
+            # This will only show the stacktrae up to the current frame because
+            # currently, the unwinding in JuliaInterpreter unlinks the frames to
+            # where the error is thrown
+
+            # Buffer error printing
+            io = IOContext(IOBuffer(), Base.pipe_writer(terminal))
+            Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
+            print(Base.pipe_writer(terminal), String(take!(io.io)))
+            # Comment below out if you are debugging the Debugger
+            #Base.display_error(Base.pipe_writer(terminal), err, catch_backtrace())
             LineEdit.transition(s, :abort)
             LineEdit.reset_state(s)
-            return false
+           return false
         end
         if old_level != state.level
             panel.prompt = promptname(state.level, "debug")
@@ -71,9 +83,8 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         return true
     end
 
-    key = '`'
     repl_switch = Dict{Any,Any}(
-        key => function (s,args...)
+        '`' => function (s,args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 prompt = julia_prompt(state)
                 buf = copy(LineEdit.buffer(s))
@@ -81,35 +92,63 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
                     LineEdit.state(s, prompt).input_buffer = buf
                 end
             else
-                LineEdit.edit_insert(s,key)
+                LineEdit.edit_insert(s, '`')
             end
         end,
-        "C" => function (s, args...)
+        'C' => function (s, args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 toggle_mode(state)
                 write(state.terminal, '\r')
                 LineEdit.write_prompt(state.terminal, panel)
             else
-                LineEdit.edit_insert(s,key)
+                LineEdit.edit_insert(s, "C")
             end
         end,
-        "L" => function (s, args...)
-        if isempty(s) || position(LineEdit.buffer(s)) == 0
-            toggle_lowered(state)
-            println(Base.pipe_writer(terminal))
-            print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
-            LineEdit.write_prompt(state.terminal, panel)
-        else
-            LineEdit.edit_insert(s,key)
+        'L' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                toggle_lowered(state)
+                println(Base.pipe_writer(terminal))
+                print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+                LineEdit.write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "L")
+            end
+        end,
+        '+' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                NUM_SOURCE_LINES_UP_DOWN[] += 1
+                println(Base.pipe_writer(terminal))
+                print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+                LineEdit.write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "+")
+            end
+        end,
+        '-' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                NUM_SOURCE_LINES_UP_DOWN[] = max(1, NUM_SOURCE_LINES_UP_DOWN[] - 1)
+                println(Base.pipe_writer(terminal))
+                print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+                LineEdit.write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "-")
+            end
         end
-    end
     )
 
     state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
     panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
     if initial_continue && !JuliaInterpreter.shouldbreak(frame, frame.pc)
-        execute_command(state, Val(:c), "c")
+        try
+            execute_command(state, Val(:c), "c")
+        catch err
+            # Buffer error printing
+            io = IOContext(IOBuffer(), Base.pipe_writer(terminal))
+            Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
+            print(Base.pipe_writer(terminal), String(take!(io.io)))
+            return
+        end
         state.frame === nothing && return state.overall_result
     end
     print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)

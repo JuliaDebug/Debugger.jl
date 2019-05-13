@@ -1,6 +1,6 @@
 # Issue #14
 
-using JuliaInterpreter: JuliaInterpreter, pc_expr, evaluate_call!, finish_and_return!, @lookup, enter_call_expr
+using JuliaInterpreter: JuliaInterpreter, pc_expr, evaluate_call!, finish_and_return!, @lookup, enter_call_expr, breakpoints
 runframe(frame::Frame, pc=frame.pc[]) = Some{Any}(finish_and_return!(Compiled(), frame))
 
 frame = @make_frame map(x->2x, 1:10)
@@ -55,9 +55,10 @@ end
 frame = Debugger.@make_frame f()
 state = dummy_state(frame)
 execute_command(state, Val{:n}(), "n")
-loc = Debugger.locinfo(state.frame)
-@test isfile(loc.filepath)
-@test occursin("logging.jl", loc.filepath)
+defline, current_line, body = Debugger.locinfo(state.frame)
+@test occursin("handle_message(logger, level, msg", body)
+
+f_unicode() = √
 
 try
     Debugger.set_highlight(Debugger.HIGHLIGHT_SYSTEM_COLORS)
@@ -65,6 +66,11 @@ try
     st = chomp(sprint(Debugger.print_status, frame; context = :color => true))
     x_1_plus_1_colored = "\e[39m\e[97mx\e[39m\e[97m \e[39m\e[91m=\e[39m\e[97m \e[39m1\e[97m \e[39m\e[91m+\e[39m\e[97m \e[39m1\e[97m"
     @test occursin(x_1_plus_1_colored, st)
+
+    frame = Debugger.@make_frame f_unicode()
+    @info "The eventual warning below is expected:"
+    st = chomp(sprint(Debugger.print_status, frame; context = :color => true))
+    @test occursin("√", st)
 finally
     Debugger.set_highlight(Debugger.HIGHLIGHT_OFF)
 end
@@ -86,3 +92,70 @@ import InteractiveUtils
     @test JuliaInterpreter.Variable(@__FILE__, :file, false) in locals
     @test JuliaInterpreter.Variable(LINE, :line, false) in locals
 end
+
+# These are LoadError because the error happens at macro expansion
+@test_throws LoadError @macroexpand @enter "foo"
+@test_throws LoadError @macroexpand @enter 1
+@test_throws LoadError @macroexpand @run [1,2]
+
+# Breakpoints
+frame = Debugger.@make_frame sin(1.0)
+state = dummy_state(frame)
+
+# add
+execute_command(state, Val{:bp}(), "bp add cos")
+bp = breakpoints()[1]
+@test bp.f === cos
+@test bp.sig === nothing
+@test bp.condition === nothing
+@test bp.line == 0
+execute_command(state, Val{:bp}(), "bp rm")
+@test length(breakpoints()) == 0
+execute_command(state, Val{:bp}(), "bp add cos(x)")
+bp = breakpoints()[1]
+@test bp.f === cos
+@test bp.sig == Tuple{Float64}
+JuliaInterpreter.remove()
+execute_command(state, Val{:bp}(), "bp add cos(::Float32)")
+bp = breakpoints()[1]
+@test bp.sig == Tuple{Float32}
+JuliaInterpreter.remove()
+execute_command(state, Val{:bp}(), """bp add "foo.jl":10 x>3""")
+bp = breakpoints()[1]
+@test bp.path == "foo.jl"
+@test bp.line == 10
+@test bp.condition == :(x > 3)
+JuliaInterpreter.remove()
+execute_command(state, Val{:bp}(), """bp add 10""")
+bp = breakpoints()[1]
+@test bp.line == 10
+@test bp.path == CodeTracking.whereis(@which sin(1.0))[1]
+
+# toggle
+JuliaInterpreter.remove()
+execute_command(state, Val{:bp}(), """bp add sin""")
+execute_command(state, Val{:bp}(), """bp add cos""")
+execute_command(state, Val{:bp}(), """bp toggle 1""")
+bp = breakpoints()[1]
+bp2 = breakpoints()[2]
+@test bp.enabled[] == false
+@test bp2.enabled[] == true
+execute_command(state, Val{:bp}(), """bp toggle""")
+@test bp.enabled[] == true
+@test bp2.enabled[] == false
+
+# disable / enable
+JuliaInterpreter.remove()
+execute_command(state, Val{:bp}(), """bp add sin""")
+execute_command(state, Val{:bp}(), """bp add cos""")
+execute_command(state, Val{:bp}(), """bp disable 1""")
+bp = breakpoints()[1]
+bp2 = breakpoints()[2]
+@test bp.enabled[] == false
+execute_command(state, Val{:bp}(), """bp enable 1""")
+@test bp.enabled[] == true
+execute_command(state, Val{:bp}(), """bp disable""")
+@test bp.enabled[] == false
+@test bp2.enabled[] == false
+
+JuliaInterpreter.remove()

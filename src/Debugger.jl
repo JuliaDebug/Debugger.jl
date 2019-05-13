@@ -15,7 +15,7 @@ using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointR
                         finish_and_return!, Compiled
 
 using JuliaInterpreter: pc_expr, moduleof, linenumber, extract_args,
-                        root, caller, whereis, get_return, nstatements
+                        root, caller, whereis, get_return, nstatements, getargs
 
 const SEARCH_PATH = []
 function __init__()
@@ -75,7 +75,8 @@ include("locationinfo.jl")
 include("repl.jl")
 include("commands.jl")
 include("printing.jl")
-include("watch.jl")
+include("watches.jl")
+include("breakpoints.jl")
 
 function _make_frame(mod, arg)
     args = try
@@ -86,6 +87,7 @@ function _make_frame(mod, arg)
     quote
         theargs = $(esc(args))
         frame = JuliaInterpreter.enter_call_expr(Expr(:call,theargs...))
+        frame === nothing && error("failed to enter the function, perhaps it is set to run in compiled mode")
         frame = JuliaInterpreter.maybe_step_through_kwprep!(frame)
         frame = JuliaInterpreter.maybe_step_through_wrapper!(frame)
         if !JuliaInterpreter.shouldbreak(frame, frame.pc)
@@ -95,21 +97,25 @@ function _make_frame(mod, arg)
     end
 end
 
+_check_is_call(arg) = !(arg isa Expr && arg.head == :call) && throw(ArgumentError("@enter and @run should be applied to a function call"))
+
 macro make_frame(arg)
     _make_frame(__module__, arg)
 end
 
 macro enter(arg)
+    _check_is_call(arg)
     quote
-        let frame = $(_make_frame(__module__,arg))
+        let frame = $(_make_frame(__module__, arg))
             RunDebugger(frame)
         end
     end
 end
 
 macro run(arg)
+    _check_is_call(arg)
     quote
-        let frame = $(_make_frame(__module__,arg))
+        let frame = $(_make_frame(__module__, arg))
             RunDebugger(frame; initial_continue=true)
         end
     end

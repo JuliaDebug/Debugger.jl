@@ -1,0 +1,636 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> u 76
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+| 74      s = 1 + 1
+| 75      s = 2 + 2
+|>76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+| 80      return s
+| 81  end
+|
+|About to run: (+)(3, 3)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> u 76
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+| 74      s = 1 + 1
+| 75      s = 2 + 2
+|>76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+| 80      return s
+| 81  end
+|
+|About to run: (+)(3, 3)
+|1|debug> u
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+| 74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+|>77      for v in x
+| 78          s += v
+| 79      end
+| 80      return s
+| 81  end
+|
+|About to run: (iterate)([1, 2, 3, 4, 5, 6, 7, 8])
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> u 76
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+| 74      s = 1 + 1
+| 75      s = 2 + 2
+|>76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+| 80      return s
+| 81  end
+|
+|About to run: (+)(3, 3)
+|1|debug> u
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+| 74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+|>77      for v in x
+| 78          s += v
+| 79      end
+| 80      return s
+| 81  end
+|
+|About to run: (iterate)([1, 2, 3, 4, 5, 6, 7, 8])
+|1|debug> u
+|In f_until(x) at ui.jl:74
+| 74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+|>78          s += v
+| 79      end
+| 80      return s
+| 81  end
+|
+|About to run: (+)(6, 1)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+|
+|About to run: (+)(1, 1)
+|1|debug> 
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+|>74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+|
+|About to run: (+)(1, 1)
+|1|debug> u 76
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+| 74      s = 1 + 1
+| 75      s = 2 + 2
+|>76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+| 80      return s
+| 81  end
+|
+|About to run: (+)(3, 3)
+|1|debug> u
+|In f_until(x) at ui.jl:74
+| 73  function f_until(x)
+| 74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+|>77      for v in x
+| 78          s += v
+| 79      end
+| 80      return s
+| 81  end
+|
+|About to run: (iterate)([1, 2, 3, 4, 5, 6, 7, 8])
+|1|debug> u
+|In f_until(x) at ui.jl:74
+| 74      s = 1 + 1
+| 75      s = 2 + 2
+| 76      s = 3 + 3
+| 77      for v in x
+|>78          s += v
+| 79      end
+| 80      return s
+| 81  end
+|
+|About to run: (+)(6, 1)
+|1|debug> u
+|In f_until(x) at ui.jl:74
+| 76      s = 3 + 3
+| 77      for v in x
+| 78          s += v
+| 79      end
+|>80      return s
+| 81  end
+|
+|About to run: return 42
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAA
+|AAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
