@@ -46,3 +46,8 @@ Debugger.add_watch_entry!(state, "x")
 watch_str = sprint(Debugger.show_watch_list, state)
 @test occursin("1] x: :foo", watch_str)
 Debugger.clear_watch_list!(state)
+
+# Evaling multiple statements (https://github.com/JuliaDebug/Debugger.jl/issues/188)
+frame = JuliaInterpreter.enter_call_expr(:($(evalfoo1)(1,2)))
+res = eval_code(frame, "x = 1; y = 2")
+@test res == 2

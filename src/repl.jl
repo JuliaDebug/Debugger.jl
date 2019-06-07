@@ -214,6 +214,10 @@ end
 function eval_code(frame::Frame, command::AbstractString)
     expr = Base.parse_input_line(command)
     isexpr(expr, :toplevel) && (expr = expr.args[end])
+
+    if isexpr(expr, :toplevel)
+      expr = Expr(:block, expr.args...)
+    end
     # see https://github.com/JuliaLang/julia/issues/31255 for the Symbol("") check
     vars = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
     res = gensym()
