@@ -164,7 +164,7 @@ Stacktrace:
 In order to fully support breakpoints, the debugger interprets all code, even code that is stepped over.
 Currently, there are cases where the interpreter is too slow for this to be feasible.
 A workaround is to use "compiled mode" which is toggled by pressing `C` in the debug REPL mode (note the change of prompt color).
-When using compiled mode, code that is stepped over will be executed
+When using compiled mode, code at the deeper levels of the call stack that is stepped over will be executed (i.e. code in the current scope and calling scopes will still be interpreted).
 by the normal julia compiler and run just as fast as normally.
 The drawback is of course that breakpoints in code that is stepped over are missed.
 
