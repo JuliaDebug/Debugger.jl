@@ -109,7 +109,7 @@
 | 91  end
 |
 |About to run: (+)(5, 3)
-|1|debug> down
+|1|debug> up
 |In f_up_down_2(x, y) at ui.jl:87
 | 86  function f_up_down_2(x, y)
 |>87      f_up_down_3(x, y)
@@ -138,7 +138,7 @@
 |AAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAAA
+|CCCCCCCCCAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAA
@@ -167,14 +167,14 @@
 | 91  end
 |
 |About to run: (+)(5, 3)
-|1|debug> down
+|1|debug> up
 |In f_up_down_2(x, y) at ui.jl:87
 | 86  function f_up_down_2(x, y)
 |>87      f_up_down_3(x, y)
 | 88  end
 |
 |About to run: (f_up_down_3)(5, 3)
-|2|debug> up
+|2|debug> down
 |In f_up_down_3(x, y) at ui.jl:90
 | 89  function f_up_down_3(x, y)
 |>90      return x + y
@@ -203,14 +203,14 @@
 |AAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAAA
+|CCCCCCCCCAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAA
+|CCCCCCCCCAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAA
@@ -239,21 +239,21 @@
 | 91  end
 |
 |About to run: (+)(5, 3)
-|1|debug> down
+|1|debug> up
 |In f_up_down_2(x, y) at ui.jl:87
 | 86  function f_up_down_2(x, y)
 |>87      f_up_down_3(x, y)
 | 88  end
 |
 |About to run: (f_up_down_3)(5, 3)
-|2|debug> up
+|2|debug> down
 |In f_up_down_3(x, y) at ui.jl:90
 | 89  function f_up_down_3(x, y)
 |>90      return x + y
 | 91  end
 |
 |About to run: (+)(5, 3)
-|1|debug> down 2
+|1|debug> up 2
 |In f_up_down_1(x, y) at ui.jl:84
 | 83  function f_up_down_1(x, y)
 |>84      f_up_down_2(x, y)
@@ -282,21 +282,21 @@
 |AAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAAA
+|CCCCCCCCCAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAA
+|CCCCCCCCCAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAAAAA
+|CCCCCCCCCAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAA
@@ -325,28 +325,28 @@
 | 91  end
 |
 |About to run: (+)(5, 3)
-|1|debug> down
+|1|debug> up
 |In f_up_down_2(x, y) at ui.jl:87
 | 86  function f_up_down_2(x, y)
 |>87      f_up_down_3(x, y)
 | 88  end
 |
 |About to run: (f_up_down_3)(5, 3)
-|2|debug> up
+|2|debug> down
 |In f_up_down_3(x, y) at ui.jl:90
 | 89  function f_up_down_3(x, y)
 |>90      return x + y
 | 91  end
 |
 |About to run: (+)(5, 3)
-|1|debug> down 2
+|1|debug> up 2
 |In f_up_down_1(x, y) at ui.jl:84
 | 83  function f_up_down_1(x, y)
 |>84      f_up_down_2(x, y)
 | 85  end
 |
 |About to run: (f_up_down_2)(5, 3)
-|3|debug> up 2
+|3|debug> down 2
 |In f_up_down_3(x, y) at ui.jl:90
 | 89  function f_up_down_3(x, y)
 |>90      return x + y
@@ -375,28 +375,28 @@
 |AAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAAA
+|CCCCCCCCCAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAA
+|CCCCCCCCCAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAAAAA
+|CCCCCCCCCAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAAA
+|CCCCCCCCCAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAA
