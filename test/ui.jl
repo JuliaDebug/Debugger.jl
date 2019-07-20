@@ -143,7 +143,7 @@ end
                           "ui/history_until.multiout")
 
         run_terminal_test(@make_frame(f_up_down_1(5, 3)),
-                          ["s\n", "s\n", "down\n", "up\n", "down 2\n", "up 2\n", "c\n"],
+                          ["s\n", "s\n", "up\n", "down\n", "up 2\n", "down 2\n", "c\n"],
                           "ui/history_updown.multiout")
 
         run_terminal_test(@make_frame(mysum([1,2,3,4,5])),
