@@ -229,12 +229,22 @@ function eval_code(frame::Frame, command::AbstractString)
         ))
     eval_res, res = Core.eval(moduleof(frame), eval_expr)
     j = 1
+    code = frame.framecode
+    data = frame.framedata
     for (i, v) in enumerate(vars)
         if v.isparam
-            frame.framedata.sparams[j] = res[i]
+            data.sparams[j] = res[i]
             j += 1
         else
-            frame.framedata.locals[frame.framedata.last_reference[v.name]] = Some{Any}(res[i])
+            if :assignment_counter in fieldnames(Frame)
+                slot_indices = code.slotnamelists[v.name]
+                idx = argmax(data.last_reference[slot_indices])
+                slot_idx = slot_indices[idx]
+                data.last_reference[slot_idx] = (frame.assignment_counter += 1)
+                data.locals[slot_idx] = Some{Any}(res[i])
+            else
+                data.locals[data.last_reference[v.name]] = Some{Any}(res[i])
+            end
         end
     end
     eval_res
