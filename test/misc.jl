@@ -130,6 +130,16 @@ execute_command(state, Val{:bp}(), """bp add 10""")
 bp = breakpoints()[1]
 @test bp.line == 10
 @test bp.path == CodeTracking.whereis(@which sin(1.0))[1]
+JuliaInterpreter.remove()
+execute_command(state, Val{:bp}(), """bp add Base.cos:5""")
+bp = breakpoints()[1]
+@test bp.f === cos
+@test bp.line == 5
+JuliaInterpreter.remove()
+execute_command(state, Val{:bp}(), """bp add 1+1""")
+bp = breakpoints()[1]
+@test bp.f === +
+@test bp.sig == Tuple{Int, Int}
 
 # toggle
 JuliaInterpreter.remove()
@@ -157,5 +167,12 @@ execute_command(state, Val{:bp}(), """bp enable 1""")
 execute_command(state, Val{:bp}(), """bp disable""")
 @test bp.enabled[] == false
 @test bp2.enabled[] == false
-
 JuliaInterpreter.remove()
+
+
+@info "BEGIN ERRORS -------------------------------------"
+execute_command(state, Val{:bp}(), """bp add Base""")
+@test length(breakpoints()) == 0
+execute_command(state, Val{:bp}(), """bp add lfdshfds""")
+@test length(breakpoints()) == 0
+@info "END ERRORS -------------------------------------"

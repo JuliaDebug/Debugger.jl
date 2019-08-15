@@ -204,7 +204,7 @@ B_inst = B{Int}()
 @test step_through(JuliaInterpreter.enter_call_expr(:($(B_inst)(10)))) == 42*10 + 10
 
 # Stepping in non toplevel frames
-@info " BEGIN ERRORS -------------------------------------"
+@info "BEGIN ERRORS -------------------------------------"
 f2(x) = f1(x)
 f1(x) = x
 frame = @make_frame f2(1)
@@ -214,5 +214,5 @@ execute_command(state, Val{:fr}(), "f 2")
 @test execute_command(state, Val{:s}(), "s") == false
 @test execute_command(state, Val{:n}(), "n") == false
 @test execute_command(state, Val{:so}(), "so") == false
-@info " END ERRORS ---------------------------------------"
+@info "END ERRORS ---------------------------------------"
 
