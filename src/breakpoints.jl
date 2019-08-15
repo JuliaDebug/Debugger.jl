@@ -21,7 +21,8 @@ function get_function_in_module_or_Main(m::Module, f::Symbol)
         !isdefined(Main, f) && return nothing
         m = Main
     end
-    return getfield(m, f)
+    f = getfield(m, f)
+    return f isa Function ? f : nothing
 end
 
 function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
@@ -46,7 +47,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
         breakpoint(current_file, line, cond_expr)
         return true
     end
- 
+
     line = nothing
     if location_expr isa Expr && location_expr.head == :call && location_expr.args[1] == :(:)
         line = location_expr.args[3]
@@ -69,7 +70,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
         fsym = location_expr
         m = moduleof(frame)
         f = get_function_in_module_or_Main(m, fsym)
-        f == nothing && return undef_func(m, fsym)
+        f === nothing && return undef_func(m, fsym)
         @info "added breakpoint for function $f" * (line === nothing ? "" : ":$line")
         breakpoint(f, line, cond_expr)
         return true
@@ -77,7 +78,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
 
     location_expr isa Expr || return bp_error("failed to parse breakpoint expression")
     location_expr.head == :call || return bp_error("expected a call expression")
-    
+
     fsym, f_args = location_expr.args[1], location_expr.args[2:end]
     type_args = false
     if any(arg -> arg isa Expr && arg.head == :(::), f_args)
@@ -90,7 +91,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
 
     vars = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
     eval_expr = Expr(:let,
-        Expr(:block, 
+        Expr(:block,
             map(x->Expr(:(=), x...), [(v.name, maybe_quote(v.value)) for v in vars])...),
         Expr(:block,
             Expr(:tuple, [arg for arg in f_args]...))
@@ -162,4 +163,3 @@ function remove_breakpoint!(state::DebuggerState, i::Int)
     JuliaInterpreter.remove(JuliaInterpreter.breakpoints()[i])
     return true
 end
- 
