@@ -52,13 +52,19 @@ function pattern_match_kw_call(expr)
     return :($f($(args...); $(kws...)))
 end
 
+@static if VERSION < v"1.3.0-DEV.179"
+    const append_any = Base.append_any
+else
+    append_any(@nospecialize x...) = append!([], Core.svec((x...)...))
+end
+
 function pattern_match_apply_call(expr, frame)
     if !(isexpr(expr, :call) && expr.args[1] == Core._apply)
         return expr
     end
     args = [@lookup(frame, expr.args[i+2]) for i in 1:(length(expr.args)-2)]
     new_expr = Expr(:call, expr.args[2])
-    argsflat = Base.append_any(args...)
+    argsflat = append_any(args...)
     for x in argsflat
         push!(new_expr.args, (isa(x, Symbol) || isa(x, Expr) || isa(x, QuoteNode)) ? QuoteNode(x) : x)
     end
@@ -119,7 +125,7 @@ function print_status(io::IO, frame::Frame; force_lowered=false)
     outbuf = IOContext(IOBuffer(), io)
     printstyled(outbuf, "In ", locdesc(frame), "\n")
     loc = locinfo(frame)
-    
+
     if loc !== nothing && !force_lowered
         defline, current_line, body = loc
         breakpoint_lines = breakpoint_linenumbers(frame)
