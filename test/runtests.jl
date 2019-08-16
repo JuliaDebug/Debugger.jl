@@ -18,6 +18,5 @@ Debugger.set_highlight(Debugger.HIGHLIGHT_OFF)
     include("misc.jl")
     include("stepping.jl")
     include("interpret.jl")
-    include("evaling.jl")
     include("ui.jl")
 #end
