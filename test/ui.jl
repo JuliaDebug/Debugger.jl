@@ -124,7 +124,7 @@ end
                            "w add a\n", "w add sin(a)\n", "w add b\n", "w\n", "w rm 1\n", "w\n",
                            "s\n", "fr 1\n", "fr 2\n", "f 2\n", "f 1\n",
                            "bt\n", "st\n", "C", "c\n", "C", "c\n"],
-                          "ui/history_gcd.multiout")
+                          VERSION >= v"1.3.0-alpha.109" ? "ui/history_gcd_1.3.multiout" : "ui/history_gcd.multiout")
 
         run_terminal_test(@make_frame(outer(1, 2, 5, 20)),
                           ["s\n", "c\n"],

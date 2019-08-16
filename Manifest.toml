@@ -41,7 +41,9 @@ uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "fd92b23285fb16884bbe54d4516615c6bf550adb"
+git-tree-sha1 = "091b327cdacadd22e137217871a5d1936007b218"
+repo-rev = "master"
+repo-url = "https://github.com/JuliaDebug/JuliaInterpreter.jl.git"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 version = "0.6.1"
 
