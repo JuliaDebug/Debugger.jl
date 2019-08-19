@@ -74,11 +74,11 @@ Evaluation:
 Breakpoints:
 - `bp`
     - `bp add`
-        - `bp add "file.jl":line`: add a breakpoint att file `file.jl` on `line`
-        - `bp add func [:line]`: add a breakpoint to function `func` at `line` (defaulting to first line)
-        - `bp add func(::Float64, Int)[:line]`: add a breakpoint to methods matching the signature at `line` (defaulting to first line)
-        - `bp add func(x, y)[:line]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc.
-        - `bp add line` add a breakpoint to `line` of the file of the current function
+        - `bp add "file.jl":line [cond]`: add a breakpoint att file `file.jl` on line `line` with condition `cond`
+        - `bp add func [:line] [cond]`: add a breakpoint to function `func` at line `line` (defaulting to first line)  with condition `cond`
+        - `bp add func(::Float64, Int)[:line] [cond]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line)  with condition `cond`
+        - `bp add func(x, y)[:line] [cond]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc with condition `cond`
+        - `bp add line [cond]` add a breakpoint to `line` of the file of the current function  with condition `cond`
     - `bp` show all breakpoints
     - `bp rm [i::Int]`: remove all or the `i`:th breakpoint
     - `bp toggle [i::Int]`: toggle all or the `i`:th breakpoint

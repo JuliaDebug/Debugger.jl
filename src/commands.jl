@@ -244,7 +244,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `C`: toggle compiled mode\\
             - `L`: toggle showing lowered code instead of source code\\
             - `+`/`-`: increase / decrease the number of lines of source code shown\\
-            
+
 
             Stepping (basic):\\
             - `n`: step to the next line\\
@@ -254,20 +254,20 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `c`: continue execution until a breakpoint is hit\\
             - `f [i::Int]`: go to the `i`-th function in the call stack (stepping is only possible in the function at the top of the call stack)\\
             - `up/down [i::Int]` go up or down one or `i` functions in the call stack\\
-            
+
 
             Stepping (advanced):\\
             - `nc`: step to the next call\\
             - `se`: step one expression step\\
             - `si`: same as `se` but step into a call if a call is the next expression\\
             - `sg`: step into a generated function\\
-            
+
 
             Querying:\\
             - `st`: show the "status" (current function, source code and current expression to run)\\
             - `bt`: show a backtrace\\
             - `fr [i::Int]`: show all variables in the current or `i`th frame\\
-            
+
 
             Evaluation:\\
             - ``` `stuff ```: run `stuff` in the current function's context\\
@@ -275,15 +275,15 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
                 - `w add expr`: add an expression to the watch list\\
                 - `w`: show all watch expressions evaluated in the current function's context\\
                 - `w rm [i::Int]`: remove all or the `i`:th watch expression\\
-            
-            
+
+
             Breakpoints:\\
             - `bp add`\\
-                - `bp add "file.jl":line`: add a breakpoint att file `file.jl` on line `line`\\
-                - `bp add func [:line]`: add a breakpoint to function `func` at line `line` (defaulting to first line)\\
-                - `bp add func(::Float64, Int)[:line]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line)\\
-                - `bp add func(x, y)[:line]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc.\\
-                - `bp add line` add a breakpoint to `line` of the file of the current function\\
+                - `bp add "file.jl":line [cond]`: add a breakpoint att file `file.jl` on line `line` with condition `cond`\\
+                - `bp add func [:line] [cond]`: add a breakpoint to function `func` at line `line` (defaulting to first line)  with condition `cond`\\
+                - `bp add func(::Float64, Int)[:line] [cond]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line)  with condition `cond`\\
+                - `bp add func(x, y)[:line] [cond]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc with condition `cond`\\
+                - `bp add line [cond]` add a breakpoint to `line` of the file of the current function  with condition `cond`\\
             - `bp` show all breakpoints\\
             - `bp rm [i::Int]`: remove all or the `i`:th breakpoint\\
             - `bp toggle [i::Int]`: toggle all or the `i`:th breakpoint\\
@@ -292,7 +292,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `bp on/off`\\
                 - `bp on/off error` - turn on or off break on error\\
                 - `bp on/off throw` - turn on or off break on throw\\
-        
+
 
             An empty command will execute the previous command.""")
     return false
