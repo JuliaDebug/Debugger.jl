@@ -41,15 +41,48 @@ function locdesc(io, frame::Frame; current_line=false)
     framecode = frame.framecode
     meth = framecode.scope
     @assert meth isa Method
+
     argnames = framecode.src.slotnames[2:meth.nargs]
     spectypes = Any[Any for i=1:length(argnames)]
-    print(io, meth.name,'(')
-    first = true
-    for (argname, argT) in zip(argnames, spectypes)
-        first || print(io, ", ")
-        first = false
-        print(io, argname)
-        !(argT === Any) && print(io, "::", argT)
+
+    is_kw = false
+    if frame.caller !== nothing
+        is_kw = occursin("#kw##", string(frame.caller.framecode.scope))
+    end
+    if is_kw
+        i = 0
+        for arg in argnames
+            if arg == Symbol("")
+                break
+            end
+            i += 1
+        end
+        kw_indices = 1:i
+        positional_indices = i+2:length(argnames)
+    else
+        kw_indices = 1:0
+        positional_indices = 1:length(argnames)
+    end
+
+    methname = string(meth.name)
+    if is_kw
+        m = match(r"#(.*?)#(?:[0-9]*)$", methname)
+        m === nothing || (methname = m.captures[1])
+    end
+    print(io, methname,'(')
+    function print_indices(indices)
+        first = true
+        for (argname, argT) in zip(argnames[indices], spectypes[indices])
+            first || print(io, ", ")
+            first = false
+            print(io, argname)
+            argT === Any || print(io, "::", argT)
+        end
+    end
+    print_indices(positional_indices)
+    if !isempty(kw_indices)
+        print(io, "; ")
+        print_indices(kw_indices)
     end
     line = current_line ? JuliaInterpreter.linenumber(frame) : meth.line
     path = string(_print_full_path[] ? meth.file : basename(String(meth.file)), ":", line)

@@ -22,7 +22,7 @@
 |
 |About to run: (inner_kw)(1, 2; c=5)
 |1|debug> s
-|In #inner_kw#12(c, d, , a, b) at ui.jl:56
+|In inner_kw(a, b; c, d) at ui.jl:56
 | 55  function inner_kw(a, b; c = 3, d = 10)
 |>56      return a + b + c + d
 | 57  end
@@ -37,7 +37,7 @@
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCCA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAA
