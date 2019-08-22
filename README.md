@@ -159,6 +159,40 @@ Stacktrace:
 [...]
 ```
 
+### Place breakpoints in source code
+It is sometimes more convenient to choose in the source code when to break. This is done for instance in Matlab/Octave with `keyboard`, and in R with `browser()`. You can use the `@bp` macro to do this:
+```
+julia> using Debugger
+
+julia> function f(x)
+           if x < 0
+               @bp
+           else
+               println("All good!")
+           end
+       end
+f (generic function with 1 method)
+
+julia> @run f(2)
+All good!
+
+julia> @run f(-2)
+Hit breakpoint:
+In f(x) at REPL[6]:2
+ 1  function f(x)
+ 2      if x < 0
+>3          @bp
+ 4      else
+ 5          println("All good!")
+ 6      end
+ 7  end
+
+About to run: return
+1|debug> bt
+[1] f(x) at REPL[6]:3
+  | x::Int64 = -2
+```
+
 ### Compiled mode
 
 In order to fully support breakpoints, the debugger interprets all code, even code that is stepped over.
