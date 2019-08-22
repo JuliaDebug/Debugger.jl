@@ -160,9 +160,9 @@ Stacktrace:
 ```
 
 ### Breakpoint at specific location
-It is sometimes useful to programmatically decide when to break and drop to the debugger to inspect your surroundings; this is for instance done in Matlab/Octave with the `keyboard` command. You can use the `@bp` macro in JuliaInterpreter to do this:
+It is sometimes useful to programmatically decide when to break and drop to the debugger to inspect your surroundings; this is for instance done in Matlab/Octave with the `keyboard` command. You can use the `@bp` macro to do this:
 ```
-julia> using Debugger, JuliaInterpreter
+julia> using Debugger
 
 julia> function f(x)
            if x < 0
