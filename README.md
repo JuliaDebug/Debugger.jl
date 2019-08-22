@@ -159,6 +159,40 @@ Stacktrace:
 [...]
 ```
 
+### Breakpoint at specific location
+It is sometimes useful to programmatically decide when to break and drop to the debugger to inspect your surroundings; this is for instance done in Matlab/Octave with the `keyboard` command. You can use the `@bp` macro in JuliaInterpreter to do this:
+```
+julia> using Debugger, JuliaInterpreter
+
+julia> function f(x)
+           if x < 0
+               @bp
+           else
+               println("All good!")
+           end
+       end
+f (generic function with 1 method)
+
+julia> @run f(2)
+All good!
+
+julia> @run f(-2)
+Hit breakpoint:
+In f(x) at REPL[6]:2
+ 1  function f(x)
+ 2      if x < 0
+>3          @bp
+ 4      else
+ 5          println("All good!")
+ 6      end
+ 7  end
+
+About to run: return
+1|debug> bt
+[1] f(x) at REPL[6]:3
+  | x::Int64 = -2
+```
+
 ### Compiled mode
 
 In order to fully support breakpoints, the debugger interprets all code, even code that is stepped over.
