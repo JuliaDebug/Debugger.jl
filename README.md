@@ -159,8 +159,8 @@ Stacktrace:
 [...]
 ```
 
-### Breakpoint at specific location
-It is sometimes useful to programmatically decide when to break and drop to the debugger to inspect your surroundings; this is for instance done in Matlab/Octave with the `keyboard` command. You can use the `@bp` macro to do this:
+### Place breakpoints in source code
+It is sometimes more convenient to choose in the source code when to break. This is done for instance in Matlab/Octave with `keyboard`, and in R with `browser()`. You can use the `@bp` macro to do this:
 ```
 julia> using Debugger
 
