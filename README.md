@@ -6,6 +6,8 @@
 |:-----------------------------------------------------------------------------------------------:|
 | [![][travis-img]][travis-url]  [![][codecov-img]][codecov-url] |
 
+**Note**: If you are looking for the docs for the Juno IDE debugger, see [this link instead]( https://docs.junolab.org/latest/man/debugging/)
+
 ## Installation
 
 ```jl
