@@ -144,21 +144,16 @@ end
 const NUM_SOURCE_LINES_UP_DOWN = Ref(4)
 
 function print_codeinfo(io::IO, frame::Frame)
-    buf = IOBuffer()
     src = frame.framecode.src
     if isdefined(JuliaInterpreter, Symbol("replace_coretypes!"))
         src = JuliaInterpreter.copy_codeinfo(src)
         JuliaInterpreter.replace_coretypes!(src; rev=true)
     end
-    show(buf, src)
+    code = JuliaInterpreter.framecode_lines(src)
     active_line = convert(Int, frame.pc[])
-    code = filter!(split(String(take!(buf)), '\n')) do line
-        !(line == "CodeInfo(" || line == ")" || isempty(line))
-    end
     startline = max(1, active_line - NUM_SOURCE_LINES_UP_DOWN[])
     endline = min(length(code), active_line + NUM_SOURCE_LINES_UP_DOWN[])
     code = code[startline:endline]
-    code .= replace.(code, Ref(r"\$\(QuoteNode\((.+?)\)\)" => s"\1"))
     breakpoint_lines = breakpoint_linenumbers(frame; lowered=true)
     print_lines(io, code, active_line, breakpoint_lines, startline)
 end
