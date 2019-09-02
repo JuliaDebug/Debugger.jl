@@ -31,9 +31,11 @@ version = "0.8.0"
 
 [[Highlights]]
 deps = ["DocStringExtensions", "InteractiveUtils", "REPL"]
-git-tree-sha1 = "a1aae1f0ff05ff56a50bf2732dc7438816639b59"
+git-tree-sha1 = "2fa66a8c9343124ad7bf79ef3804f6965ee7c71d"
+repo-rev = "master"
+repo-url = "https://github.com/JuliaDocs/Highlights.jl"
 uuid = "eafb193a-b7ab-5a9e-9068-77385905fa72"
-version = "0.4.0"
+version = "0.4.3"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
@@ -50,6 +52,9 @@ version = "0.7.0"
 [[LibGit2]]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 
+[[Libdl]]
+uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
@@ -58,7 +63,7 @@ deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
 [[Pkg]]
-deps = ["Dates", "LibGit2", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
+deps = ["Dates", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[Printf]]
