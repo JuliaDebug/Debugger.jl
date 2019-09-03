@@ -169,14 +169,11 @@ end
 end
 
 # Completions
-function test_complete(c, s)
-    c, r, s = Debugger.completions(c, s, lastindex(s))
-    return unique!(map(REPL.REPLCompletions.completion_text, c)), r, s
-end
+test_complete(c, s) = Debugger.completions(c, s, s)
 
 module F
     local_var = 1
-    f(x) = x
+    f(f_args) = f_args
 end
 
 @testset "REPL completions" begin
@@ -184,6 +181,8 @@ end
     state = dummy_state(frame)
     prov = Debugger.DebugCompletionProvider(state)
 
-    c, r = test_complete(prov, "local")
+    c, _ = test_complete(prov, "local")
     @test "local_var" in c
+    c, _ = test_complete(prov, "f_")
+    @test "f_args" in c
 end

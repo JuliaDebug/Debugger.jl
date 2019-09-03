@@ -221,6 +221,11 @@ function LineEdit.complete_line(c::DebugCompletionProvider, s)
     partial = REPL.beforecursor(s.input_buffer)
     full = LineEdit.input_string(s)
 
+    ret, range, should_complete = completions(c, full, partial)
+    return ret, partial[range], should_complete
+end
+
+function completions(c::DebugCompletionProvider, full, partial)
     frame = c.state.frame
 
     # repl backend completions
@@ -238,5 +243,5 @@ function LineEdit.complete_line(c::DebugCompletionProvider, s)
     end |> vars -> map(v -> string(v.name), vars)
     pushfirst!(ret, vars...)
 
-    return ret, partial[range], should_complete
+    ret, range, should_complete
 end
