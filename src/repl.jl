@@ -234,7 +234,7 @@ function completions(c::DebugCompletionProvider, full, partial)
 
     # local completions
     vars = filter!(locals(frame)) do v
-        # xref: https://github.com/JunoLab/Atom.jl/blob/master/src/debugger/stepper.jl#L411-L421
+        # ref: https://github.com/JuliaDebug/JuliaInterpreter.jl/blob/master/src/utils.jl#L365-L370
         if v.name == Symbol("#self") && (v.value isa Type || sizeof(v.value) == 0)
             return false
         else
