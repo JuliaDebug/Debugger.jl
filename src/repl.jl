@@ -220,14 +220,28 @@ end
 function LineEdit.complete_line(c::DebugCompletionProvider, s)
     partial = REPL.beforecursor(s.input_buffer)
     full = LineEdit.input_string(s)
-    ret, range, should_complete = completions(c, full, lastindex(partial))
-    return unique!(map(REPLCompletions.completion_text, ret)), partial[range], should_complete
+
+    ret, range, should_complete = completions(c, full, partial)
+    return ret, partial[range], should_complete
 end
 
 function completions(c::DebugCompletionProvider, full, partial)
-    mod = moduleof(c.state.frame)
-    ret, range, should_complete = REPLCompletions.completions(full, partial, mod)
+    frame = c.state.frame
 
-    # TODO Add local variable completions
-    return ret, range, should_complete
+    # repl backend completions
+    comps, range, should_complete = REPLCompletions.completions(full, lastindex(partial), moduleof(frame))
+    ret = map(REPLCompletions.completion_text, comps) |> unique!
+
+    # local completions
+    vars = filter!(locals(frame)) do v
+        # ref: https://github.com/JuliaDebug/JuliaInterpreter.jl/blob/master/src/utils.jl#L365-L370
+        if v.name == Symbol("#self") && (v.value isa Type || sizeof(v.value) == 0)
+            return false
+        else
+            return startswith(string(v.name), partial)
+        end
+    end |> vars -> map(v -> string(v.name), vars)
+    pushfirst!(ret, vars...)
+
+    ret, range, should_complete
 end
