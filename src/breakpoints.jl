@@ -49,7 +49,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
     end
 
     line = nothing
-    if location_expr isa Expr && location_expr.head == :call && location_expr.args[1] == :(:)
+    if isexpr(location_expr, :call) && location_expr.args[1] == :(:)
         line = location_expr.args[3]
         line isa Integer || return bp_error("line number to the right of `:` should be given as an integer")
         location_expr = location_expr.args[2]
@@ -76,7 +76,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
         else
             # check that the expr is a chain of getproperty calls
             expr = fsym = location_expr
-            if expr isa Expr && expr.head == :call
+            if isexpr(expr, :call)
                 has_args = true
                 expr = expr.args[1]
             end
@@ -116,7 +116,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
 
     fsym, f_args = location_expr.args[1], location_expr.args[2:end]
     type_args = false
-    if any(arg -> arg isa Expr && arg.head == :(::), f_args)
+    if any(arg -> isexpr(arg, :(::)), f_args)
         if !all(arg -> arg.head == :(::), f_args)
             return bp_error("all arguments should have `::` if one does")
         end
