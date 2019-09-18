@@ -124,20 +124,39 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
         type_args = true
     end
 
-    vars = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
-    eval_expr = Expr(:let,
-        Expr(:block,
-            map(x->Expr(:(=), x...), [(v.name, maybe_quote(v.value)) for v in vars])...),
-        Expr(:block,
-            Expr(:tuple, [arg for arg in f_args]...))
-        )
-    res = Core.eval(moduleof(frame), eval_expr)
-    types = type_args ? res : typeof.(res)
-    breakpoint(f, types, something(line, 0), cond_expr)
+    locals = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
 
-    @info "added breakpoint for method $f(" * join("::" .* string.(types), ", ") * ")"
+    res = nothing
+    arg_types = []
+    for arg in f_args
+        for m in (moduleof(frame), Main)
+            try 
+                res = interpret_variable(arg, locals, m)
+            catch e
+                e isa UndefVarError || rethrow()
+            end
+        end
+        if res === nothing
+            return bp_error("could not find function argument $arg")
+        end
+        push!(arg_types, type_args ? res : typeof(res))
+    end
+
+    breakpoint(f, Tuple(arg_types), something(line, 0), cond_expr)
+
+    @info "added breakpoint for method $f(" * join("::" .* string.(arg_types), ", ") * ")"
     return true
 end
+
+function interpret_variable(arg, locals, m::Module)
+    eval_expr = Expr(:let,
+        Expr(:block,
+            map(x->Expr(:(=), x...), [(v.name, maybe_quote(v.value)) for v in locals])...),
+        Expr(:block, arg)
+        )
+    return Core.eval(m, eval_expr)
+end
+
 
 function show_breakpoints(io::IO, state::DebuggerState)
     if JuliaInterpreter.break_on_error[] || JuliaInterpreter.break_on_throw[]
