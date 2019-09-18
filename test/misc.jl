@@ -135,6 +135,17 @@ bp = breakpoints()[1]
 @test bp.f === cos
 @test bp.line == 5
 JuliaInterpreter.remove()
+execute_command(state, Val{:bp}(), """bp add Base.sin(x)""")
+bp = breakpoints()[1]
+@test bp.f === sin
+@test bp.sig == Tuple{Float64}
+JuliaInterpreter.remove()
+execute_command(state, Val{:bp}(), """bp add Base.sin(x):10""")
+bp = breakpoints()[1]
+@test bp.f === sin
+@test bp.sig == Tuple{Float64}
+@test bp.line == 10
+JuliaInterpreter.remove()
 execute_command(state, Val{:bp}(), """bp add 1+1""")
 bp = breakpoints()[1]
 @test bp.f === +
