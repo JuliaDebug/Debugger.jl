@@ -95,24 +95,35 @@ function _make_frame(mod, arg)
     end
 end
 
-_check_is_call(arg) = isexpr(arg, :call) || throw(ArgumentError("@enter and @run should be applied to a function call"))
+function _preprocess_enter(__source__, ex)
+    if isexpr(ex, :call)
+        return nothing, ex
+    else
+        @gensym thunk
+        preamble = Expr(:(=), :($thunk()), Expr(:block, __source__, ex))
+        arg = :($thunk())
+        return esc(preamble), arg
+    end
+end
 
 macro make_frame(arg)
     _make_frame(__module__, arg)
 end
 
-macro enter(arg)
-    _check_is_call(arg)
+macro enter(ex)
+    preamble, arg = _preprocess_enter(__source__, ex)
     quote
+        $preamble
         let frame = $(_make_frame(__module__, arg))
             RunDebugger(frame)
         end
     end
 end
 
-macro run(arg)
-    _check_is_call(arg)
+macro run(ex)
+    preamble, arg = _preprocess_enter(__source__, ex)
     quote
+        $preamble
         let frame = $(_make_frame(__module__, arg))
             RunDebugger(frame; initial_continue=true)
         end
