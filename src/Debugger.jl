@@ -95,8 +95,15 @@ function _make_frame(mod, arg)
     end
 end
 
+function _isdotcall(ex::Expr)
+    op = ex.args[1]
+    return op isa Symbol && Base.isoperator(op) && startswith(string(op), ".")
+end
+
+_iscall(ex) = isexpr(ex, :call) && !_isdotcall(ex)
+
 function _preprocess_enter(__source__, ex)
-    if isexpr(ex, :call)
+    if _iscall(ex)
         return nothing, ex
     else
         @gensym thunk
