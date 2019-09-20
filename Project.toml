@@ -1,6 +1,6 @@
 name = "Debugger"
 uuid = "31a5f54b-26ea-5ae9-a837-f05ce5417438"
-version = "0.6.1"
+version = "0.6.2"
 
 [deps]
 CodeTracking = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
