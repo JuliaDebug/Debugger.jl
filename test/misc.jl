@@ -115,33 +115,59 @@ bp = breakpoints()[1]
 @test bp.f === cos
 @test bp.sig == Tuple{Float64}
 JuliaInterpreter.remove()
+
 execute_command(state, Val{:bp}(), "bp add cos(::Float32)")
 bp = breakpoints()[1]
+@test bp.f == cos
 @test bp.sig == Tuple{Float32}
 JuliaInterpreter.remove()
+
+TT = Float32
+execute_command(state, Val{:bp}(), "bp add cos(::TT)")
+bp = breakpoints()[1]
+@test bp.f == cos
+@test bp.sig == Tuple{Float32}
+JuliaInterpreter.remove()
+
 execute_command(state, Val{:bp}(), """bp add "foo.jl":10 x>3""")
 bp = breakpoints()[1]
 @test bp.path == "foo.jl"
 @test bp.line == 10
 @test bp.condition == :(x > 3)
 JuliaInterpreter.remove()
+
 execute_command(state, Val{:bp}(), """bp add 10""")
 bp = breakpoints()[1]
 @test bp.line == 10
 @test bp.path == CodeTracking.whereis(@which sin(1.0))[1]
 JuliaInterpreter.remove()
+
 execute_command(state, Val{:bp}(), """bp add Base.cos:5""")
 bp = breakpoints()[1]
 @test bp.f === cos
 @test bp.line == 5
 JuliaInterpreter.remove()
+
+execute_command(state, Val{:bp}(), """bp add Base.sin(x)""")
+bp = breakpoints()[1]
+@test bp.f === sin
+@test bp.sig == Tuple{Float64}
+JuliaInterpreter.remove()
+
+execute_command(state, Val{:bp}(), """bp add Base.sin(x):10""")
+bp = breakpoints()[1]
+@test bp.f === sin
+@test bp.sig == Tuple{Float64}
+@test bp.line == 10
+JuliaInterpreter.remove()
+
 execute_command(state, Val{:bp}(), """bp add 1+1""")
 bp = breakpoints()[1]
 @test bp.f === +
 @test bp.sig == Tuple{Int, Int}
+JuliaInterpreter.remove()
 
 # toggle
-JuliaInterpreter.remove()
 execute_command(state, Val{:bp}(), """bp add sin""")
 execute_command(state, Val{:bp}(), """bp add cos""")
 execute_command(state, Val{:bp}(), """bp toggle 1""")
@@ -152,9 +178,9 @@ bp2 = breakpoints()[2]
 execute_command(state, Val{:bp}(), """bp toggle""")
 @test bp.enabled[] == true
 @test bp2.enabled[] == false
+JuliaInterpreter.remove()
 
 # disable / enable
-JuliaInterpreter.remove()
 execute_command(state, Val{:bp}(), """bp add sin""")
 execute_command(state, Val{:bp}(), """bp add cos""")
 execute_command(state, Val{:bp}(), """bp disable 1""")

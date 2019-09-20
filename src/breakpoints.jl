@@ -49,13 +49,13 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
     end
 
     line = nothing
-    if location_expr isa Expr && location_expr.head == :call && location_expr.args[1] == :(:)
+    if isexpr(location_expr, :call) && location_expr.args[1] == :(:)
         line = location_expr.args[3]
         line isa Integer || return bp_error("line number to the right of `:` should be given as an integer")
         location_expr = location_expr.args[2]
     end
 
-    # Function
+    # File
     if location_expr isa String
         file = location_expr
         if line === nothing
@@ -66,16 +66,21 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
         return true
     end
 
+    f = nothing
     if location_expr isa Symbol || location_expr isa Expr
         m = moduleof(frame)
-        f = nothing
+        has_args = false
         if location_expr isa Symbol
             fsym = location_expr
             f = get_function_in_module_or_Main(m, fsym)
         else
             # check that the expr is a chain of getproperty calls
             expr = fsym = location_expr
-            while expr isa Expr
+            if isexpr(expr, :call)
+                has_args = true
+                expr = expr.args[1]
+            end
+            while expr isa Expr 
                 if expr.head == Symbol(".") && length(expr.args) == 2 && expr.args[2] isa QuoteNode
                     expr = expr.args[1]
                 else
@@ -84,7 +89,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
             end
             for m in (moduleof(frame), Main)
                 try
-                    f_eval = Base.eval(m, location_expr)
+                    f_eval = Base.eval(m, has_args ? location_expr.args[1] : location_expr)
                     if f_eval isa Function
                         f = f_eval
                         break
@@ -94,18 +99,24 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
             end
         end
         f === nothing && return undef_func(m, fsym)
-        @info "added breakpoint for function $f" * (line === nothing ? "" : ":$line")
-        breakpoint(f, line, cond_expr)
-        return true
+        if !has_args
+            @info "added breakpoint for function $f" * (line === nothing ? "" : ":$line")
+            breakpoint(f, line, cond_expr)
+            return true
+        end
     end
-
     @label not_a_function
-    location_expr isa Expr || return bp_error("failed to parse breakpoint expression")
-    location_expr.head == :call || return bp_error("expected a call expression or an expression that evaluates to a function")
+    if f === nothing
+        location_expr isa Expr || return bp_error("failed to parse breakpoint expression")
+        location_expr.head == :call || return bp_error("expected a call expression or an expression that evaluates to a function")
+        m = moduleof(frame)
+        f = get_function_in_module_or_Main(m, fsym)
+        f === nothing && return undef_func(m, fsym)
+    end
 
     fsym, f_args = location_expr.args[1], location_expr.args[2:end]
     type_args = false
-    if any(arg -> arg isa Expr && arg.head == :(::), f_args)
+    if any(arg -> isexpr(arg, :(::)), f_args)
         if !all(arg -> arg.head == :(::), f_args)
             return bp_error("all arguments should have `::` if one does")
         end
@@ -113,23 +124,39 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
         type_args = true
     end
 
-    vars = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
-    eval_expr = Expr(:let,
-        Expr(:block,
-            map(x->Expr(:(=), x...), [(v.name, maybe_quote(v.value)) for v in vars])...),
-        Expr(:block,
-            Expr(:tuple, [arg for arg in f_args]...))
-        )
-    res = Core.eval(moduleof(frame), eval_expr)
-    m = moduleof(frame)
-    f = get_function_in_module_or_Main(m, fsym)
-    f === nothing && return undef_func(m, fsym)
-    types = type_args ? res : typeof.(res)
-    breakpoint(f, types, something(line, 0), cond_expr)
+    locals = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
 
-    @info "added breakpoint for method $f(" * join("::" .* string.(types), ", ") * ")"
+    res = nothing
+    arg_types = []
+    for arg in f_args
+        for m in (moduleof(frame), Main)
+            try 
+                res = interpret_variable(arg, locals, m)
+            catch e
+                e isa UndefVarError || rethrow()
+            end
+        end
+        if res === nothing
+            return bp_error("could not find function argument $arg")
+        end
+        push!(arg_types, type_args ? res : typeof(res))
+    end
+
+    breakpoint(f, Tuple(arg_types), something(line, 0), cond_expr)
+
+    @info "added breakpoint for method $f(" * join("::" .* string.(arg_types), ", ") * ")"
     return true
 end
+
+function interpret_variable(arg, locals, m::Module)
+    eval_expr = Expr(:let,
+        Expr(:block,
+            map(x->Expr(:(=), x...), [(v.name, maybe_quote(v.value)) for v in locals])...),
+        Expr(:block, arg)
+        )
+    return Core.eval(m, eval_expr)
+end
+
 
 function show_breakpoints(io::IO, state::DebuggerState)
     if JuliaInterpreter.break_on_error[] || JuliaInterpreter.break_on_throw[]
