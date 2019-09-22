@@ -93,11 +93,6 @@ import InteractiveUtils
     @test JuliaInterpreter.Variable(LINE, :line, false) in locals
 end
 
-# These are LoadError because the error happens at macro expansion
-@test_throws LoadError @macroexpand @enter "foo"
-@test_throws LoadError @macroexpand @enter 1
-@test_throws LoadError @macroexpand @run [1,2]
-
 # Breakpoints
 frame = Debugger.@make_frame sin(1.0)
 state = dummy_state(frame)
