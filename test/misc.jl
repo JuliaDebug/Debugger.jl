@@ -1,5 +1,6 @@
 # Issue #14
 
+using Debugger: _iscall
 using JuliaInterpreter: JuliaInterpreter, pc_expr, evaluate_call!, finish_and_return!, @lookup, enter_call_expr, breakpoints
 runframe(frame::Frame, pc=frame.pc[]) = Some{Any}(finish_and_return!(Compiled(), frame))
 
@@ -91,11 +92,6 @@ import InteractiveUtils
     @test JuliaInterpreter.Variable(@__FILE__, :file, false) in locals
     @test JuliaInterpreter.Variable(LINE, :line, false) in locals
 end
-
-# These are LoadError because the error happens at macro expansion
-@test_throws LoadError @macroexpand @enter "foo"
-@test_throws LoadError @macroexpand @enter 1
-@test_throws LoadError @macroexpand @run [1,2]
 
 # Breakpoints
 frame = Debugger.@make_frame sin(1.0)
@@ -201,3 +197,13 @@ execute_command(state, Val{:bp}(), """bp add Base""")
 execute_command(state, Val{:bp}(), """bp add lfdshfds""")
 @test length(breakpoints()) == 0
 @info "END ERRORS -------------------------------------"
+
+@testset "_iscall" begin
+    @test _iscall(:(1 + 2))
+    @test _iscall(:($(Symbol(".f"))(1, 2)))
+    @test _iscall(:(f(1, 2)))
+    @test _iscall(:($(+)(1, 2)))
+    @test !_iscall(:(1 .+ 2))
+    @test !_iscall(:(f.(1, 2)))
+    @test !_iscall(:(identity() do; end))
+end
