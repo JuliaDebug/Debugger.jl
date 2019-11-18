@@ -113,20 +113,20 @@ execute_command(state, Val{:bp}(), "bp rm")
 execute_command(state, Val{:bp}(), "bp add cos(x)")
 bp = breakpoints()[1]
 @test bp.f === cos
-@test bp.sig == Tuple{Float64}
+@test bp.sig == Tuple{typeof(cos), Float64}
 JuliaInterpreter.remove()
 
 execute_command(state, Val{:bp}(), "bp add cos(::Float32)")
 bp = breakpoints()[1]
 @test bp.f == cos
-@test bp.sig == Tuple{Float32}
+@test bp.sig == Tuple{typeof(cos), Float32}
 JuliaInterpreter.remove()
 
 TT = Float32
 execute_command(state, Val{:bp}(), "bp add cos(::TT)")
 bp = breakpoints()[1]
 @test bp.f == cos
-@test bp.sig == Tuple{Float32}
+@test bp.sig == Tuple{typeof(cos), Float32}
 JuliaInterpreter.remove()
 
 execute_command(state, Val{:bp}(), """bp add "foo.jl":10 x>3""")
@@ -151,20 +151,20 @@ JuliaInterpreter.remove()
 execute_command(state, Val{:bp}(), """bp add Base.sin(x)""")
 bp = breakpoints()[1]
 @test bp.f === sin
-@test bp.sig == Tuple{Float64}
+@test bp.sig == Tuple{typeof(sin), Float64}
 JuliaInterpreter.remove()
 
 execute_command(state, Val{:bp}(), """bp add Base.sin(x):10""")
 bp = breakpoints()[1]
 @test bp.f === sin
-@test bp.sig == Tuple{Float64}
+@test bp.sig == Tuple{typeof(sin), Float64}
 @test bp.line == 10
 JuliaInterpreter.remove()
 
 execute_command(state, Val{:bp}(), """bp add 1+1""")
 bp = breakpoints()[1]
 @test bp.f === +
-@test bp.sig == Tuple{Int, Int}
+@test bp.sig == Tuple{typeof(+), Int, Int}
 JuliaInterpreter.remove()
 
 # toggle

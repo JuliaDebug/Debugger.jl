@@ -4,10 +4,10 @@
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[CodeTracking]]
-deps = ["InteractiveUtils", "Test", "UUIDs"]
-git-tree-sha1 = "9b21a2dfe51ba71fdc5688039075819196595367"
+deps = ["InteractiveUtils", "UUIDs"]
+git-tree-sha1 = "0becdab7e6fbbcb7b88d8de5b72e5bb2f28239f3"
 uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
-version = "0.5.7"
+version = "0.5.8"
 
 [[Crayons]]
 deps = ["Test"]
@@ -25,17 +25,17 @@ uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[DocStringExtensions]]
 deps = ["LibGit2", "Markdown", "Pkg", "Test"]
-git-tree-sha1 = "0513f1a8991e9d83255e0140aace0d0fc4486600"
+git-tree-sha1 = "88bb0edb352b16608036faadcc071adda068582a"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
-version = "0.8.0"
+version = "0.8.1"
 
 [[Highlights]]
 deps = ["DocStringExtensions", "InteractiveUtils", "REPL"]
-git-tree-sha1 = "2fa66a8c9343124ad7bf79ef3804f6965ee7c71d"
+git-tree-sha1 = "f823a2d04fb233d52812c8024a6d46d9581904a4"
 repo-rev = "master"
 repo-url = "https://github.com/JuliaDocs/Highlights.jl"
 uuid = "eafb193a-b7ab-5a9e-9068-77385905fa72"
-version = "0.4.3"
+version = "0.4.5"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
@@ -43,11 +43,11 @@ uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "a4bb251f96cb22141cff4185b724c2e4f46245d2"
+git-tree-sha1 = "91773221beb661db9d466788f02366e9cb790675"
 repo-rev = "master"
 repo-url = "https://github.com/JuliaDebug/JuliaInterpreter.jl.git"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.7.0"
+version = "0.7.4"
 
 [[LibGit2]]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
