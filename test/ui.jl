@@ -101,7 +101,7 @@ end
 
 
 @testset "UI" begin
-    if Sys.isunix() && VERSION >= v"1.1.0"
+    if Sys.isunix() && (v"1.3.0-A" <= VERSION < v"1.4.0-A")
         Debugger._print_full_path[] = false
         using TerminalRegressionTests
 
@@ -124,7 +124,7 @@ end
                            "w add a\n", "w add sin(a)\n", "w add b\n", "w\n", "w rm 1\n", "w\n",
                            "s\n", "fr 1\n", "fr 2\n", "f 2\n", "f 1\n",
                            "bt\n", "st\n", "C", "c\n", "C", "c\n"],
-                          VERSION >= v"1.3.0-alpha.109" ? "ui/history_gcd_1.3.multiout" : "ui/history_gcd.multiout")
+                          "ui/history_gcd.multiout")
 
         run_terminal_test(@make_frame(outer(1, 2, 5, 20)),
                           ["s\n", "c\n"],
@@ -156,15 +156,11 @@ end
                           "ui/history_break_error.multiout")
         Debugger.break_off(:error)
 
-        if v"1.1">= VERSION < v"1.2"
-            run_terminal_test(@make_frame(my_gcd_noinfo(10, 20)),
-                            ["n\n","`", "a\n", UP_ARROW, UP_ARROW, CTRL_C, EOT],
-                             "ui/history_noinfo.multiout")
-        else
-            @warn "Skipping tests for IR display due to mismatched Julia versions."
-        end
+        run_terminal_test(@make_frame(my_gcd_noinfo(10, 20)),
+                        ["n\n","`", "a\n", UP_ARROW, UP_ARROW, CTRL_C, EOT],
+                         "ui/history_noinfo.multiout")
     else
-        @warn "Skipping UI tests on non unix systems"
+        @warn "Skipping UI tests"
     end
 end
 
