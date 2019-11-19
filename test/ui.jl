@@ -101,7 +101,7 @@ end
 
 
 @testset "UI" begin
-    if Sys.isunix() && v"1.3" >= VERSION < v"1.4"
+    if Sys.isunix() && (v"1.3.0-A" <= VERSION < v"1.4.0-A")
         Debugger._print_full_path[] = false
         using TerminalRegressionTests
 
@@ -160,7 +160,7 @@ end
                         ["n\n","`", "a\n", UP_ARROW, UP_ARROW, CTRL_C, EOT],
                          "ui/history_noinfo.multiout")
     else
-        @warn "Skipping UI tests on non unix systems"
+        @warn "Skipping UI tests"
     end
 end
 
