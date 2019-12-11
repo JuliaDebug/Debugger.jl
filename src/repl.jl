@@ -133,7 +133,18 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             else
                 LineEdit.edit_insert(s, "-")
             end
+        end,
+        'M' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                COMPACT_MODE[] = !COMPACT_MODE[]
+                println(Base.pipe_writer(terminal))
+                print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+                LineEdit.write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "-")
+            end
         end
+        
     )
 
     state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]

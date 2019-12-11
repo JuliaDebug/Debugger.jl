@@ -45,6 +45,7 @@ Misc:
 - `C`: toggle compiled mode
 - `L`: toggle showing lowered code instead of source code
 - `+`/`-`: increase / decrease the number of lines of source code shown
+- `M`: toggle compact mode display. Compact mode removes common leading white space
 
 Stepping (basic):
 - `n`: step to the next line
