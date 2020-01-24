@@ -4,3 +4,4 @@
 *.jl.mem
 expected.out
 failed.out
+Manifest.toml
