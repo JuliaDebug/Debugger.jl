@@ -151,6 +151,9 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         end
         state.frame === nothing && return state.overall_result
     end
+    if pc_expr(state.frame) === nothing
+        JuliaInterpreter.maybe_next_call!(state.frame)
+    end
     print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
     REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
 
