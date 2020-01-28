@@ -1,21 +1,28 @@
+const MAX_BYTES_REPR = Ref(100)
+suppressed(str) = string("<", str, "...>")
 
-struct Suppressed{T}
-    item::T
+function repr_limited(val, n, f=show)
+    iob = IOBuffer()
+    local limited_str
+    try
+        limit_io = LimitIO(iob, n)
+        f(limit_io, val)
+        limited_str = String(take!(iob))
+    catch e
+        if e isa LimitIOException
+            limited_str = String(take!(iob))
+            limited_str = suppressed("$limited_str")
+        else
+            limited_str = suppressed("printing error")
+        end
+    end
+    return limited_str
 end
-Base.show(io::IO, x::Suppressed) = print(io, "<suppressed ", x.item, '>')
 
 function print_var(io::IO, var::JuliaInterpreter.Variable)
     print(io, "  | ")
     T = typeof(var.value)
-    local val
-    try
-        val = repr(var.value)
-        if length(val) > 150
-            val = Suppressed("$(length(val)) bytes of output")
-        end
-    catch
-        val = Suppressed("printing error")
-    end
+    val = repr_limited(var.value, MAX_BYTES_REPR[])
     println(io, highlight_code(string(var.name, "::", T, " = ", val); context=io))
 end
 
@@ -92,19 +99,8 @@ function print_next_expr(io::IO, frame::Frame)
     end
     expr = pattern_match_kw_call(expr)
     expr = pattern_match_apply_call(expr, frame)
-    if isa(expr, Expr)
-        for (i, arg) in enumerate(expr.args)
-            try
-                nbytes = length(repr(arg))
-                if nbytes > max(40, div(200, length(expr.args)))
-                    expr.args[i] = Suppressed("$nbytes bytes of output")
-                end
-            catch
-                expr.args[i] = Suppressed("printing error")
-            end
-        end
-    end
-    print(io, highlight_code(string(expr); context=io))
+    limit_expr = repr_limited(expr, MAX_BYTES_REPR[], print)
+    print(io, highlight_code(limit_expr; context=io))
     println(io)
 end
 

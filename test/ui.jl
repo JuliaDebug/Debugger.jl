@@ -150,6 +150,10 @@ end
                           ["bp add mysum:97 v > 3\n", "c\n", "bp rm\n", "c\n"],
                           "ui/bp_ui.multiout")
 
+        run_terminal_test(@make_frame(mysum(collect(1:10000))),
+                          ["bt\n", "c\n"],
+                          "ui/big_repr_ui.multiout")
+
         Debugger.break_on(:error)
         run_terminal_test(@make_frame(error("foo")),
                           ["c\n", "bt\n", "q\n"],
