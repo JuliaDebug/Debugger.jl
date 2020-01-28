@@ -1,0 +1,62 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In mysum(x) at ui.jl:95
+|  94  function mysum(x)
+|  95      s = 0
+|> 96      for v in x
+|  97          s += v
+|  98      end
+|  99      return s
+| 100  end
+|
+|About to run: <(iterate)([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+| 17, 18, 19, 20, 21, 22, 23, 24, 25,...>
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In mysum(x) at ui.jl:95
+|  94  function mysum(x)
+|  95      s = 0
+|> 96      for v in x
+|  97          s += v
+|  98      end
+|  99      return s
+| 100  end
+|
+|About to run: <(iterate)([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+| 17, 18, 19, 20, 21, 22, 23, 24, 25,...>
+|1|debug> bt
+|[1] mysum(x) at ui.jl:96
+|  | x::Array{Int64,1} = <[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+| 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 2...>
+|  | s::Int64 = 0
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|CCCCCCCCC

@@ -74,6 +74,7 @@ maybe_quote(x) = (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
 include("locationinfo.jl")
 include("repl.jl")
 include("commands.jl")
+include("limitio.jl")
 include("printing.jl")
 include("watches.jl")
 include("breakpoints.jl")
