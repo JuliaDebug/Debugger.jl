@@ -11,7 +11,7 @@ function repr_limited(val, n, f=show)
     catch e
         if e isa LimitIOException
             limited_str = String(take!(iob))
-            limited_str = suppressed("$limited_str")
+            limited_str = suppressed(limited_str)
         else
             limited_str = suppressed("printing error")
         end
