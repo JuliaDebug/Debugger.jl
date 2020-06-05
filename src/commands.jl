@@ -270,7 +270,6 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
 
 
             Evaluation:\\
-            - ``` `stuff ```: run `stuff` in the current function's context\\
             - `w`\\
                 - `w add expr`: add an expression to the watch list\\
                 - `w`: show all watch expressions evaluated in the current function's context\\
@@ -294,7 +293,10 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
                 - `bp on/off throw` - turn on or off break on throw\\
 
 
-            An empty command will execute the previous command.""")
+            An empty command will execute the previous command.
+        
+            Hit ``` to enter "evaluation mode," where any expression you type is executed in the debug context.
+            Hit backspace as the first character of the line to return to "debug mode." """)
     return false
 end
 
