@@ -295,8 +295,8 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
 
             An empty command will execute the previous command.
         
-            Hit ``` to enter "evaluation mode," where any expression you type is executed in the debug context.
-            Hit backspace as the first character of the line to return to "debug mode." """)
+            Hit `` ` `` to enter "evaluation mode," where any expression you type is executed in the debug context.
+            Hit backspace as the first character of the line (or `^C` anywhere) to return to "debug mode." """)
     return false
 end
 
