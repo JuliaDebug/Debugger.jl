@@ -39,6 +39,8 @@ the context of functions.
 
 Below, square brackets denote optional arguments.
 
+All of the following commands work when the prompt is `1|debug>`:
+
 Misc:
 - `o`: open the current line in an editor
 - `q`: quit the debugger, returning `nothing`
@@ -67,7 +69,6 @@ Querying:
 - `fr [i::Int]`: show all variables in the current or `i`th frame
 
 Evaluation:
-- ``` `stuff ```: run `stuff` in the current function's context
 - `w`
     - `w add expr`: add an expression to the watch list
     - `w`: show all watch expressions evaluated in the current function's context
@@ -91,6 +92,15 @@ Breakpoints:
       - `bp on/off throw` - turn on or off break on throw
 
 An empty command will execute the previous command.
+
+Changing frames with `f i::Int` will change the prompt to `$i|debug>`.
+Stepping commands will not work until you return to `f 1`, but a subset of normal commands will continue to work.
+
+In addition to these debugging commands, you can type `` ` `` to enter "evaluation mode" indicated by a prompt `$i|julia>`.
+In evaluation mode, any expression you type is executed in the debug context.
+For example, if you have a local variable named `n`, then once in evaluation mode typing `n` will show you the value of `n` rather than advancing to the next line.
+
+Hit backspace as the first character of the line to return to "debug mode."
 
 ### Breakpoints
 
