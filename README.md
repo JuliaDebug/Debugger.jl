@@ -11,7 +11,7 @@
 ## Installation
 
 ```jl
-]add Debugger
+julia> import Pkg; Pkg.add("Debugger")
 ```
 
 # Usage
