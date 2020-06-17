@@ -10,13 +10,11 @@
 
 ## Installation
 
-Install Debugger using [Julia's Pkg REPL-mode](https://docs.julialang.org/en/v1/stdlib/Pkg/) (hitting `]` as the first character of the command prompt):
+Install Debugger using [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/):
 
 ```julia
-(v1.0) pkg> add Debugger
+julia> import Pkg; Pkg.add("Debugger")
 ```
-
-Alternatively, copy and paste `import Pkg; Pkg.add("Debugger")` into the Julia prompt.
 
 # Usage
 
