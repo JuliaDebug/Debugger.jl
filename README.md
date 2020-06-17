@@ -10,7 +10,9 @@
 
 ## Installation
 
-```jl
+Install Debugger using [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/):
+
+```julia
 julia> import Pkg; Pkg.add("Debugger")
 ```
 
