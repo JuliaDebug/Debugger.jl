@@ -6,7 +6,7 @@
 |:-----------------------------------------------------------------------------------------------:|
 | [![][travis-img]][travis-url]  [![][codecov-img]][codecov-url] |
 
-**Note**: If you are looking for the docs for the Juno IDE debugger, see [this link instead]( https://docs.junolab.org/latest/man/debugging/)
+**Note**: If you are looking for the docs for the Juno IDE debugger, see [this link instead](https://docs.junolab.org/latest/man/debugging/), and VC Code IDE also has a debugger, see e.g. [Debug Julia code with vscode-julia](https://youtu.be/Q4GFPD-j_EQ) video on it.
 
 ## Installation
 
