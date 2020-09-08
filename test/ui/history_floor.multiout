@@ -1,5 +1,5 @@
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In f_end(x) at ui.jl:63
+|In f_end(x) at ui.jl:62
 | 62  function f_end(x)
 |>63      x = 3 + 3
 | 64      return sin(x)
@@ -17,7 +17,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In f_end(x) at ui.jl:63
+|In f_end(x) at ui.jl:62
 | 62  function f_end(x)
 |>63      x = 3 + 3
 | 64      return sin(x)
@@ -25,7 +25,7 @@
 |
 |About to run: (+)(3, 3)
 |1|debug> n
-|In f_end(x) at ui.jl:63
+|In f_end(x) at ui.jl:62
 | 62  function f_end(x)
 | 63      x = 3 + 3
 |>64      return sin(x)
@@ -51,7 +51,7 @@
 |AAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In f_end(x) at ui.jl:63
+|In f_end(x) at ui.jl:62
 | 62  function f_end(x)
 |>63      x = 3 + 3
 | 64      return sin(x)
@@ -59,7 +59,7 @@
 |
 |About to run: (+)(3, 3)
 |1|debug> n
-|In f_end(x) at ui.jl:63
+|In f_end(x) at ui.jl:62
 | 62  function f_end(x)
 | 63      x = 3 + 3
 |>64      return sin(x)
@@ -67,7 +67,7 @@
 |
 |About to run: (sin)(6)
 |1|debug> n
-|In f_end(x) at ui.jl:63
+|In f_end(x) at ui.jl:62
 | 62  function f_end(x)
 | 63      x = 3 + 3
 |>64      return sin(x)

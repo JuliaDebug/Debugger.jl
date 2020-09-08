@@ -87,6 +87,7 @@ function _make_frame(mod, arg)
     end
     quote
         theargs = $(esc(args))
+        local frame
         frame = JuliaInterpreter.enter_call_expr(Expr(:call,theargs...))
         frame === nothing && error("failed to enter the function, perhaps it is set to run in compiled mode")
         frame = JuliaInterpreter.maybe_step_through_kwprep!(frame)
