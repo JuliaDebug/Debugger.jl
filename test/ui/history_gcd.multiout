@@ -1,5 +1,5 @@
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -23,7 +23,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -34,7 +34,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -71,7 +71,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -82,7 +82,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -119,7 +119,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAA
 |DDDDDDDDD
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -130,7 +130,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -173,7 +173,7 @@
 |
 |DDDDDDDDD
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -184,7 +184,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -233,7 +233,7 @@
 |
 |DDDDDDDDD
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -244,7 +244,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -293,7 +293,7 @@
 |
 |DDDDDDDDDA
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -304,7 +304,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -353,7 +353,7 @@
 |
 |DDDDDDDDDAAAAAA
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -364,7 +364,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -413,7 +413,7 @@
 |
 |CCCCCCCCCA
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -424,7 +424,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -477,7 +477,7 @@
 |
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -488,7 +488,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -547,7 +547,7 @@
 |
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -558,7 +558,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -625,7 +625,7 @@
 |
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -636,7 +636,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -713,7 +713,7 @@
 |
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -724,7 +724,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -811,7 +811,7 @@
 |
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -822,7 +822,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -917,7 +917,7 @@
 |
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -928,7 +928,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -1031,7 +1031,7 @@
 |
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -1042,7 +1042,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -1087,8 +1087,8 @@
 |2] b: 20
 |
 |1|debug> s
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> 
@@ -1155,7 +1155,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -1166,7 +1166,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -1211,12 +1211,12 @@
 |2] b: 20
 |
 |1|debug> s
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> fr 1
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
@@ -1289,7 +1289,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -1300,7 +1300,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -1345,17 +1345,17 @@
 |2] b: 20
 |
 |1|debug> s
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> fr 1
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
 |1|debug> fr 2
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:4
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
@@ -1433,7 +1433,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -1444,7 +1444,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -1489,22 +1489,22 @@
 |2] b: 20
 |
 |1|debug> s
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> fr 1
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
 |1|debug> fr 2
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:4
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
 |1|debug> f 2
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -1601,7 +1601,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -1612,7 +1612,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -1657,22 +1657,22 @@
 |2] b: 20
 |
 |1|debug> s
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> fr 1
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
 |1|debug> fr 2
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:4
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
 |1|debug> f 2
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -1684,8 +1684,8 @@
 |
 |About to run: (==)(20, 0)
 |2|debug> f 1
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> 
@@ -1779,7 +1779,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -1790,7 +1790,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -1835,22 +1835,22 @@
 |2] b: 20
 |
 |1|debug> s
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> fr 1
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
 |1|debug> fr 2
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:4
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
 |1|debug> f 2
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -1862,12 +1862,12 @@
 |
 |About to run: (==)(20, 0)
 |2|debug> f 1
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> bt
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
@@ -1975,7 +1975,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -1986,7 +1986,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -2031,22 +2031,22 @@
 |2] b: 20
 |
 |1|debug> s
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> fr 1
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
 |1|debug> fr 2
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:4
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
 |1|debug> f 2
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -2058,218 +2058,12 @@
 |
 |About to run: (==)(20, 0)
 |2|debug> f 1
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> bt
-|[1] ==(x, y) at promotion.jl:401
-|  | x::Int64 = 20
-|  | y::Int64 = 0
-|  | T::DataType = Int64
-|[2] my_gcd(a, b) at ui.jl:6
-|  | a::Int64 = 10
-|  | b::Int64 = 20
-|  | T::DataType = Int64
-|1|debug> st
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
-|
-|About to run: (===)(20, 0)
-|1|debug> 
---------------------------------------------------
-|AAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|BBBBAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAA
-|
-|AAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCA
-|AAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|
-|AAAAAAAAAAAAAAAAAAAAAAAAA
-|DDDDDDDDDAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|
-|DDDDDDDDDA
-|AA
-|
-|CCCCCCCCCAAA
-|
-|CCCCCCCCCAAAAAAA
-|AAAAAAAA
-|
-|CCCCCCCCCAAAAAAAAAAAA
-|AAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|
-|CCCCCCCCCAAAAAAA
-|AAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAA
-|
-|CCCCCCCCCA
-|AAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAA
-|
-|CCCCCCCCCAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAA
-|
-|CCCCCCCCCA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAA
-|
-|CCCCCCCCCA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|
-|AAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|
-|AAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|
-|AAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|
-|AAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCC
-++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
-| 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
-|t32,Int64,UInt64,Int128,UInt128}
-|>5      a == 0 && return abs(b)
-| 6      b == 0 && return abs(a)
-| 7      za = trailing_zeros(a)
-| 8      zb = trailing_zeros(b)
-| 9      k = min(za, zb)
-|
-|About to run: (==)(10, 0)
-|1|debug> n
-|In my_gcd(a, b) at ui.jl:5
-|  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
-|nt32,Int64,UInt64,Int128,UInt128}
-|  5      a == 0 && return abs(b)
-|> 6      b == 0 && return abs(a)
-|  7      za = trailing_zeros(a)
-|  8      zb = trailing_zeros(b)
-|  9      k = min(za, zb)
-| 10      u = unsigned(abs(a >> za))
-|
-|About to run: (==)(20, 0)
-|1|julia> my_gcd
-|my_gcd (generic function with 1 method)
-|
-|1|julia> a
-|10
-|
-|1|debug> n^C
-|
-|1|debug> w add a
-|1] a: 10
-|
-|1|debug> w add sin(a)
-|1] a: 10
-|2] sin(a): -0.5440211108893698
-|
-|1|debug> w add b
-|1] a: 10
-|2] sin(a): -0.5440211108893698
-|3] b: 20
-|
-|1|debug> w
-|1] a: 10
-|2] sin(a): -0.5440211108893698
-|3] b: 20
-|
-|1|debug> w rm 1
-|1] sin(a): -0.5440211108893698
-|2] b: 20
-|
-|1|debug> w
-|1] sin(a): -0.5440211108893698
-|2] b: 20
-|
-|1|debug> s
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
-|
-|About to run: (===)(20, 0)
-|1|debug> fr 1
-|[1] ==(x, y) at promotion.jl:401
-|  | x::Int64 = 20
-|  | y::Int64 = 0
-|  | T::DataType = Int64
-|1|debug> fr 2
-|[2] my_gcd(a, b) at ui.jl:5
-|  | a::Int64 = 10
-|  | b::Int64 = 20
-|  | T::DataType = Int64
-|1|debug> f 2
-|In my_gcd(a, b) at ui.jl:5
-|  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
-|nt32,Int64,UInt64,Int128,UInt128}
-|  5      a == 0 && return abs(b)
-|> 6      b == 0 && return abs(a)
-|  7      za = trailing_zeros(a)
-|  8      zb = trailing_zeros(b)
-|  9      k = min(za, zb)
-| 10      u = unsigned(abs(a >> za))
-|
-|About to run: (==)(20, 0)
-|2|debug> f 1
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
-|
-|About to run: (===)(20, 0)
-|1|debug> bt
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
@@ -2278,8 +2072,214 @@
 |  | b::Int64 = 20
 |  | T::DataType = Int64
 |1|debug> st
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
+|
+|About to run: (===)(20, 0)
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|DDDDDDDDDAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|DDDDDDDDDA
+|AA
+|
+|CCCCCCCCCAAA
+|
+|CCCCCCCCCAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCAAAAAAAAAAAA
+|AAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|CCCCCCCCCAAAAAAA
+|AAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCA
+|AAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAA
+|
+|CCCCCCCCCA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCCAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|AAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCCCCC
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In my_gcd(a, b) at ui.jl:4
+| 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
+|t32,Int64,UInt64,Int128,UInt128}
+|>5      a == 0 && return abs(b)
+| 6      b == 0 && return abs(a)
+| 7      za = trailing_zeros(a)
+| 8      zb = trailing_zeros(b)
+| 9      k = min(za, zb)
+|
+|About to run: (==)(10, 0)
+|1|debug> n
+|In my_gcd(a, b) at ui.jl:4
+|  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
+|nt32,Int64,UInt64,Int128,UInt128}
+|  5      a == 0 && return abs(b)
+|> 6      b == 0 && return abs(a)
+|  7      za = trailing_zeros(a)
+|  8      zb = trailing_zeros(b)
+|  9      k = min(za, zb)
+| 10      u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|1] a: 10
+|
+|1|debug> w add sin(a)
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|
+|1|debug> w add b
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w
+|1] a: 10
+|2] sin(a): -0.5440211108893698
+|3] b: 20
+|
+|1|debug> w rm 1
+|1] sin(a): -0.5440211108893698
+|2] b: 20
+|
+|1|debug> w
+|1] sin(a): -0.5440211108893698
+|2] b: 20
+|
+|1|debug> s
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
+|
+|About to run: (===)(20, 0)
+|1|debug> fr 1
+|[1] ==(x, y) at promotion.jl:398
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|1|debug> fr 2
+|[2] my_gcd(a, b) at ui.jl:4
+|  | a::Int64 = 10
+|  | b::Int64 = 20
+|  | T::DataType = Int64
+|1|debug> f 2
+|In my_gcd(a, b) at ui.jl:4
+|  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
+|nt32,Int64,UInt64,Int128,UInt128}
+|  5      a == 0 && return abs(b)
+|> 6      b == 0 && return abs(a)
+|  7      za = trailing_zeros(a)
+|  8      zb = trailing_zeros(b)
+|  9      k = min(za, zb)
+| 10      u = unsigned(abs(a >> za))
+|
+|About to run: (==)(20, 0)
+|2|debug> f 1
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
+|
+|About to run: (===)(20, 0)
+|1|debug> bt
+|[1] ==(x, y) at promotion.jl:398
+|  | x::Int64 = 20
+|  | y::Int64 = 0
+|  | T::DataType = Int64
+|[2] my_gcd(a, b) at ui.jl:6
+|  | a::Int64 = 10
+|  | b::Int64 = 20
+|  | T::DataType = Int64
+|1|debug> st
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> 
@@ -2387,7 +2387,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |EEEEEEEEE
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -2398,7 +2398,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -2443,22 +2443,22 @@
 |2] b: 20
 |
 |1|debug> s
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> fr 1
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
 |1|debug> fr 2
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:4
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
 |1|debug> f 2
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -2470,12 +2470,12 @@
 |
 |About to run: (==)(20, 0)
 |2|debug> f 1
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> bt
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
@@ -2484,13 +2484,13 @@
 |  | b::Int64 = 20
 |  | T::DataType = Int64
 |1|debug> st
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> c
 |Hit breakpoint:
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  9  k = min(za, zb)
 | 10  u = unsigned(abs(a >> za))
 | 11  v = unsigned(abs(b >> zb))
@@ -2621,7 +2621,7 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |EEEEEEEEE
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
 |t32,Int64,UInt64,Int128,UInt128}
 |>5      a == 0 && return abs(b)
@@ -2632,7 +2632,7 @@
 |
 |About to run: (==)(10, 0)
 |1|debug> n
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -2677,22 +2677,22 @@
 |2] b: 20
 |
 |1|debug> s
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> fr 1
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
 |1|debug> fr 2
-|[2] my_gcd(a, b) at ui.jl:5
+|[2] my_gcd(a, b) at ui.jl:4
 |  | a::Int64 = 10
 |  | b::Int64 = 20
 |  | T::DataType = Int64
 |1|debug> f 2
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
 |nt32,Int64,UInt64,Int128,UInt128}
 |  5      a == 0 && return abs(b)
@@ -2704,12 +2704,12 @@
 |
 |About to run: (==)(20, 0)
 |2|debug> f 1
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> bt
-|[1] ==(x, y) at promotion.jl:401
+|[1] ==(x, y) at promotion.jl:398
 |  | x::Int64 = 20
 |  | y::Int64 = 0
 |  | T::DataType = Int64
@@ -2718,13 +2718,13 @@
 |  | b::Int64 = 20
 |  | T::DataType = Int64
 |1|debug> st
-|In ==(x, y) at promotion.jl:401
-|>401  (==)(x::T, y::T) where {T<:Number} = x === y
+|In ==(x, y) at promotion.jl:398
+|>398  (==)(x::T, y::T) where {T<:Number} = x === y
 |
 |About to run: (===)(20, 0)
 |1|debug> c
 |Hit breakpoint:
-|In my_gcd(a, b) at ui.jl:5
+|In my_gcd(a, b) at ui.jl:4
 |  9  k = min(za, zb)
 | 10  u = unsigned(abs(a >> za))
 | 11  v = unsigned(abs(b >> zb))
