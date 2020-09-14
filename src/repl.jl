@@ -1,5 +1,14 @@
 
 promptname(level, name) = "$level|$name> "
+
+function write_prompt(terminal, mode)
+    @static if VERSION ≥ v"1.6.0-DEV.517"
+        LineEdit.write_prompt(terminal, mode, LineEdit.hascolor(terminal))
+    else
+        LineEdit.write_prompt(terminal, mode)
+    end
+end
+
 function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue=false)
     if repl === nothing
         if !isdefined(Base, :active_repl)
@@ -109,7 +118,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
                 toggle_lowered(state)
                 println(Base.pipe_writer(terminal))
                 print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
-                LineEdit.write_prompt(state.terminal, panel)
+                write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "L")
             end
@@ -119,7 +128,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
                 NUM_SOURCE_LINES_UP_DOWN[] += 1
                 println(Base.pipe_writer(terminal))
                 print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
-                LineEdit.write_prompt(state.terminal, panel)
+                write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "+")
             end
@@ -129,7 +138,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
                 NUM_SOURCE_LINES_UP_DOWN[] = max(1, NUM_SOURCE_LINES_UP_DOWN[] - 1)
                 println(Base.pipe_writer(terminal))
                 print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
-                LineEdit.write_prompt(state.terminal, panel)
+                write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "-")
             end
