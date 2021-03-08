@@ -29,9 +29,9 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
     # These commands take no arguments
     kwargs = Dict()
     if v != Val(:u)
-        length(split(cmd)) == 1 || return invalid_command(state, cmd)
+        length(split(cmd, r" +")) == 1 || return invalid_command(state, cmd)
     else
-        args = split(cmd)
+        args = split(cmd, r" +")
         length(args) > 2 && return invalid_command(state, cmd)
         cmd = args[1]
         if length(args) == 2
@@ -93,7 +93,7 @@ end
 execute_command(state::DebuggerState, ::Val{:st}, cmd) = true
 
 function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
-    subcmds = split(cmd, ' ')
+    subcmds = split(cmd, r" +")
     if length(subcmds) == 1
         if cmd == "f"
             new_level = 1
@@ -129,7 +129,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
 end
 
 function execute_command(state::DebuggerState, v::Union{Val{:up}, Val{:down}}, cmd::AbstractString)
-    args = split(cmd, " ")[2:end]
+    args = split(cmd, r" +")[2:end]
     if isempty(args)
         offset = v == Val(:up) ? +1 : -1
     else
@@ -142,7 +142,7 @@ function execute_command(state::DebuggerState, v::Union{Val{:up}, Val{:down}}, c
 end
 function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
     # TODO show some info messages?
-    cmds = split(cmd)
+    cmds = split(cmd, r" +")
     success_and_show = false
     if length(cmds) == 1
         success_and_show = true
@@ -176,7 +176,7 @@ function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
 end
 
 function execute_command(state::DebuggerState, v::Union{Val{:bp}}, cmd::AbstractString)
-    cmds = split(cmd, ' ')
+    cmds = split(cmd, r" +")
     function repl_show_breakpoints()
         if state.terminal !== nothing
             io = Base.pipe_writer(state.terminal)
@@ -294,7 +294,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
 
 
             An empty command will execute the previous command.
-        
+
             Hit `` ` `` to enter "evaluation mode," where any expression you type is executed in the debug context.
             Hit backspace as the first character of the line (or `^C` anywhere) to return to "debug mode." """)
     return false
