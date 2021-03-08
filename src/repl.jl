@@ -108,7 +108,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 toggle_mode(state)
                 write(state.terminal, '\r')
-                LineEdit.write_prompt(state.terminal, panel)
+                write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "C")
             end
