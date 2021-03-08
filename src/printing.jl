@@ -97,6 +97,17 @@ function print_next_expr(io::IO, frame::Frame)
             expr.args[i] = maybe_quote(val)
         end
     end
+    if isdefined(Core, :ReturnNode)
+        if expr isa Core.ReturnNode
+            val = try
+                @lookup(frame, expr.val)
+            catch err
+                err isa UndefVarError || rethrow(err)
+                expr.val
+            end
+            expr = Expr(:return, maybe_quote(val))
+        end
+    end
     expr = pattern_match_kw_call(expr)
     expr = pattern_match_apply_call(expr, frame)
     limit_expr = repr_limited(expr, MAX_BYTES_REPR[], print)

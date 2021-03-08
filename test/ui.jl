@@ -101,7 +101,7 @@ end
 
 
 @testset "UI" begin
-    if Sys.isunix() && (v"1.5.0-A" <= VERSION < v"1.6.0-A")
+    if Sys.isunix() && (v"1.6.0-A" <= VERSION < v"1.7.0-A")
         Debugger._print_full_path[] = false
         using TerminalRegressionTests
 
