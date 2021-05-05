@@ -16,7 +16,7 @@ function repr_limited(val, n, f=show)
             limited_str = suppressed("printing error")
         end
     end
-    return limited_str
+    return filter(isvalid, limited_str)
 end
 
 function print_var(io::IO, var::JuliaInterpreter.Variable)
