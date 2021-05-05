@@ -8,3 +8,5 @@ function step_through(frame)
     end
     return state.overall_result
 end
+
+@test Debugger.repr_limited(Text("ωωω"), 2) == Debugger.suppressed("ω")
