@@ -153,7 +153,7 @@ const NUM_SOURCE_LINES_UP_DOWN = Ref(4)
 function print_codeinfo(io::IO, frame::Frame)
     src = frame.framecode.src
     if isdefined(JuliaInterpreter, Symbol("replace_coretypes!"))
-        src = JuliaInterpreter.copy_codeinfo(src)
+        src = copy(src)
         JuliaInterpreter.replace_coretypes!(src; rev=true)
     end
     code = JuliaInterpreter.framecode_lines(src)
