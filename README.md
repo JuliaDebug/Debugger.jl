@@ -175,7 +175,8 @@ Stacktrace:
 
 ### Place breakpoints in source code
 It is sometimes more convenient to choose in the source code when to break. This is done for instance in Matlab/Octave with `keyboard`, and in R with `browser()`. You can use the `@bp` macro to do this:
-```
+
+```jl
 julia> using Debugger
 
 julia> function f(x)
