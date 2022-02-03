@@ -223,7 +223,6 @@ function highlight_code(code; context=nothing)
         try
             sprint(highlight, MIME("text/ansi-debugger"), code, Lexers.JuliaLexer, _current_theme[]; context=context)
         catch e
-            rethrow()
             printstyled(stderr, "failed to highlight code, $e\n"; color=Base.warn_color())
             return code
         end
