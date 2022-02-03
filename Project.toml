@@ -1,6 +1,6 @@
 name = "Debugger"
 uuid = "31a5f54b-26ea-5ae9-a837-f05ce5417438"
-version = "0.7.1"
+version = "0.7.2"
 
 [deps]
 CodeTracking = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
@@ -13,7 +13,7 @@ REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [compat]
 CodeTracking = "0.5.7, 1"
-Crayons = "3, 4"
+Crayons = "4.1"
 Highlights = "0.4.3"
 JuliaInterpreter = "0.9"
 julia = "1.6"
