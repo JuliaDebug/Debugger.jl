@@ -200,14 +200,14 @@ set_highlight(opt::HighlightOption) = _syntax_highlighting[] = opt
 
 function Format.render(io::IO, ::MIME"text/ansi-debugger", tokens::Format.TokenIterator)
     for (str, id, style) in tokens
-        fg = style.fg.active ? map(Int, (style.fg.r, style.fg.g, style.fg.b)) : :nothing
-        bg = style.bg.active ? map(Int, (style.bg.r, style.bg.g, style.bg.b)) : :nothing
+        fg = style.fg.active ? map(Int, (style.fg.r, style.fg.g, style.fg.b)) : nothing
+        bg = style.bg.active ? map(Int, (style.bg.r, style.bg.g, style.bg.b)) : nothing
         crayon = Crayon(
             foreground = fg,
             background = bg,
-            bold       = style.bold ? true : :nothing,
-            italics    = style.italic ? true : :nothing,
-            underline  = style.underline ? true : :nothing,
+            bold       = style.bold ? true : nothing,
+            italics    = style.italic ? true : nothing,
+            underline  = style.underline ? true : nothing,
         )
         if _syntax_highlighting[] == HIGHLIGHT_256_COLORS
             crayon = Crayons.to_256_colors(crayon)
