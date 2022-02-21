@@ -134,9 +134,9 @@ function print_status(io::IO, frame::Frame; force_lowered=false)
     loc = locinfo(frame)
 
     if loc !== nothing && !force_lowered
-        defline, current_line, body = loc
+        defline, deffile, current_line, body = loc
         breakpoint_lines = breakpoint_linenumbers(frame)
-        ok = print_sourcecode(outbuf, body, current_line, defline, breakpoint_lines)
+        ok = print_sourcecode(outbuf, body, current_line, defline, deffile, breakpoint_lines)
         if !ok
             printstyled(io, "failed to lookup source code, showing lowered code:\n"; color=Base.warn_color())
             print_codeinfo(outbuf, frame)
@@ -240,8 +240,11 @@ function breakpoint_char(bp::BreakpointState)
     return bp.condition === JuliaInterpreter.falsecondition ? ' ' : '○'
 end
 
-function print_sourcecode(io::IO, code::AbstractString, current_line::Integer, defline::Integer, breakpoint_lines::Dict{Int, BreakpointState} = Dict{Int, BreakpointState}())
-    code = highlight_code(code; context=io)
+function print_sourcecode(io::IO, code::AbstractString, current_line::Integer, defline::Integer, deffile::AbstractString, breakpoint_lines::Dict{Int, BreakpointState} = Dict{Int, BreakpointState}())
+    _, ext = splitext(deffile)
+    if isempty(ext) || ext == ".jl"
+        code = highlight_code(code; context=io)
+    end
     file = SourceFile(code)
     current_offsetline = current_line - defline + 1
     checkbounds(Bool, file.offsets, current_offsetline) || return false

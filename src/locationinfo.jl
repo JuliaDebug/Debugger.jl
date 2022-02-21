@@ -18,7 +18,7 @@ function locinfo(frame::Frame)
             body = read(current_file, String)
             defline = 0 # We are not sure where the context start in cases like these, could be improved?
         end
-        return defline, current_line, body
+        return defline, deffile, current_line, body
     else
         println("not yet implemented")
     end
