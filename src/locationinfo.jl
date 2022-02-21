@@ -7,18 +7,23 @@ function locinfo(frame::Frame)
         ret = JuliaInterpreter.whereis(frame)
         ret === nothing && return nothing
         current_file, current_line = ret
+        body_defline = CodeTracking.definition(String, meth)
         local body, defline
-        try # https://github.com/timholy/CodeTracking.jl/issues/31
-            body, defline = CodeTracking.definition(String, meth)
-        catch
-            return nothing
+        unknown_start = false
+        if body_defline === nothing
+            unknown_start = true
+        else
+            body, defline = body_defline
+            if deffile != current_file || defline > current_line
+                unknown_start = true
+            end
         end
-        if deffile != current_file || defline > current_line
+        if unknown_start
             isfile(current_file) || return nothing
             body = read(current_file, String)
             defline = 0 # We are not sure where the context start in cases like these, could be improved?
         end
-        return defline, current_line, body
+        return defline, deffile, current_line, body
     else
         println("not yet implemented")
     end

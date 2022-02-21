@@ -56,7 +56,7 @@ end
 frame = Debugger.@make_frame f()
 state = dummy_state(frame)
 execute_command(state, Val{:n}(), "n")
-defline, current_line, body = Debugger.locinfo(state.frame)
+defline, deffile, current_line, body = Debugger.locinfo(state.frame)
 @test occursin("handle_message(logger, level", body)
 
 f_unicode() = √
