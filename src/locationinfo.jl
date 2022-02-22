@@ -21,7 +21,7 @@ function locinfo(frame::Frame)
         if unknown_start
             isfile(current_file) || return nothing
             body = read(current_file, String)
-            defline = 0 # We are not sure where the context start in cases like these, could be improved?
+            defline = 1 # We are not sure where the context start in cases like these, could be improved?
         end
         return defline, deffile, current_line, body
     else
