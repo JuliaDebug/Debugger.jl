@@ -22,13 +22,14 @@ function get_function_in_module_or_Main(m::Module, f::Symbol)
         m = Main
     end
     f = getfield(m, f)
-    return f isa Function ? f : nothing
+    return (f isa Function || f isa Type) ? f : nothing
 end
 
 function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
     cmd = strip(cmd)
-    bp_error(err) = (printstyled(stderr, err, "\n", color = Base.error_color()); false)
-    undef_func(m, f) = bp_error("$f in " * (m !== Main ? "$m or"  : "") * " Main is either not a function or not defined")
+    bp_error() = (@error "Empty breakpoint expression"; false)
+    bp_error(err) = (@error err; false)
+    undef_func(m, expr) = bp_error("Expression $(expr) in " * (m !== Main ? "$m or"  : "") * " Main did not evaluate to a function or type")
     isempty(cmd) && return bp_error()
     frame = active_frame(state)
 
@@ -71,36 +72,28 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
         m = moduleof(frame)
         has_args = false
         if location_expr isa Symbol
-            fsym = location_expr
-            f = get_function_in_module_or_Main(m, fsym)
+            f = get_function_in_module_or_Main(m, location_expr)
         else
-            # check that the expr is a chain of getproperty calls
-            expr = fsym = location_expr
+            expr = location_expr
             if isexpr(expr, :call)
                 has_args = true
                 expr = expr.args[1]
             end
-            while expr isa Expr 
-                if expr.head == Symbol(".") && length(expr.args) == 2 && expr.args[2] isa QuoteNode
-                    expr = expr.args[1]
-                else
-                    @goto not_a_function
-                end
-            end
             for m in (moduleof(frame), Main)
                 try
-                    f_eval = Base.eval(m, has_args ? location_expr.args[1] : location_expr)
-                    if f_eval isa Function
+                    f_eval = Base.eval(m, expr)
+                    if f_eval isa Function || f_eval isa Type
                         f = f_eval
                         break
                     end
-                catch
+                catch e
+                    bp_error("error when evaluating expression $(expr) in module $m")
                 end
             end
         end
-        f === nothing && return undef_func(m, fsym)
+        f === nothing && return undef_func(m, location_expr)
         if !has_args
-            @info "added breakpoint for function $f" * (line === nothing ? "" : ":$line")
+            @info string("added breakpoint for ", f isa Function ? "function" : "type", " $f", (line === nothing ? "" : ":$line"))
             breakpoint(f, line, cond_expr)
             return true
         end

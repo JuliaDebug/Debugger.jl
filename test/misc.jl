@@ -190,6 +190,12 @@ execute_command(state, Val{:bp}(), """bp disable""")
 @test bp2.enabled[] == false
 JuliaInterpreter.remove()
 
+frame = Debugger.@make_frame 1.0:2.0:3.0
+state = dummy_state(frame)
+execute_command(state, Val{:bp}(), """bp add StepRangeLen""")
+execute_command(state, Val{:c}(), "c")
+@test state.frame !== nothing
+JuliaInterpreter.remove()
 
 @info "BEGIN ERRORS -------------------------------------"
 execute_command(state, Val{:bp}(), """bp add Base""")
