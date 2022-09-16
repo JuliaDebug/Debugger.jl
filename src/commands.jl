@@ -251,7 +251,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `u [i::Int]`: step until line `i` or the next line past the current line\\
             - `s`: step into the next call\\
             - `so`: step out of the current call\\
-            - `sl`: step into the last call on the current line (e.g. steps into `f` if the line is `f(g(h(x)))`).
+            - `sl`: step into the last call on the current line (e.g. steps into `f` if the line is `f(g(h(x)))`).\\
             - `c`: continue execution until a breakpoint is hit\\
             - `f [i::Int]`: go to the `i`-th function in the call stack (stepping is only possible in the function at the top of the call stack)\\
             - `up/down [i::Int]` go up or down one or `i` functions in the call stack\\
