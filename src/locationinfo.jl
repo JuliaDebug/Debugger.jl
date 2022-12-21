@@ -1,29 +1,44 @@
+function body_for_method(current_file, current_line, meth)
+    ret = JuliaInterpreter.whereis(meth)
+    ret === nothing && return nothing
+    deffile, _ = ret
+    body_defline = CodeTracking.definition(String, meth)
+    if body_defline === nothing
+        return (nothing, 1, true)
+    else
+        body, defline = body_defline
+        return (body, defline, deffile != current_file || defline > current_line)
+    end
+end
+
 function locinfo(frame::Frame)
-    if frame.framecode.scope isa Method
-        meth = frame.framecode.scope
-        ret = JuliaInterpreter.whereis(meth)
-        ret === nothing && return nothing
-        deffile, _ = ret
+    scope = frame.framecode.scope
+    if scope isa Method
+        meth = scope
         ret = JuliaInterpreter.whereis(frame)
         ret === nothing && return nothing
         current_file, current_line = ret
-        body_defline = CodeTracking.definition(String, meth)
-        local body, defline
-        unknown_start = false
-        if body_defline === nothing
-            unknown_start = true
-        else
-            body, defline = body_defline
-            if deffile != current_file || defline > current_line
-                unknown_start = true
+        unknown_start = true
+        if JuliaInterpreter.is_generated(meth) && !frame.framecode.generator
+            # We're inside the expansion of a generated function.
+            # There's not much point trying to query the method.
+            # However, me heuristically make one exception: If our
+            # src has method_for_inference_heuristics set, it is likely
+            # a Cassette pass, so we can use the un-overdubbed method
+            # to retrieve source.
+            src = frame.framecode.src
+            if isdefined(src, :method_for_inference_heuristics)
+                (body, defline, unknown_start) = body_for_method(current_file, current_line, src.method_for_inference_heuristics)
             end
+        else
+            (body, defline, unknown_start) = body_for_method(current_file, current_line, meth)
         end
         if unknown_start
             isfile(current_file) || return nothing
             body = read(current_file, String)
             defline = 1 # We are not sure where the context start in cases like these, could be improved?
         end
-        return defline, deffile, current_line, body
+        return defline, current_file, current_line, body
     else
         println("not yet implemented")
     end
