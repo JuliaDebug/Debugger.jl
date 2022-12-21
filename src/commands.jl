@@ -25,7 +25,7 @@ function show_breakpoint(io::IO, bp::BreakpointRef, state::DebuggerState)
     print(io, String(take!(outbuf.io)))
 end
 
-function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so},Val{:u},Val{:sl}}, cmd::AbstractString)
+function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n},Val{:se},Val{:s},Val{:si},Val{:sg},Val{:so},Val{:u},Val{:sl},Val{:sr}}, cmd::AbstractString)
     # These commands take no arguments
     kwargs = Dict()
     if v != Val(:u)
@@ -252,6 +252,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `s`: step into the next call\\
             - `so`: step out of the current call\\
             - `sl`: step into the last call on the current line (e.g. steps into `f` if the line is `f(g(h(x)))`).\\
+            - `sr`: step until next `return`.\\
             - `c`: continue execution until a breakpoint is hit\\
             - `f [i::Int]`: go to the `i`-th function in the call stack (stepping is only possible in the function at the top of the call stack)\\
             - `up/down [i::Int]` go up or down one or `i` functions in the call stack\\
