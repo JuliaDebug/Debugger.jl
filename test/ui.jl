@@ -1,6 +1,6 @@
 #
 #
-# From base, but copied here to make sure we don't fail bacause base changed
+# From base, but copied here to make sure we don't fail because base changed
 function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UInt32,Int64,UInt64,Int128,UInt128}
     a == 0 && return abs(b)
     b == 0 && return abs(a)
