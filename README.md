@@ -217,7 +217,23 @@ Currently, there are cases where the interpreter is too slow for this to be feas
 A workaround is to use "compiled mode" which is toggled by pressing `C` in the debug REPL mode (note the change of prompt color).
 When using compiled mode, code that is stepped over will be executed
 by the normal julia compiler and run just as fast as normally.
-The drawback is of course that breakpoints in code that is stepped over are missed.
+The drawback is that breakpoints in compiled code that is stepped over are missed.
+
+To split the difference between these two extremes, one can fine tune which modules are compiled and which are not.
+For example, to compile all code in Base, even when not in `C` mode, and hence break on all specified points in user code,
+issue the following commands on the REPL *before* `@enter`:
+
+```jl
+using JuliaInterpreter, MethodAnalysis
+union!(JuliaInterpreter.compiled_modules, Base)
+union!(JuliaInterpreter.compiled_modules, child_modules(Base))
+```
+
+Additional imported modules can also always be compiled with:
+
+```jl
+union!(JuliaInterpreter.compiled_modules, SomePackage)
+```
 
 
 ### Syntax highlighting
