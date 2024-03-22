@@ -225,7 +225,6 @@ issue the following commands on the REPL *before* `@enter`:
 
 ```jl
 using JuliaInterpreter, MethodAnalysis
-union!(JuliaInterpreter.compiled_modules, Base)
 union!(JuliaInterpreter.compiled_modules, child_modules(Base))
 ```
 
