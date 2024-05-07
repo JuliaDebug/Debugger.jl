@@ -229,7 +229,7 @@ mutable struct DebugCompletionProvider <: REPL.CompletionProvider
     state::DebuggerState
 end
 
-function LineEdit.complete_line(c::DebugCompletionProvider, s)
+function LineEdit.complete_line(c::DebugCompletionProvider, s; hint=true)
     partial = REPL.beforecursor(s.input_buffer)
     full = LineEdit.input_string(s)
 
