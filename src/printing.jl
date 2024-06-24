@@ -149,6 +149,7 @@ function print_status(io::IO, frame::Frame; force_lowered=false)
 end
 
 const NUM_SOURCE_LINES_UP_DOWN = Ref(4)
+const COMPACT_MODE = Ref(true)
 
 function print_codeinfo(io::IO, frame::Frame)
     src = frame.framecode.src
@@ -268,20 +269,22 @@ function print_lines(io, code, current_line, breakpoint_lines, startline)
     end
     stopline = startline + length(code) - 1
 
-    # Count indentation level (only count spaces for now)
-    min_indentation = typemax(Int)
-    for textline in code
-        all(isspace, textline) && continue
-        isempty(textline) && continue
-        indent_line = 0
-        for char in textline
-            char != ' ' && break
-            indent_line += 1
+    if COMPACT_MODE[]
+        # Count indentation level (only count spaces for now)
+        min_indentation = typemax(Int)
+        for textline in code
+            all(isspace, textline) && continue
+            isempty(textline) && continue
+            indent_line = 0
+            for char in textline
+                char != ' ' && break
+                indent_line += 1
+            end
+            min_indentation = min(min_indentation, indent_line)
         end
-        min_indentation = min(min_indentation, indent_line)
-    end
-    for i in 1:length(code)
-        code[i] = code[i][min_indentation+1:end]
+        for i in 1:length(code)
+            code[i] = code[i][min_indentation+1:end]
+        end
     end
     lineno = startline
     stoplinelength = ndigits(stopline)
