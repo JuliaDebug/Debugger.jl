@@ -6,7 +6,7 @@
 |:-----------------------------------------------------------------------------------------------:|
 | [![][travis-img]][travis-url]  [![][codecov-img]][codecov-url] |
 
-**Note**: If you are looking for the docs for the Juno IDE debugger, see [this link instead]( https://docs.junolab.org/latest/man/debugging/)
+**Note**: If you are looking for the docs for the Julia VSCode debugger, see [this link instead](https://www.julia-vscode.org/docs/stable/userguide/debugging/)
 
 ## Installation
 
