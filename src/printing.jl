@@ -78,6 +78,21 @@ function pattern_match_apply_call(expr, frame)
     return new_expr
 end
 
+# Replace functions with their symbol so that calls print like `f(x)` instead of `(f)(x)`.
+function replace_function_with_symbol(expr)
+    if isexpr(expr, :call)
+        f = expr.args[1]
+        if f isa Function
+            s = Symbol(f)
+            if Base.isidentifier(s)
+                expr.args[1] = s
+                return expr
+            end
+        end
+    end
+    return expr
+end
+
 function print_next_expr(io::IO, frame::Frame)
     expr = pc_expr(frame)
     @assert expr !== nothing
@@ -110,6 +125,7 @@ function print_next_expr(io::IO, frame::Frame)
     end
     expr = pattern_match_kw_call(expr)
     expr = pattern_match_apply_call(expr, frame)
+    expr = replace_function_with_symbol(expr)
     limit_expr = repr_limited(expr, MAX_BYTES_REPR[], print)
     print(io, highlight_code(limit_expr; context=io))
     println(io)
