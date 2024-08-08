@@ -4,9 +4,16 @@ end
 
 step_through(enter_call_expr(:($(CallTest)())))
 
+# https://github.com/JuliaLang/julia/pull/44776
+@static if isdefined(Base, Symbol("@_pure_meta"))
+    var"@metamacro" = Base.var"@_pure_meta"
+else
+    var"@metamacro" = Base.var"@_total_meta"
+end
+
 # Properly handle :meta annotations
 function MetaTest()
-    @Base._pure_meta
+    @metamacro
     0
 end
 
