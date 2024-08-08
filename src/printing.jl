@@ -44,7 +44,8 @@ end
 function pattern_match_kw_call(expr)
     if isexpr(expr, :call)
         f = string(expr.args[1])
-        is_kw = occursin("#kw#", f) || (startswith(f, "#") && endswith(f, "_kw"))
+        is_kw = expr.args[1] === Core.kwcall ||
+            occursin("#kw#", f) || (startswith(f, "#") && endswith(f, "_kw"))
     else
         is_kw = false
     end
