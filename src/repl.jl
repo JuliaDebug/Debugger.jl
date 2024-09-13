@@ -188,7 +188,6 @@ function julia_prompt(state::DebuggerState)
             LineEdit.transition(s, :abort)
             return false
         end
-        xbuf = copy(buf)
         command = String(take!(buf))
         @static if VERSION >= v"1.2.0-DEV.253"
             response = _eval_code(active_frame(state), command)
@@ -241,19 +240,29 @@ function completions(c::DebugCompletionProvider, full, partial)
     frame = c.state.frame
 
     # repl backend completions
-    comps, range, should_complete = REPLCompletions.completions(full, lastindex(partial), moduleof(frame))
-    ret = map(REPLCompletions.completion_text, comps) |> unique!
+    comps1, range1, should_complete1 = REPLCompletions.completions(full, lastindex(partial), moduleof(frame))
+    ret1 = map(REPLCompletions.completion_text, comps1)
 
-    # local completions
-    vars = filter!(locals(frame)) do v
-        # ref: https://github.com/JuliaDebug/JuliaInterpreter.jl/blob/master/src/utils.jl#L365-L370
-        if v.name == Symbol("#self") && (v.value isa Type || sizeof(v.value) == 0)
-            return false
-        else
-            return startswith(string(v.name), partial)
-        end
-    end |> vars -> map(v -> string(v.name), vars)
-    pushfirst!(ret, vars...)
+    ignore_local(v) = v.name == Symbol("#self") && (v.value isa Type || sizeof(v.value) == 0)
+    m = Module()
+    for v in locals(frame)
+        ignore_local(v) && continue
+        Base.eval(m, :($(v.name) = $(v.value)))
+    end
+
+    comps2, range2, should_complete2 = REPLCompletions.completions(full, lastindex(partial), m)
+    ret2 = map(REPLCompletions.completion_text, comps2)
+
+    ret = sort!(unique!(vcat(ret1, ret2)))
+    should_complete = should_complete1 | should_complete2
+    range = min(range1, range2) # Not sure about this one
+
+    # Attempt to allow values to be garbage collected
+    # because I don't think Julia ever GCs modules.
+    for v in locals(frame)
+        ignore_local(v) && continue
+        Base.eval(m, :($(v.name) = nothing))
+    end
 
     ret, range, should_complete
 end
