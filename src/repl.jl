@@ -247,7 +247,7 @@ function completions(c::DebugCompletionProvider, full, partial)
     m = Module()
     for v in locals(frame)
         ignore_local(v) && continue
-        Base.eval(m, :($(v.name) = $(v.value)))
+        Base.eval(m, :($(v.name) = $(QuoteNode(v.value))))
     end
 
     comps2, range2, should_complete2 = REPLCompletions.completions(full, lastindex(partial), m)
