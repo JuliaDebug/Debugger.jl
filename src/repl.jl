@@ -192,7 +192,8 @@ function julia_prompt(state::DebuggerState)
         @static if VERSION >= v"1.11.5"
             response = _eval_code(active_frame(state), command)
             specialdisplay = REPL.specialdisplay(state.repl)
-            backend = REPL.backend(state.repl)
+            # I have no idea why this needs to be nothing rather than backend = REPL.backend(state.repl)
+            # but if I do that, it hangs
             REPL.print_response(IOBuffer(), response, nothing, true, true, specialdisplay)
         elseif VERSION >= v"1.2.0-DEV.253"
             response = _eval_code(active_frame(state), command)
