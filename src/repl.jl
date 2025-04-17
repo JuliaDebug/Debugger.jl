@@ -189,7 +189,12 @@ function julia_prompt(state::DebuggerState)
             return false
         end
         command = String(take!(buf))
-        @static if VERSION >= v"1.2.0-DEV.253"
+        @static if VERSION >= v"1.11.5"
+            response = _eval_code(active_frame(state), command)
+            specialdisplay = REPL.specialdisplay(state.repl)
+            backend = REPL.backend(state.repl)
+            REPL.print_response(IOBuffer(), response, nothing, true, true, specialdisplay)
+        elseif VERSION >= v"1.2.0-DEV.253"
             response = _eval_code(active_frame(state), command)
             REPL.print_response(state.repl, response, true, true)
         else
