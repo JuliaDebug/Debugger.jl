@@ -189,11 +189,15 @@ function julia_prompt(state::DebuggerState)
             return false
         end
         command = String(take!(buf))
-        @static if VERSION >= v"1.2.0-DEV.253"
-            response = _eval_code(active_frame(state), command)
+        response = _eval_code(active_frame(state), command)
+        @static if VERSION >= v"1.11.5"
+            # Since https://github.com/JuliaLang/julia/pull/57773 REPL.print_resons runs `display` on the backend
+            # task. If this is called from the same thread the channel orchestration will block, so do this async.
+            fetch(Threads.@spawn REPL.print_response(state.repl, response, true, true))
+        elseif VERSION >= v"1.2.0-DEV.253"
             REPL.print_response(state.repl, response, true, true)
         else
-            ok, result = _eval_code(active_frame(state), command)
+            ok, result = response
             REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
         end
         println(state.terminal)
