@@ -11,7 +11,7 @@ using REPL.LineEdit
 using REPL.REPLCompletions
 
 using CodeTracking
-using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState,
+using JuliaInterpreter: JuliaInterpreter, Frame, lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState,
                         finish_and_return!, Compiled
 
 using JuliaInterpreter: pc_expr, moduleof, linenumber, extract_args, locals,

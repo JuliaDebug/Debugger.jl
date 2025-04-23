@@ -70,7 +70,7 @@ function pattern_match_apply_call(expr, frame)
     if !(isexpr(expr, :call) && expr.args[1] == Core._apply)
         return expr
     end
-    args = [@lookup(frame, expr.args[i+2]) for i in 1:(length(expr.args)-2)]
+    args = Any[lookup(frame, expr.args[i+2]) for i in 1:(length(expr.args)-2)]
     new_expr = Expr(:call, expr.args[2])
     argsflat = append_any(args...)
     for x in argsflat
@@ -105,7 +105,7 @@ function print_next_expr(io::IO, frame::Frame)
     if isexpr(expr, :call) || isexpr(expr, :return)
         for i in 1:length(expr.args)
             val = try
-                @lookup(frame, expr.args[i])
+                lookup(frame, expr.args[i])
             catch err
                 err isa UndefVarError || rethrow(err)
                 expr.args[i]
@@ -116,7 +116,7 @@ function print_next_expr(io::IO, frame::Frame)
     if isdefined(Core, :ReturnNode)
         if expr isa Core.ReturnNode
             val = try
-                @lookup(frame, expr.val)
+                lookup(frame, expr.val)
             catch err
                 err isa UndefVarError || rethrow(err)
                 expr.val
