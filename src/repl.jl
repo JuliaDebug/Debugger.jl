@@ -148,7 +148,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
     panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
-    if initial_continue
+    if initial_continue && !JuliaInterpreter.shouldbreak(frame, frame.pc)
         try
             execute_command(state, Val(:c), "c")
         catch err
