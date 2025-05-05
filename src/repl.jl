@@ -29,7 +29,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     normal_prefix = Sys.iswindows() ? "\e[33m" : "\e[38;5;166m"
     compiled_prefix = "\e[96m"
     panel = LineEdit.Prompt(promptname(state.level, "debug");
-        prompt_prefix = () -> state.mode == Compiled() ? compiled_prefix : normal_prefix,
+        prompt_prefix = () -> state.interp == NonRecursiveInterpreter() ? compiled_prefix : normal_prefix,
         prompt_suffix = Base.text_colors[:normal],
         on_enter = s->true)
 

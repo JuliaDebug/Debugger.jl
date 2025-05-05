@@ -43,7 +43,7 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
     assert_allow_step(state) || return false
     cmd == "so" && (cmd = "finish")
     cmd == "u" && (cmd = "until")
-    ret = debug_command(state.mode, state.frame, Symbol(cmd); kwargs...)
+    ret = debug_command(state.interp, state.frame, Symbol(cmd); kwargs...)
     if ret === nothing
         state.overall_result = get_return(root(state.frame))
         state.frame = nothing
