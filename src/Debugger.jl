@@ -11,8 +11,8 @@ using REPL.LineEdit
 using REPL.REPLCompletions
 
 using CodeTracking
-using JuliaInterpreter: JuliaInterpreter, Frame, @lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState,
-                        finish_and_return!, Compiled
+using JuliaInterpreter: JuliaInterpreter, Frame, lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState,
+                        finish_and_return!, Interpreter, NonRecursiveInterpreter, RecursiveInterpreter
 
 using JuliaInterpreter: pc_expr, moduleof, linenumber, extract_args, locals,
                         root, caller, whereis, get_return, nstatements, getargs
@@ -43,7 +43,7 @@ Base.@kwdef mutable struct DebuggerState
     broke_on_error::Bool = false
     watch_list::Vector = WATCH_LIST
     lowered_status::Bool = false
-    mode = finish_and_return!
+    interp::Interpreter = RecursiveInterpreter()
     repl = nothing
     terminal = nothing
     main_mode = nothing
@@ -53,7 +53,7 @@ Base.@kwdef mutable struct DebuggerState
 end
 
 function toggle_mode(state)
-    state.mode = (state.mode === finish_and_return! ? (state.mode = Compiled()) : (state.mode = finish_and_return!))
+    state.interp = (state.interp === RecursiveInterpreter() ? (state.interp = NonRecursiveInterpreter()) : (state.interp = RecursiveInterpreter()))
 end
 
 toggle_lowered(state) = state.lowered_status = !state.lowered_status

@@ -1,8 +1,9 @@
 # Issue #14
 
 using Debugger: _iscall
-using JuliaInterpreter: JuliaInterpreter, pc_expr, evaluate_call!, finish_and_return!, @lookup, enter_call_expr, breakpoints
-runframe(frame::Frame, pc=frame.pc[]) = Some{Any}(finish_and_return!(Compiled(), frame))
+using JuliaInterpreter
+using JuliaInterpreter: pc_expr, evaluate_call!, finish_and_return!, enter_call_expr
+runframe(frame::Frame, pc=frame.pc[]) = Some{Any}(finish_and_return!(NonRecursiveInterpreter(), frame))
 
 frame = @make_frame map(x->2x, 1:10)
 state = dummy_state(frame)

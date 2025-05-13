@@ -29,7 +29,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     normal_prefix = Sys.iswindows() ? "\e[33m" : "\e[38;5;166m"
     compiled_prefix = "\e[96m"
     panel = LineEdit.Prompt(promptname(state.level, "debug");
-        prompt_prefix = () -> state.mode == Compiled() ? compiled_prefix : normal_prefix,
+        prompt_prefix = () -> state.interp == NonRecursiveInterpreter() ? compiled_prefix : normal_prefix,
         prompt_suffix = Base.text_colors[:normal],
         on_enter = s->true)
 
@@ -189,11 +189,15 @@ function julia_prompt(state::DebuggerState)
             return false
         end
         command = String(take!(buf))
-        @static if VERSION >= v"1.2.0-DEV.253"
-            response = _eval_code(active_frame(state), command)
+        response = _eval_code(active_frame(state), command)
+        @static if VERSION >= v"1.11.5"
+            # Since https://github.com/JuliaLang/julia/pull/57773 REPL.print_resons runs `display` on the backend
+            # task. If this is called from the same thread the channel orchestration will block, so do this async.
+            fetch(Threads.@spawn REPL.print_response(state.repl, response, true, true))
+        elseif VERSION >= v"1.2.0-DEV.253"
             REPL.print_response(state.repl, response, true, true)
         else
-            ok, result = _eval_code(active_frame(state), command)
+            ok, result = response
             REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
         end
         println(state.terminal)
