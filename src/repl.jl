@@ -169,6 +169,22 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     return state.overall_result
 end
 
+@static if VERSION ≥ v"1.11.5"
+    # Starting from https://github.com/JuliaLang/julia/pull/57773, `print_response`
+    # hands over the evaluation to the backend using a `Channel` for synchronization.
+    # However, this causes a deadlock for Debugger because we call this from the backend already.
+    function print_response(repl, response, show_value::Bool, have_color::Bool)
+        repl.waserror = response[2]
+        backend = nothing # don't defer evaluation to the REPL backend, do it eagerly.
+        REPL.with_repl_linfo(repl) do io
+            io = IOContext(io, :module => Base.active_module(repl)::Module)
+
+            REPL.print_response(io, response, backend, show_value, have_color, REPL.specialdisplay(repl))
+        end
+    end
+else
+    print_response(repl, response, show_value::Bool, have_color::Bool) = REPL.print_response(repl, response, show_value, have_color)
+end
 
 function julia_prompt(state::DebuggerState)
     # Return early if this has already been called on the state
@@ -190,16 +206,7 @@ function julia_prompt(state::DebuggerState)
         end
         command = String(take!(buf))
         response = _eval_code(active_frame(state), command)
-        @static if VERSION >= v"1.11.5"
-            # Since https://github.com/JuliaLang/julia/pull/57773 REPL.print_resons runs `display` on the backend
-            # task. If this is called from the same thread the channel orchestration will block, so do this async.
-            fetch(Threads.@spawn REPL.print_response(state.repl, response, true, true))
-        elseif VERSION >= v"1.2.0-DEV.253"
-            REPL.print_response(state.repl, response, true, true)
-        else
-            ok, result = response
-            REPL.print_response(state.repl, ok ? result : result[1], ok ? nothing : result[2], true, true)
-        end
+        print_response(state.repl, response, true, true)
         println(state.terminal)
         LineEdit.reset_state(s)
     end
