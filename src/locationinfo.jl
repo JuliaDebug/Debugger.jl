@@ -106,6 +106,6 @@ function locdesc(io, frame::Frame; current_line=false)
     end
     line = current_line ? JuliaInterpreter.linenumber(frame) : meth.line
     path = string(_print_full_path[] ? meth.file : basename(String(meth.file)), ":", line)
-    path = CodeTracking.replace_buildbot_stdlibpath(String(path))
+    path = CodeTracking.maybe_fix_path(path)
     print(io, ") at ", path)
 end
