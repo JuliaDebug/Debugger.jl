@@ -101,13 +101,13 @@ end
 
 
 @testset "UI" begin
-    if Sys.isunix() && (v"1.6.0-A" <= VERSION < v"1.7.0-A")
+    if Sys.isunix() && (v"1.7.0-A" <= VERSION < v"1.8.0-A")
         Debugger._print_full_path[] = false
         using TerminalRegressionTests
 
         function run_terminal_test(frame, commands, validation)
             TerminalRegressionTests.automated_test(joinpath(@__DIR__, validation), commands) do emuterm
-            #TerminalRegressionTests.create_automated_test(joinpath(@__DIR__, validation), commands) do emuterm
+            # TerminalRegressionTests.create_automated_test(joinpath(@__DIR__, validation), commands) do emuterm
                 repl = REPL.LineEditREPL(emuterm, true)
                 repl.interface = REPL.setup_interface(repl)
                 repl.specialdisplay = REPL.REPLDisplay(repl)
