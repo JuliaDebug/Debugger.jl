@@ -12,7 +12,7 @@ Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [compat]
-CodeTracking = "0.5.7, 1, 2"
+CodeTracking = "2"
 Crayons = "4.1"
 Highlights = "0.4.3, 0.5"
 JuliaInterpreter = "0.10"
