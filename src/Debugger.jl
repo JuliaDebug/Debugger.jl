@@ -92,7 +92,7 @@ function _make_frame(mod, arg)
         frame === nothing && error("failed to enter the function, perhaps it is set to run in compiled mode")
         frame = JuliaInterpreter.maybe_step_through_kwprep!(frame)
         frame = JuliaInterpreter.maybe_step_through_wrapper!(frame)
-        JuliaInterpreter.maybe_next_call!(frame)
+        JuliaInterpreter.maybe_next_until!(JuliaInterpreter.is_next_stop, frame)
         frame
     end
 end
