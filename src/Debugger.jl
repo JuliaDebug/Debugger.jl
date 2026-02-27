@@ -1,7 +1,6 @@
 module Debugger
 
 using Highlights
-using Crayons
 import InteractiveUtils
 
 using Markdown

@@ -4,19 +4,19 @@ version = "0.7.16"
 
 [deps]
 CodeTracking = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
-Crayons = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
 Highlights = "eafb193a-b7ab-5a9e-9068-77385905fa72"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 JuliaInterpreter = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+tree_sitter_julia_jll = "52be201e-a5e9-5cfe-8bf2-2dc4b062171c"
 
 [compat]
 CodeTracking = "2, 3"
-Crayons = "4.1"
-Highlights = "0.4.3, 0.5, 0.6"
+Highlights = "0.6"
 JuliaInterpreter = "0.10"
 julia = "1.6"
+tree_sitter_julia_jll = "0.25.0"
 
 [extras]
 TerminalRegressionTests = "98bfdc55-cc95-5876-a49a-74609291cbe0"
