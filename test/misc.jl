@@ -76,7 +76,7 @@ finally
     Debugger.set_highlight(Debugger.HIGHLIGHT_OFF)
 end
 
-frame = @make_frame Test.eval(1)
+frame = @make_frame Test.TestLogger()
 desc = Debugger.locdesc(frame)
 @test occursin(Sys.STDLIB, desc)
 
