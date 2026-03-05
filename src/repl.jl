@@ -36,8 +36,10 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     panel.hist = REPL.REPLHistoryProvider(Dict{Symbol,Any}(:debug => panel))
     REPL.history_reset_state(panel.hist)
 
-    search_prompt, skeymap = LineEdit.setup_search_keymap(panel.hist)
-    search_prompt.complete = REPL.LatexCompletions()
+    if VERSION < v"1.13-"
+        search_prompt, skeymap = LineEdit.setup_search_keymap(panel.hist)
+        search_prompt.complete = REPL.LatexCompletions()
+    end
 
     state.main_mode = panel
 
@@ -59,6 +61,9 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             command = strip(line)
         end
         do_print_status = true
+        if !(command isa AbstractString)
+            command = command.content
+        end
         cmd1 = split(command,' ')[1]
         do_print_status = try
             execute_command(state, Val{Symbol(cmd1)}(), command)
@@ -144,8 +149,14 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             end
         end
     )
+    
+    keymaps = Dict{Any,Any}[LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
 
-    state.standard_keymap = Dict{Any,Any}[skeymap, LineEdit.history_keymap, LineEdit.default_keymap, LineEdit.escape_defaults]
+    if VERSION < v"1.13-"
+        pushfirst!(keymaps, skeymap)
+    end
+
+    state.standard_keymap = keymaps
     panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
     if initial_continue
@@ -164,7 +175,15 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         JuliaInterpreter.maybe_next_call!(state.frame)
     end
     print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
-    REPL.run_interface(terminal, LineEdit.ModalInterface([panel,search_prompt]))
+
+    prompts = [panel]
+
+    if VERSION < v"1.13-"
+        push!(prompts, search_prompt)
+    end
+
+
+    REPL.run_interface(terminal, LineEdit.ModalInterface(prompts))
 
     return state.overall_result
 end
@@ -261,7 +280,7 @@ function completions(c::DebugCompletionProvider, full, partial)
         Base.eval(m, :($(v.name) = $(QuoteNode(v.value))))
     end
 
-    comps2, range2, should_complete2 = REPLCompletions.completions(full, lastindex(partial), m)
+    comps2, range2, should_complete2 = Base.invokelatest(REPLCompletions.completions, full, lastindex(partial), m)
     ret2 = map(REPLCompletions.completion_text, comps2)
 
     ret = sort!(unique!(vcat(ret1, ret2)))
