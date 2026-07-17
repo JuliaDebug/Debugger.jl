@@ -63,10 +63,10 @@ defline, deffile, current_line, body = Debugger.locinfo(state.frame)
 f_unicode() = √
 
 try
-    Debugger.set_highlight(Debugger.HIGHLIGHT_SYSTEM_COLORS)
+    Debugger.set_highlight(true)
     frame = Debugger.@make_frame f()
     st = chomp(sprint(Debugger.print_status, frame; context = :color => true))
-    x_1_plus_1_colored = "x \e[91m=\e[39m 1 \e[91m+\e[39m"
+    x_1_plus_1_colored = "x\e[0m \e[38;2;249;248;245m=\e[0m \e[38;2;244;191;117m1\e[0m \e[38;2;249;248;245m+\e[0m \e[38;2;244;191;117m"
     @test occursin(x_1_plus_1_colored, st)
 
     frame = Debugger.@make_frame f_unicode()
