@@ -53,7 +53,7 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
         if pc isa BreakpointRef
             if pc.stmtidx != 0 # This is the dummy breakpoint to stop just after entering a call
                 if state.terminal !== nothing # fix this, it happens when a test hits this and hasn't set a terminal
-                    show_breakpoint(Base.pipe_writer(state.terminal), pc, state)
+                    show_breakpoint(output_stream(state), pc, state)
                 end
             end
             if pc.err !== nothing
@@ -68,7 +68,7 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
 end
 
 function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
-    io = Base.pipe_writer(state.terminal)
+    io = output_stream(state)
     iob = IOContext(IOBuffer(), io)
     num = 0
     frame = state.frame
@@ -117,7 +117,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
         old_level = state.level
         try
             state.level = new_level
-            print_frame(Base.pipe_writer(state.terminal), new_level, active_frame(state))
+            print_frame(output_stream(state), new_level, active_frame(state))
         finally
             state.level = old_level
         end
@@ -164,7 +164,7 @@ function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
         end
     end
     if success_and_show
-        io = Base.pipe_writer(state.terminal)
+        io = output_stream(state)
         outbuf = IOContext(IOBuffer(), io)
         show_watch_list(outbuf, state)
         print(io, String(take!(outbuf.io)))
@@ -179,7 +179,7 @@ function execute_command(state::DebuggerState, v::Union{Val{:bp}}, cmd::Abstract
     cmds = split(cmd, r" +")
     function repl_show_breakpoints()
         if state.terminal !== nothing
-            io = Base.pipe_writer(state.terminal)
+            io = output_stream(state)
             outbuf = IOContext(IOBuffer(), io)
             show_breakpoints(outbuf, state)
             print(io, String(take!(outbuf.io)))
@@ -275,21 +275,21 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `w`\\
                 - `w add expr`: add an expression to the watch list\\
                 - `w`: show all watch expressions evaluated in the current function's context\\
-                - `w rm [i::Int]`: remove all or the `i`:th watch expression\\
+                - `w rm [i::Int]`: remove all or the `i`-th watch expression\\
 
 
             Breakpoints:\\
             - `bp add`\\
-                - `bp add "file.jl":line [cond]`: add a breakpoint att file `file.jl` on line `line` with condition `cond`\\
-                - `bp add func [:line] [cond]`: add a breakpoint to function `func` at line `line` (defaulting to first line)  with condition `cond`\\
-                - `bp add func(::Float64, Int)[:line] [cond]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line)  with condition `cond`\\
+                - `bp add "file.jl":line [cond]`: add a breakpoint at file `file.jl` on line `line` with condition `cond`\\
+                - `bp add func [:line] [cond]`: add a breakpoint to function `func` at line `line` (defaulting to first line) with condition `cond`\\
+                - `bp add func(::Float64, Int)[:line] [cond]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line) with condition `cond`\\
                 - `bp add func(x, y)[:line] [cond]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc with condition `cond`\\
-                - `bp add line [cond]` add a breakpoint to `line` of the file of the current function  with condition `cond`\\
+                - `bp add line [cond]`: add a breakpoint to `line` of the file of the current function with condition `cond`\\
             - `bp` show all breakpoints\\
-            - `bp rm [i::Int]`: remove all or the `i`:th breakpoint\\
-            - `bp toggle [i::Int]`: toggle all or the `i`:th breakpoint\\
-            - `bp disable [i::Int]`: disable all or the `i`:th breakpoint\\
-            - `bp enable [i::Int]`: enable all or the `i`:th breakpoint\\
+            - `bp rm [i::Int]`: remove all or the `i`-th breakpoint\\
+            - `bp toggle [i::Int]`: toggle all or the `i`-th breakpoint\\
+            - `bp disable [i::Int]`: disable all or the `i`-th breakpoint\\
+            - `bp enable [i::Int]`: enable all or the `i`-th breakpoint\\
             - `bp on/off`\\
                 - `bp on/off error` - turn on or off break on error\\
                 - `bp on/off throw` - turn on or off break on throw\\

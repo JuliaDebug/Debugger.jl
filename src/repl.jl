@@ -2,11 +2,7 @@
 promptname(level, name) = "$level|$name> "
 
 function write_prompt(terminal, mode)
-    @static if VERSION ≥ v"1.6.0-DEV.517"
-        LineEdit.write_prompt(terminal, mode, LineEdit.hascolor(terminal))
-    else
-        LineEdit.write_prompt(terminal, mode)
-    end
+    LineEdit.write_prompt(terminal, mode, LineEdit.hascolor(terminal))
 end
 
 function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue=false)
@@ -68,14 +64,14 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         do_print_status = try
             execute_command(state, Val{Symbol(cmd1)}(), command)
         catch err
-            # This will only show the stacktrae up to the current frame because
+            # This will only show the stacktrace up to the current frame because
             # currently, the unwinding in JuliaInterpreter unlinks the frames to
             # where the error is thrown
 
             # Buffer error printing
-            io = IOContext(IOBuffer(), Base.pipe_writer(terminal))
+            io = IOContext(IOBuffer(), output_stream(state))
             Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
-            print(Base.pipe_writer(terminal), String(take!(io.io)))
+            print(output_stream(state), String(take!(io.io)))
             # Comment below out if you are debugging the Debugger
             #Base.display_error(Base.pipe_writer(terminal), err, catch_backtrace())
             LineEdit.transition(s, :abort)
@@ -92,7 +88,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             return false
         end
         if do_print_status
-            print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered = state.lowered_status)
+            print_status(output_stream(state), active_frame(state); force_lowered = state.lowered_status)
         end
         return true
     end
@@ -121,8 +117,8 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         'L' => function (s, args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 toggle_lowered(state)
-                println(Base.pipe_writer(terminal))
-                print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+                println(output_stream(state))
+                print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
                 write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "L")
@@ -131,8 +127,8 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         '+' => function (s, args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 NUM_SOURCE_LINES_UP_DOWN[] += 1
-                println(Base.pipe_writer(terminal))
-                print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+                println(output_stream(state))
+                print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
                 write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "+")
@@ -141,8 +137,8 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         '-' => function (s, args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 NUM_SOURCE_LINES_UP_DOWN[] = max(1, NUM_SOURCE_LINES_UP_DOWN[] - 1)
-                println(Base.pipe_writer(terminal))
-                print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+                println(output_stream(state))
+                print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
                 write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "-")
@@ -164,9 +160,9 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             execute_command(state, Val(:c), "c")
         catch err
             # Buffer error printing
-            io = IOContext(IOBuffer(), Base.pipe_writer(terminal))
+            io = IOContext(IOBuffer(), output_stream(state))
             Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
-            print(Base.pipe_writer(terminal), String(take!(io.io)))
+            print(output_stream(state), String(take!(io.io)))
             return
         end
         state.frame === nothing && return state.overall_result
@@ -174,16 +170,24 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     if pc_expr(state.frame) === nothing
         JuliaInterpreter.maybe_next_call!(state.frame)
     end
-    print_status(Base.pipe_writer(terminal), active_frame(state); force_lowered=state.lowered_status)
+    print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
 
-    prompts = [panel]
+    prompts = LineEdit.TextInterface[panel]
 
     if VERSION < v"1.13-"
         push!(prompts, search_prompt)
     end
 
 
-    REPL.run_interface(terminal, LineEdit.ModalInterface(prompts))
+    interface = LineEdit.ModalInterface(prompts)
+    mistate = LineEdit.init_state(terminal, interface)
+    previous_mistate = repl.mistate
+    repl.mistate = mistate
+    try
+        REPL.run_interface(terminal, interface, mistate)
+    finally
+        repl.mistate = previous_mistate
+    end
 
     return state.overall_result
 end
@@ -234,21 +238,11 @@ function julia_prompt(state::DebuggerState)
     return julia_prompt
 end
 
-@static if VERSION >= v"1.2.0-DEV.253"
-    function _eval_code(frame::Frame, code::AbstractString)
-        try
-            return JuliaInterpreter.eval_code(frame, code), false
-        catch
-            return Base.catch_stack(), true
-        end
-    end
-else
-    function _eval_code(frame::Frame, code::AbstractString)
-        try
-            return true, JuliaInterpreter.eval_code(frame, code)
-        catch err
-            return false, (err, catch_backtrace())
-        end
+function _eval_code(frame::Frame, code::AbstractString)
+    try
+        return JuliaInterpreter.eval_code(frame, code), false
+    catch
+        return Base.catch_stack(), true
     end
 end
 
