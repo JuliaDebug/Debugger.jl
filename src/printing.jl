@@ -60,11 +60,7 @@ function pattern_match_kw_call(expr)
     return :($f($(args...); $(kws...)))
 end
 
-@static if VERSION < v"1.3.0-DEV.179"
-    const append_any = Base.append_any
-else
-    append_any(@nospecialize x...) = append!([], Core.svec((x...)...))
-end
+append_any(@nospecialize x...) = append!([], Core.svec((x...)...))
 
 function pattern_match_apply_call(expr, frame)
     if !(isexpr(expr, :call) && expr.args[1] == Core._apply)
@@ -79,23 +75,58 @@ function pattern_match_apply_call(expr, frame)
     return new_expr
 end
 
-# Replace functions with their symbol so that calls print like `f(x)` instead of `(f)(x)`.
+# Replace functions with their symbol so that calls print like `f(x)` instead of `(f)(x)`,
+# and function arguments do not gain a version-dependent `Main.` qualification.
 function replace_function_with_symbol(expr)
     if isexpr(expr, :call)
-        f = expr.args[1]
-        if f isa Function
-            s = Symbol(f)
+        for i in eachindex(expr.args)
+            arg = expr.args[i]
+            arg isa Function || continue
+            s = Symbol(arg)
             if Base.isidentifier(s)
-                expr.args[1] = s
-                return expr
+                expr.args[i] = s
             end
         end
     end
     return expr
 end
 
-function print_next_expr(io::IO, frame::Frame)
+function expression_for_display(frame::Frame)
     expr = pc_expr(frame)
+    if expr isa GlobalRef && frame.pc < nstatements(frame.framecode)
+        # Julia 1.12 may pause on a global lookup followed by separate argument
+        # loads and then a call. Preview that call so the status still shows its
+        # arguments rather than just `Main.:+`.
+        for next_pc in (frame.pc + 1):nstatements(frame.framecode)
+            stmt = pc_expr(frame, next_pc)
+            call = isexpr(stmt, :(=)) ? stmt.args[2] : stmt
+            if isexpr(call, :call)
+                f = call.args[1]
+                if f isa JuliaInterpreter.SSAValue && f.id == frame.pc
+                    call = copy(call)
+                    for i in eachindex(call.args)
+                        arg = call.args[i]
+                        if arg isa JuliaInterpreter.SSAValue && frame.pc <= arg.id < next_pc
+                            source = pc_expr(frame, arg.id)
+                            if source isa Union{GlobalRef, JuliaInterpreter.SlotNumber, QuoteNode}
+                                call.args[i] = source
+                            else
+                                return expr
+                            end
+                        end
+                    end
+                    return call
+                end
+            end
+
+            stmt isa Union{GlobalRef, JuliaInterpreter.SlotNumber, QuoteNode} || break
+        end
+    end
+    return expr
+end
+
+function print_next_expr(io::IO, frame::Frame)
+    expr = expression_for_display(frame)
     @assert expr !== nothing
     print(io, "About to run: ")
     isa(expr, Expr) && (expr = copy(expr))
@@ -201,12 +232,6 @@ function compute_source_offsets(code::AbstractString, current_offsetline::Intege
     end
     startoffset, stopoffset
 end
-
-# TODO: Remove on next breaking change. These exist for back compat
-const HIGHLIGHT_OFF = false
-const HIGHLIGHT_SYSTEM_COLORS = true
-const HIGHLIGHT_256_COLORS = true
-const HIGHLIGHT_24_BIT = true
 
 const _syntax_highlighting = Ref(true)
 const _current_theme = Ref("Monokai Dark")

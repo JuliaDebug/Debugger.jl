@@ -1,6 +1,6 @@
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In error(s) at error.jl:33
-|>33  error(s::AbstractString) = throw(ErrorException(s))
+|In error(s) at error.jl:44
+|>44  error(s::AbstractString) = throw(ErrorException(s))
 |
 |About to run: (ErrorException)("foo")
 |1|debug> 
@@ -11,8 +11,8 @@
 |AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In error(s) at error.jl:33
-|>33  error(s::AbstractString) = throw(ErrorException(s))
+|In error(s) at error.jl:44
+|>44  error(s::AbstractString) = throw(ErrorException(s))
 |
 |About to run: (ErrorException)("foo")
 |1|debug> c
@@ -20,12 +20,12 @@
 |ERROR: foo
 |Stacktrace:
 | [1] error(s::String)
-|   @ Base error.jl:33
+|   @ Base error.jl:44
 |
-|In error(s) at error.jl:33
-|>33  error(s::AbstractString) = throw(ErrorException(s))
+|In error(s) at error.jl:44
+|>44  error(s::AbstractString) = throw(ErrorException(s))
 |
-|About to run: (throw)(ErrorException("foo"))
+|About to run: throw(ErrorException("foo"))
 |1|debug> 
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -36,17 +36,17 @@
 |AAAAAAAAAAAAAAAAAAA
 |DDDDDDDAAA
 |AAAAAAAAAAA
-|AAAAAEEEEEEFEEAAAAAAE
-|FFFFFGGGGEHHHHHHHHHHH
+|AAAAAEEEEEEFAAAAAAAAE
+|FFFFAGGGGAHHHHHHHHHHH
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In error(s) at error.jl:33
-|>33  error(s::AbstractString) = throw(ErrorException(s))
+|In error(s) at error.jl:44
+|>44  error(s::AbstractString) = throw(ErrorException(s))
 |
 |About to run: (ErrorException)("foo")
 |1|debug> c
@@ -54,14 +54,14 @@
 |ERROR: foo
 |Stacktrace:
 | [1] error(s::String)
-|   @ Base error.jl:33
+|   @ Base error.jl:44
 |
-|In error(s) at error.jl:33
-|>33  error(s::AbstractString) = throw(ErrorException(s))
+|In error(s) at error.jl:44
+|>44  error(s::AbstractString) = throw(ErrorException(s))
 |
-|About to run: (throw)(ErrorException("foo"))
+|About to run: throw(ErrorException("foo"))
 |1|debug> bt
-|[1] error(s) at error.jl:33
+|[1] error(s) at error.jl:44
 |  | s::String = "foo"
 |1|debug> 
 --------------------------------------------------
@@ -73,13 +73,13 @@
 |AAAAAAAAAAAAAAAAAAA
 |DDDDDDDAAA
 |AAAAAAAAAAA
-|AAAAAEEEEEEFEEAAAAAAE
-|FFFFFGGGGEHHHHHHHHHHH
+|AAAAAEEEEEEFAAAAAAAAE
+|FFFFAGGGGAHHHHHHHHHHH
 |
 |AAAAAAAAAAAAAAAAAAAAAAAAAA
 |BBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCCAA
 |AAAAAAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAA

@@ -8,7 +8,7 @@
 |  99      return s
 | 100  end
 |
-|About to run: (iterate)([1, 2, 3, 4, 5])
+|About to run: iterate([1, 2, 3, 4, 5])
 |1|debug> 
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAA
@@ -20,7 +20,7 @@
 |AAAAAAAAAAAAAAAAAA
 |AAAAAAAAA
 |
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 |In mysum(x) at ui.jl:94
@@ -32,7 +32,7 @@
 |  99      return s
 | 100  end
 |
-|About to run: (iterate)([1, 2, 3, 4, 5])
+|About to run: iterate([1, 2, 3, 4, 5])
 |1|debug> bp add mysum:97 v > 3
 |1] mysum:97 v > 3
 |
@@ -47,7 +47,7 @@
 |AAAAAAAAAAAAAAAAAA
 |AAAAAAAAA
 |
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCCAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAA
 |
@@ -62,7 +62,7 @@
 |  99      return s
 | 100  end
 |
-|About to run: (iterate)([1, 2, 3, 4, 5])
+|About to run: iterate([1, 2, 3, 4, 5])
 |1|debug> bp add mysum:97 v > 3
 |1] mysum:97 v > 3
 |
@@ -89,7 +89,7 @@
 |AAAAAAAAAAAAAAAAAA
 |AAAAAAAAA
 |
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCCAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAA
 |
@@ -116,7 +116,7 @@
 |  99      return s
 | 100  end
 |
-|About to run: (iterate)([1, 2, 3, 4, 5])
+|About to run: iterate([1, 2, 3, 4, 5])
 |1|debug> bp add mysum:97 v > 3
 |1] mysum:97 v > 3
 |
@@ -144,7 +144,7 @@
 |AAAAAAAAAAAAAAAAAA
 |AAAAAAAAA
 |
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCCAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAA
 |

@@ -49,6 +49,16 @@ execute_command(state, Val{:so}(), "c")
 frame = @make_frame fnothing(0)
 @test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: return 1"
 
+# Julia 1.12 can initially pause on the global lookup immediately before a call.
+frame = @make_frame (20 == 0)
+frame.pc = 1
+@test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: (===)(20, 0)"
+
+f_preview_add(x, y) = x + y
+frame = @make_frame f_preview_add(6, 4)
+frame.pc = 1
+@test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: (+)(6, 4)"
+
 function f()
     x = 1 + 1
     @info "hello"
@@ -73,7 +83,7 @@ try
     st = chomp(sprint(Debugger.print_status, frame; context = :color => true))
     @test occursin("√", st)
 finally
-    Debugger.set_highlight(Debugger.HIGHLIGHT_OFF)
+    Debugger.set_highlight(false)
 end
 
 frame = @make_frame Test.TestLogger()

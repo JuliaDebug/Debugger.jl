@@ -51,6 +51,12 @@ Base.@kwdef mutable struct DebuggerState
     overall_result = nothing
 end
 
+function output_stream(state::DebuggerState)
+    io = Base.pipe_writer(state.terminal)
+    have_color = state.repl isa REPL.LineEditREPL ? state.repl.hascolor : get(io, :color, false)
+    return IOContext(io, :color => have_color)
+end
+
 function toggle_mode(state)
     state.interp = (state.interp === RecursiveInterpreter() ? (state.interp = NonRecursiveInterpreter()) : (state.interp = RecursiveInterpreter()))
 end

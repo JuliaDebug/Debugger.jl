@@ -31,7 +31,7 @@
 |>64      return sin(x)
 | 65  end
 |
-|About to run: (sin)(6)
+|About to run: sin(6)
 |1|debug> 
 --------------------------------------------------
 |AAAAAAAAAAAAAAAAAAAAAAA
@@ -48,7 +48,7 @@
 |BBBBBAAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
-|AAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCC
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 |In f_end(x) at ui.jl:62
@@ -65,7 +65,7 @@
 |>64      return sin(x)
 | 65  end
 |
-|About to run: (sin)(6)
+|About to run: sin(6)
 |1|debug> n
 |In f_end(x) at ui.jl:62
 | 62  function f_end(x)
@@ -90,7 +90,7 @@
 |BBBBBAAAAAAAAAAAAAAAAA
 |AAAAAAAA
 |
-|AAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
 |CCCCCCCCCA
 |AAAAAAAAAAAAAAAAAAAAAAA
 |AAAAAAAAAAAAAAAAAAAAAA

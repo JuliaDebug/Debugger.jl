@@ -76,21 +76,21 @@ Evaluation:
 - `w`
     - `w add expr`: add an expression to the watch list
     - `w`: show all watch expressions evaluated in the current function's context
-    - `w rm [i::Int]`: remove all or the `i`:th watch expression
+    - `w rm [i::Int]`: remove all or the `i`-th watch expression
 
 Breakpoints:
 - `bp`
     - `bp add`
-        - `bp add "file.jl":line [cond]`: add a breakpoint att file `file.jl` on line `line` with condition `cond`
-        - `bp add func [:line] [cond]`: add a breakpoint to function `func` at line `line` (defaulting to first line)  with condition `cond`
-        - `bp add func(::Float64, Int)[:line] [cond]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line)  with condition `cond`
+        - `bp add "file.jl":line [cond]`: add a breakpoint at file `file.jl` on line `line` with condition `cond`
+        - `bp add func [:line] [cond]`: add a breakpoint to function `func` at line `line` (defaulting to first line) with condition `cond`
+        - `bp add func(::Float64, Int)[:line] [cond]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line) with condition `cond`
         - `bp add func(x, y)[:line] [cond]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc with condition `cond`
-        - `bp add line [cond]` add a breakpoint to `line` of the file of the current function  with condition `cond`
+        - `bp add line [cond]`: add a breakpoint to `line` of the file of the current function with condition `cond`
     - `bp` show all breakpoints
-    - `bp rm [i::Int]`: remove all or the `i`:th breakpoint
-    - `bp toggle [i::Int]`: toggle all or the `i`:th breakpoint
-    - `bp disable [i::Int]`: disable all or the `i`:th breakpoint
-    - `bp enable [i::Int]`: enable all or the `i`:th breakpoint
+    - `bp rm [i::Int]`: remove all or the `i`-th breakpoint
+    - `bp toggle [i::Int]`: toggle all or the `i`-th breakpoint
+    - `bp disable [i::Int]`: disable all or the `i`-th breakpoint
+    - `bp enable [i::Int]`: enable all or the `i`-th breakpoint
     - `bp on/off`
       - `bp on/off error` - turn on or off break on error
       - `bp on/off throw` - turn on or off break on throw
@@ -239,7 +239,7 @@ union!(JuliaInterpreter.compiled_modules, SomePackage)
 
 The source code preview is syntax highlighted and this highlighting has some options.
 The theme can be set by calling `Debugger.set_theme(theme)` where `theme` is a [Highlights.jl theme](https://highlights.juliadocs.org/dev/themes/).
-It can be completely turned off by calling `Debugger.set_highlight(false)`
+It can be completely turned off by calling `Debugger.set_highlight(false)`.
 
 [travis-img]: https://travis-ci.org/JuliaDebug/Debugger.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/JuliaDebug/Debugger.jl
