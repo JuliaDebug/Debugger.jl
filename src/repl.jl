@@ -262,34 +262,47 @@ mutable struct DebugCompletionProvider <: REPL.CompletionProvider
     state::DebuggerState
 end
 
-function LineEdit.complete_line(c::DebugCompletionProvider, s; hint=true)
+function LineEdit.complete_line(c::DebugCompletionProvider, s; hint=false)
     partial = REPL.beforecursor(s.input_buffer)
     full = LineEdit.input_string(s)
 
-    ret, range, should_complete = completions(c, full, partial)
+    ret, range, should_complete = completions(c, full, partial; hint=hint)
     return ret, partial[range], should_complete
 end
 
-function completions(c::DebugCompletionProvider, full, partial)
+function completions(c::DebugCompletionProvider, full, partial; hint::Bool=false)
     frame = c.state.frame
+    pos = lastindex(partial)
 
-    # repl backend completions
-    comps1, range1, should_complete1 = REPLCompletions.completions(full, lastindex(partial), moduleof(frame))
+    # completions in the context of the frame's module
+    comps1, range1, should_complete1 = REPLCompletions.completions(full, pos, moduleof(frame), true, hint)
     ret1 = map(_completion_text, comps1)
 
-    ignore_local(v) = v.name == Symbol("#self") && (v.value isa Type || sizeof(v.value) == 0)
+    # completions where the frame's locals are visible as globals of a temporary module
+    ignore_local(v) = v.name == Symbol("#self#") && (v.value isa Type || sizeof(v.value) == 0)
     m = Module()
     for v in locals(frame)
         ignore_local(v) && continue
         Base.eval(m, :($(v.name) = $(QuoteNode(v.value))))
     end
 
-    comps2, range2, should_complete2 = Base.invokelatest(REPLCompletions.completions, full, lastindex(partial), m)
+    comps2, range2, should_complete2 = Base.invokelatest(REPLCompletions.completions, full, pos, m, true, hint)
     ret2 = map(_completion_text, comps2)
 
-    ret = sort!(unique!(vcat(ret1, ret2)))
-    should_complete = should_complete1 | should_complete2
-    range = min(range1, range2) # Not sure about this one
+    # The two passes can return completions of different kinds (e.g. dict key
+    # completions for a local dict vs. path completions inside the string) with
+    # different replacement ranges. Merging those would corrupt the insertion,
+    # so only merge when the ranges agree; otherwise pick one pass, preferring
+    # the one whose completion consumed more context (smaller range start).
+    if range1 == range2
+        ret = sort!(unique!(vcat(ret1, ret2)))
+        range = range1
+        should_complete = should_complete1 | should_complete2
+    elseif isempty(ret2) || (!isempty(ret1) && first(range1) < first(range2))
+        ret, range, should_complete = ret1, range1, should_complete1
+    else
+        ret, range, should_complete = ret2, range2, should_complete2
+    end
 
     # Attempt to allow values to be garbage collected
     # because I don't think Julia ever GCs modules.
