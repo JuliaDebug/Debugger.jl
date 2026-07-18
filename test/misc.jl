@@ -224,3 +224,14 @@ execute_command(state, Val{:bp}(), """bp add lfdshfds""")
     @test !_iscall(:(f.(1, 2)))
     @test !_iscall(:(identity() do; end))
 end
+
+# Issue #394: backslash (latex) completions in the evaluation mode
+@testset "completions" begin
+    f_completions(x) = x + 1
+    frame = @make_frame f_completions(1)
+    provider = Debugger.DebugCompletionProvider(dummy_state(frame))
+    ret, _, _ = Debugger.completions(provider, "\\Omega", "\\Omega")
+    @test ret == ["Ω"]
+    ret, _, _ = Debugger.completions(provider, "x", "x")
+    @test "x" in ret
+end
