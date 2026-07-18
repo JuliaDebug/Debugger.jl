@@ -252,6 +252,26 @@ end
     @test "x" in ret
 end
 
+# Issue #352: a function breakpoint can stop on a bare quoted value; it should
+# not be displayed as `$(QuoteNode(f))`
+@testset "no QuoteNode in next expression display" begin
+    g352() = IOBuffer()
+    function f352()
+        x = g352()
+        println(x, "hello")
+    end
+    JuliaInterpreter.breakpoint(println)
+    try
+        frame = @make_frame f352()
+        state = dummy_state(frame)
+        execute_command(state, Val{:c}(), "c")
+        out = sprint(Debugger.print_next_expr, JuliaInterpreter.leaf(state.frame))
+        @test !occursin("QuoteNode", out)
+    finally
+        JuliaInterpreter.remove()
+    end
+end
+
 @testset "p command" begin
     function command_output(frame, cmd)
         buf = IOBuffer()
