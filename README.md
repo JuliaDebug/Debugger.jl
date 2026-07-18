@@ -71,6 +71,9 @@ Querying:
 - `st`: show the "status" (current function, source code and current expression to run)
 - `bt`: show a backtrace
 - `fr [i::Int]`: show all variables in the current or `i`th frame
+- `p`
+    - `p`: print all variables in the current frame (same as `fr`)
+    - `p x [y ...]`: print the value of the variable(s) `x` (and `y` ...)
 
 Evaluation:
 - `w`
