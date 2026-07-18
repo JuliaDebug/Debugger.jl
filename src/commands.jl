@@ -140,6 +140,31 @@ function execute_command(state::DebuggerState, v::Union{Val{:up}, Val{:down}}, c
     end
     return execute_command(state, Val(:f), string("f ", state.level + offset))
 end
+
+function execute_command(state::DebuggerState, ::Val{:p}, cmd::AbstractString)
+    cmds = split(cmd, r" +")
+    io = output_stream(state)
+    frame = active_frame(state)
+    if length(cmds) == 1
+        print_locals(io, frame)
+    else
+        vars = JuliaInterpreter.locals(frame)
+        for requested_var in cmds[2:end]
+            found = false
+            for var in vars
+                if string(var.name) == requested_var
+                    print_var(io, var)
+                    found = true
+                end
+            end
+            if !found
+                printstyled(io, "no variable `$requested_var` in this frame\n"; color=Base.error_color())
+            end
+        end
+    end
+    return false
+end
+
 function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
     # TODO show some info messages?
     cmds = split(cmd, r" +")
@@ -269,6 +294,9 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `st`: show the "status" (current function, source code and current expression to run)\\
             - `bt`: show a backtrace\\
             - `fr [i::Int]`: show all variables in the current or `i`th frame\\
+            - `p`\\
+                - `p`: print all variables in the current frame (same as `fr`)\\
+                - `p x [y ...]`: print the value of the variable(s) `x` (and `y` ...)\\
 
 
             Evaluation:\\

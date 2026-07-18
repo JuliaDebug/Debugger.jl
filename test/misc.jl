@@ -271,3 +271,48 @@ end
         JuliaInterpreter.remove()
     end
 end
+
+@testset "p command" begin
+    function command_output(frame, cmd)
+        buf = IOBuffer()
+        term = REPL.Terminals.TTYTerminal("dumb", stdin, buf, stderr)
+        state = Debugger.DebuggerState(; frame=frame, terminal=term)
+        execute_command(state, Val{Symbol(first(split(cmd)))}(), cmd)
+        return String(take!(buf))
+    end
+    f_p_cmd(x) = (y = x + 1; y * 2)
+    frame = @make_frame f_p_cmd(3)
+    @test occursin("x::$Int = 3", command_output(frame, "p x"))
+    @test occursin("x::$Int = 3", command_output(frame, "p"))
+    @test occursin("no variable `nope` in this frame", command_output(frame, "p nope"))
+end
+
+# Issue #338: the two completion passes (frame module / locals) can return
+# completions of different kinds with different replacement ranges; they must
+# not be merged into one broken list
+struct S_completions
+    field_a
+    field_b
+end
+@testset "completion merging" begin
+    function f_completions_merge()
+        xs = [S_completions(1, 2)]
+        d = Dict("key1" => 1)
+        return (xs, d)
+    end
+    frame = @make_frame f_completions_merge()
+    state = dummy_state(frame)
+    execute_command(state, Val{:sr}(), "sr")
+    provider = Debugger.DebugCompletionProvider(state)
+    # dict key completion for a local dict is not polluted by path completions
+    ret, _, _ = Debugger.completions(provider, "d[\"", "d[\"")
+    @test ret == ["\"key1\"]"]
+    # field completion through getindex inference on a local
+    ret, _, _ = Debugger.completions(provider, "xs[1].", "xs[1].")
+    @test ret == ["field_a", "field_b"]
+    # identifier completions from the frame module and the locals are merged
+    ret, _, _ = Debugger.completions(provider, "si", "si")
+    @test "sin" in ret
+    ret, _, _ = Debugger.completions(provider, "xs", "xs")
+    @test "xs" in ret
+end
