@@ -91,6 +91,8 @@ Breakpoints:
         - `bp add line [cond]`: add a breakpoint to `line` of the file of the current function with condition `cond`
     - `bp` show all breakpoints
     - `bp rm [i::Int]`: remove all or the `i`-th breakpoint
+    - `bp rm "file.jl":line`: remove the breakpoint at the given file and line
+    - `bp rm func [:line]`: remove breakpoints for the function `func` (at line `line`)
     - `bp toggle [i::Int]`: toggle all or the `i`-th breakpoint
     - `bp disable [i::Int]`: disable all or the `i`-th breakpoint
     - `bp enable [i::Int]`: enable all or the `i`-th breakpoint
