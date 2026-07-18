@@ -258,6 +258,14 @@ else
     _completion_text(c) = REPLCompletions.completion_text(c)
 end
 
+# The `hint` positional argument to `REPLCompletions.completions` was added in
+# Julia 1.11 (JuliaLang/julia#51229).
+@static if VERSION >= v"1.11"
+    _completions(full, pos, mod, hint) = REPLCompletions.completions(full, pos, mod, true, hint)
+else
+    _completions(full, pos, mod, hint) = REPLCompletions.completions(full, pos, mod, true)
+end
+
 mutable struct DebugCompletionProvider <: REPL.CompletionProvider
     state::DebuggerState
 end
@@ -275,7 +283,7 @@ function completions(c::DebugCompletionProvider, full, partial; hint::Bool=false
     pos = lastindex(partial)
 
     # completions in the context of the frame's module
-    comps1, range1, should_complete1 = REPLCompletions.completions(full, pos, moduleof(frame), true, hint)
+    comps1, range1, should_complete1 = _completions(full, pos, moduleof(frame), hint)
     ret1 = map(_completion_text, comps1)
 
     # completions where the frame's locals are visible as globals of a temporary module
@@ -286,7 +294,7 @@ function completions(c::DebugCompletionProvider, full, partial; hint::Bool=false
         Base.eval(m, :($(v.name) = $(QuoteNode(v.value))))
     end
 
-    comps2, range2, should_complete2 = Base.invokelatest(REPLCompletions.completions, full, pos, m, true, hint)
+    comps2, range2, should_complete2 = Base.invokelatest(_completions, full, pos, m, hint)
     ret2 = map(_completion_text, comps2)
 
     # The two passes can return completions of different kinds (e.g. dict key
