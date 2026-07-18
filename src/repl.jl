@@ -248,6 +248,14 @@ end
 
 # Completions
 
+# Julia 1.12 removed `completion_text(::BslashCompletion)` in favor of the
+# `named_completion` API (JuliaLang/julia#54800).
+@static if isdefined(REPLCompletions, :named_completion)
+    _completion_text(c) = REPLCompletions.named_completion(c).completion
+else
+    _completion_text(c) = REPLCompletions.completion_text(c)
+end
+
 mutable struct DebugCompletionProvider <: REPL.CompletionProvider
     state::DebuggerState
 end
@@ -265,7 +273,7 @@ function completions(c::DebugCompletionProvider, full, partial)
 
     # repl backend completions
     comps1, range1, should_complete1 = REPLCompletions.completions(full, lastindex(partial), moduleof(frame))
-    ret1 = map(REPLCompletions.completion_text, comps1)
+    ret1 = map(_completion_text, comps1)
 
     ignore_local(v) = v.name == Symbol("#self") && (v.value isa Type || sizeof(v.value) == 0)
     m = Module()
@@ -275,7 +283,7 @@ function completions(c::DebugCompletionProvider, full, partial)
     end
 
     comps2, range2, should_complete2 = Base.invokelatest(REPLCompletions.completions, full, lastindex(partial), m)
-    ret2 = map(REPLCompletions.completion_text, comps2)
+    ret2 = map(_completion_text, comps2)
 
     ret = sort!(unique!(vcat(ret1, ret2)))
     should_complete = should_complete1 | should_complete2
