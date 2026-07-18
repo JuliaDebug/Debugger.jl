@@ -140,12 +140,12 @@ end
                     Vector{UInt8}(codeunits(actual_decorator)))
             end
 
-            function run_terminal_test(frame, commands, validation)
+            function run_terminal_test(frame, commands, validation; initial_continue=false)
                 run_debugger = function (emuterm)
                     repl = REPL.LineEditREPL(emuterm, true)
                     repl.interface = REPL.setup_interface(repl)
                     repl.specialdisplay = REPL.REPLDisplay(repl)
-                    RunDebugger(frame, repl, emuterm)
+                    RunDebugger(frame, repl, emuterm; initial_continue=initial_continue)
                 end
                 output_path = joinpath(@__DIR__, validation)
                 if get(ENV, "DEBUGGER_UPDATE_UI_SNAPSHOTS", "false") == "true"
@@ -194,6 +194,18 @@ end
             run_terminal_test(@make_frame(mysum(collect(1:10000))),
                               ["bt\n", "c\n"],
                               "ui/big_repr_ui.multiout")
+
+            # Issue #134: `@run` should stop at a breakpoint on the first statement
+            # instead of continuing past it
+            JuliaInterpreter.breakpoint(mysum)
+            try
+                run_terminal_test(@make_frame(mysum([1,2,3])),
+                                  ["c\n"],
+                                  "ui/bp_first_statement.multiout";
+                                  initial_continue=true)
+            finally
+                JuliaInterpreter.remove()
+            end
 
             was_breaking_on_error = JuliaInterpreter.break_on_error[]
             Debugger.break_on(:error)

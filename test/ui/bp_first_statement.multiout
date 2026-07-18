@@ -1,0 +1,24 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|In mysum(x) at ui.jl:94
+|  94  function mysum(x)
+|> 95      s = 0
+|  96      for v in x
+|  97          s += v
+|  98      end
+|  99      return s
+| 100  end
+|
+|About to run: 0
+|1|debug> 
+--------------------------------------------------
+|AAAAAAAAAAAAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAAAAA
+|BBBBBBAAAAAAAAA
+|AAAAAAAAAAAAAAAAAAAA
+|CCCCCCAAAAAAAAAAAAAA
+|AAAAAAAAAAAAA
+|AAAAAAAAAAAAAAAAAA
+|AAAAAAAAA
+|
+|AAAAAAAAAAAAAAA
+|DDDDDDDDD
