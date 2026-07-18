@@ -23,7 +23,8 @@ function print_var(io::IO, var::JuliaInterpreter.Variable)
     print(io, "  | ")
     T = typeof(var.value)
     val = repr_limited(var.value, MAX_BYTES_REPR[])
-    println(io, highlight_code(string(var.name, "::", T, " = ", val); context=io))
+    name = Base.isidentifier(var.name) ? var.name : string("var\"", var.name, "\"")
+    println(io, highlight_code(string(name, "::", T, " = ", val); context=io))
 end
 
 function print_locals(io::IO, frame::Frame)
