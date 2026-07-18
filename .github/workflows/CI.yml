@@ -33,7 +33,7 @@ jobs:
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
-      - uses: julia-actions/cache@v2
+      - uses: julia-actions/cache@v3
       - uses: julia-actions/julia-buildpkg@v1
       - name: Use TerminalRegressionTests Julia 1.12 support branch
         run: julia --project=. --color=yes -e 'using Pkg; Pkg.add(Pkg.PackageSpec(url="https://github.com/JuliaDebug/TerminalRegressionTests.jl", rev="kc/terminal-1.12-support"))'
