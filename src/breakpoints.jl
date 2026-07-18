@@ -207,3 +207,57 @@ function remove_breakpoint!(state::DebuggerState, i::Int)
     JuliaInterpreter.remove(JuliaInterpreter.breakpoints()[i])
     return true
 end
+
+# Remove breakpoints by location (`"file.jl":line`, `func` or `func:line`)
+# instead of by index (#375)
+function remove_breakpoint!(state::DebuggerState, location::AbstractString)
+    bp_error(err) = (@error err; false)
+
+    location_expr, _ = parse_as_much_as_possible(location, 1)
+    location_expr === nothing && return bp_error("failed to parse breakpoint location")
+
+    line = nothing
+    if isexpr(location_expr, :call) && location_expr.args[1] == :(:)
+        line = location_expr.args[3]
+        line isa Integer || return bp_error("line number to the right of `:` should be given as an integer")
+        location_expr = location_expr.args[2]
+    end
+
+    matches = JuliaInterpreter.AbstractBreakpoint[]
+    if location_expr isa String
+        file = location_expr
+        line === nothing && return bp_error("removing breakpoints in files needs a line number")
+        for bp in JuliaInterpreter.breakpoints()
+            bp isa JuliaInterpreter.BreakpointFileLocation || continue
+            if bp.line == line && (bp.path == file || endswith(bp.abspath, file))
+                push!(matches, bp)
+            end
+        end
+    elseif location_expr isa Symbol || location_expr isa Expr
+        f = nothing
+        for m in (moduleof(active_frame(state)), Main)
+            try
+                f_eval = Base.eval(m, location_expr)
+                if f_eval isa Function || f_eval isa Type
+                    f = f_eval
+                    break
+                end
+            catch
+            end
+        end
+        f === nothing && return bp_error("expression $(location_expr) did not evaluate to a function or type")
+        for bp in JuliaInterpreter.breakpoints()
+            bp isa JuliaInterpreter.BreakpointSignature || continue
+            bp.f === f || continue
+            if line === nothing || bp.line == line
+                push!(matches, bp)
+            end
+        end
+    else
+        return bp_error("failed to parse breakpoint location")
+    end
+
+    isempty(matches) && return bp_error("no breakpoint found at $location")
+    foreach(JuliaInterpreter.remove, matches)
+    return true
+end

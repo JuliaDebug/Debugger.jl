@@ -316,3 +316,40 @@ end
     ret, _, _ = Debugger.completions(provider, "xs", "xs")
     @test "xs" in ret
 end
+
+# Issue #375: remove breakpoints by location instead of by index
+@testset "bp rm by location" begin
+    frame = Debugger.@make_frame sin(1.0)
+    state = dummy_state(frame)
+
+    execute_command(state, Val{:bp}(), "bp add cos")
+    execute_command(state, Val{:bp}(), """bp add "foo.jl":10""")
+    execute_command(state, Val{:bp}(), """bp add "foo.jl":20""")
+    @test length(breakpoints()) == 3
+
+    execute_command(state, Val{:bp}(), """bp rm "foo.jl":10""")
+    @test length(breakpoints()) == 2
+    @test all(bp -> !(bp isa JuliaInterpreter.BreakpointFileLocation && bp.line == 10), breakpoints())
+
+    execute_command(state, Val{:bp}(), "bp rm cos")
+    @test length(breakpoints()) == 1
+    @test breakpoints()[1] isa JuliaInterpreter.BreakpointFileLocation
+
+    # removing a non-existent breakpoint errors but does not throw
+    @info "BEGIN ERRORS -------------------------------------"
+    execute_command(state, Val{:bp}(), "bp rm cos")
+    @test length(breakpoints()) == 1
+    execute_command(state, Val{:bp}(), "bp rm lkjdsflk")
+    @test length(breakpoints()) == 1
+    @info "END ERRORS -------------------------------------"
+
+    execute_command(state, Val{:bp}(), """bp add Base.sin:10""")
+    execute_command(state, Val{:bp}(), """bp add Base.sin:20""")
+    execute_command(state, Val{:bp}(), "bp rm Base.sin:10")
+    @test length(breakpoints()) == 2
+    @test all(bp -> !(bp isa JuliaInterpreter.BreakpointSignature && bp.line == 10), breakpoints())
+    execute_command(state, Val{:bp}(), "bp rm Base.sin")
+    @test length(breakpoints()) == 1
+
+    JuliaInterpreter.remove()
+end

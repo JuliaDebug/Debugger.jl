@@ -218,6 +218,10 @@ function execute_command(state::DebuggerState, v::Union{Val{:bp}}, cmd::Abstract
             ok = add_breakpoint!(state, join(cmds[3:end], ' '))
             ok && repl_show_breakpoints()
             return false
+        elseif cmds[2] == "rm" && length(cmds) >= 3 && tryparse(Int, cmds[3]) === nothing
+            ok = remove_breakpoint!(state, join(cmds[3:end], ' '))
+            ok && repl_show_breakpoints()
+            return false
         elseif length(cmds) == 2 || length(cmds) == 3
             if cmds[2] == "on" || cmds[2] == "off"
                 break_on_off = cmds[2] == "on" ? JuliaInterpreter.break_on : JuliaInterpreter.break_off
@@ -315,6 +319,8 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
                 - `bp add line [cond]`: add a breakpoint to `line` of the file of the current function with condition `cond`\\
             - `bp` show all breakpoints\\
             - `bp rm [i::Int]`: remove all or the `i`-th breakpoint\\
+            - `bp rm "file.jl":line`: remove the breakpoint at the given file and line\\
+            - `bp rm func [:line]`: remove breakpoints for the function `func` (at line `line`)\\
             - `bp toggle [i::Int]`: toggle all or the `i`-th breakpoint\\
             - `bp disable [i::Int]`: disable all or the `i`-th breakpoint\\
             - `bp enable [i::Int]`: enable all or the `i`-th breakpoint\\
