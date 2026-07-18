@@ -133,6 +133,11 @@ function print_next_expr(io::IO, frame::Frame)
     if isexpr(expr, :(=))
         expr = expr.args[2]
     end
+    if expr isa QuoteNode && !isa(expr.value, Union{Symbol, Expr})
+        # A function breakpoint can stop on a bare quoted value (e.g. the
+        # callee); show the value itself rather than `$(QuoteNode(f))` (#352)
+        expr = expr.value
+    end
     if isexpr(expr, :call) || isexpr(expr, :return)
         for i in 1:length(expr.args)
             val = try
