@@ -225,6 +225,22 @@ execute_command(state, Val{:bp}(), """bp add lfdshfds""")
     @test !_iscall(:(identity() do; end))
 end
 
+# Issue #134: a breakpoint on one of the initial statements of a function should
+# not be stepped over when entering the frame
+@testset "breakpoint on first statement" begin
+    function f_bp_first(x)
+        y = x + 1
+        return y * 2
+    end
+    JuliaInterpreter.breakpoint(f_bp_first)
+    try
+        frame = @make_frame f_bp_first(1)
+        @test JuliaInterpreter.shouldbreak(frame, frame.pc)
+    finally
+        JuliaInterpreter.remove()
+    end
+end
+
 # Issue #394: backslash (latex) completions in the evaluation mode
 @testset "completions" begin
     f_completions(x) = x + 1

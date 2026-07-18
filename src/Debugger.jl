@@ -97,7 +97,12 @@ function _make_frame(mod, arg)
         frame === nothing && error("failed to enter the function, perhaps it is set to run in compiled mode")
         frame = JuliaInterpreter.maybe_step_through_kwprep!(frame)
         frame = JuliaInterpreter.maybe_step_through_wrapper!(frame)
-        JuliaInterpreter.maybe_next_call!(frame)
+        # Advance to the first call, but stop earlier if a breakpoint is set on
+        # one of the initial statements (#134)
+        JuliaInterpreter.maybe_next_until!(frame) do fr
+            JuliaInterpreter.shouldbreak(fr, fr.pc) ||
+                JuliaInterpreter.is_call_or_return(JuliaInterpreter.pc_expr(fr))
+        end
         frame
     end
 end

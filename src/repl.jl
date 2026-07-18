@@ -155,7 +155,9 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     state.standard_keymap = keymaps
     panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
-    if initial_continue
+    # If a breakpoint is set on the statement we are already stopped at, `c` would
+    # step over it, so stay put and show the prompt instead (#134)
+    if initial_continue && !JuliaInterpreter.shouldbreak(state.frame, state.frame.pc)
         try
             execute_command(state, Val(:c), "c")
         catch err
