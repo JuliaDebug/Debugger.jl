@@ -72,8 +72,8 @@ Querying:
 - `bt`: show a backtrace
 - `fr [i::Int]`: show all variables in the current or `i`th frame
 - `p`
-    - `p`: print all currently defined variables
-    - `p x` : print the value of the variable `x`
+    - `p`: print all variables in the current frame (same as `fr`)
+    - `p x [y ...]`: print the value of the variable(s) `x` (and `y` ...)
 
 Evaluation:
 - `w`

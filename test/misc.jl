@@ -251,3 +251,18 @@ end
     ret, _, _ = Debugger.completions(provider, "x", "x")
     @test "x" in ret
 end
+
+@testset "p command" begin
+    function command_output(frame, cmd)
+        buf = IOBuffer()
+        term = REPL.Terminals.TTYTerminal("dumb", stdin, buf, stderr)
+        state = Debugger.DebuggerState(; frame=frame, terminal=term)
+        execute_command(state, Val{Symbol(first(split(cmd)))}(), cmd)
+        return String(take!(buf))
+    end
+    f_p_cmd(x) = (y = x + 1; y * 2)
+    frame = @make_frame f_p_cmd(3)
+    @test occursin("x::$Int = 3", command_output(frame, "p x"))
+    @test occursin("x::$Int = 3", command_output(frame, "p"))
+    @test occursin("no variable `nope` in this frame", command_output(frame, "p nope"))
+end

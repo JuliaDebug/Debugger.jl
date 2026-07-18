@@ -1,3 +1,4 @@
+
 function assert_allow_step(state)
     if state.broke_on_error
         printstyled(stderr, "Cannot step after breaking on error\n"; color=Base.error_color())
@@ -142,17 +143,22 @@ end
 
 function execute_command(state::DebuggerState, ::Val{:p}, cmd::AbstractString)
     cmds = split(cmd, r" +")
-    io = Base.pipe_writer(state.terminal)
+    io = output_stream(state)
     frame = active_frame(state)
     if length(cmds) == 1
         print_locals(io, frame)
     else
         vars = JuliaInterpreter.locals(frame)
         for requested_var in cmds[2:end]
+            found = false
             for var in vars
                 if string(var.name) == requested_var
                     print_var(io, var)
+                    found = true
                 end
+            end
+            if !found
+                printstyled(io, "no variable `$requested_var` in this frame\n"; color=Base.error_color())
             end
         end
     end
@@ -289,8 +295,8 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `bt`: show a backtrace\\
             - `fr [i::Int]`: show all variables in the current or `i`th frame\\
             - `p`\\
-                - `p`: print all currently defined variables\\
-                - `p x` : print the value of the variable `x`\\
+                - `p`: print all variables in the current frame (same as `fr`)\\
+                - `p x [y ...]`: print the value of the variable(s) `x` (and `y` ...)\\
 
 
             Evaluation:\\
