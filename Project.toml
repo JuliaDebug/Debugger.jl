@@ -11,14 +11,15 @@ Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 tree_sitter_julia_jll = "52be201e-a5e9-5cfe-8bf2-2dc4b062171c"
 
-[sources]
-TerminalRegressionTests = {url = "https://github.com/JuliaDebug/TerminalRegressionTests.jl", rev = "kc/terminal-1.12-support"}
+[sources.TerminalRegressionTests]
+rev = "kc/terminal-1.12-support"
+url = "https://github.com/JuliaDebug/TerminalRegressionTests.jl"
 
 [compat]
 CodeTracking = "2, 3"
 Highlights = "0.6"
 JuliaInterpreter = "0.10, 0.11"
-TerminalRegressionTests = "0.3"
+TerminalRegressionTests = "0.3, 0.2"
 julia = "1.10"
 tree_sitter_julia_jll = "0.25.0"
 
