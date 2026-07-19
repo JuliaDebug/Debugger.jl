@@ -114,7 +114,8 @@ function bp_menu_writerow(io::IO, row, idx::Int)
         enabled = bp.enabled[]
         printstyled(io, bp_status_char(enabled, bp.condition !== nothing);
                     color = enabled ? :light_red : :light_black)
-        print(io, " ", idx, "] ", trunc_to_width(sprint(show, bp), width - 12))
+        desc = trunc_to_width(sprint(show, bp), width - 12)
+        print(io, " ", idx, "] ", highlight_code(desc; context=io))
     end
 end
 
@@ -228,8 +229,11 @@ function frame_menu(state::DebuggerState)
 
     writerow = function (io, frame, idx)
         width = displaysize(io)[2]
-        desc = string("[", idx, "] ", locdesc(frame; current_line=true))
-        print(io, trunc_to_width(desc, width - 16))
+        sig = trunc_to_width(frame_signature(frame), max(width ÷ 2, 8))
+        loc = trunc_to_width(frame_location(frame; current_line=true),
+                             max(width - 16 - textwidth(sig), 8))
+        print(io, "[", idx, "] ", highlight_code(sig; context=io))
+        printstyled(io, " at ", loc; color=:light_black)
         idx == state.level && printstyled(io, " (current)"; color=:light_black)
     end
     onpick = (m, idx) -> (m.selected = idx; true)
@@ -251,9 +255,11 @@ function watch_menu(state::DebuggerState)
     writerow = function (io, row, idx)
         width = displaysize(io)[2]
         expr, (res_str, errored) = row
-        print(io, idx, "] ", trunc_to_width(string(expr), max(width ÷ 3, 8)), ": ")
+        expr_str = trunc_to_width(string(expr), max(width ÷ 3, 8))
+        print(io, idx, "] ", highlight_code(expr_str; context=io), ": ")
         str = trunc_to_width(res_str, width ÷ 2)
-        errored ? printstyled(io, str; color=Base.error_color()) : print(io, str)
+        errored ? printstyled(io, str; color=Base.error_color()) :
+                  print(io, highlight_code(str; context=io))
     end
     onkey = function (m, key, idx)
         if key == 'd' || key == 'x'
