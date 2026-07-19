@@ -30,7 +30,8 @@ scrolling transcript back.
 ### Interactive menus
 
 - `bp` (no arguments) opens a breakpoint manager: move with the arrow keys,
-  **space/enter** toggles a breakpoint, **`d`** deletes it, **`o`** opens its
+  **space/enter** toggles a breakpoint, **`a`** adds one (prompts for a
+  location using the `bp add` syntax), **`d`** deletes it, **`o`** opens its
   location in your editor, **`q`** quits. Break-on-error and break-on-throw
   are toggleable rows in the same menu.
 - `f` (no arguments) opens a frame picker for the call stack.

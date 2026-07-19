@@ -105,7 +105,8 @@ Evaluation:
 Breakpoints:
 - `bp`
     - `bp`: interactively manage breakpoints — move with the arrow keys, toggle with space/enter,
-      delete with `d`, open the breakpoint location in an editor with `o`, quit with `q`.
+      add with `a` (prompts for a location using the `bp add` syntax below), delete with `d`,
+      open the breakpoint location in an editor with `o`, quit with `q`.
       Break-on-error and break-on-throw can be toggled from the same menu.
     - `bp add`
         - `bp add "file.jl":line [cond]`: add a breakpoint at file `file.jl` on line `line` with condition `cond`

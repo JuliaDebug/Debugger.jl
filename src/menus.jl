@@ -152,9 +152,9 @@ end
 bp_location(::Any) = nothing
 
 function breakpoint_menu(state::DebuggerState)
-    rows = Any[JuliaInterpreter.breakpoints()...]
-    push!(rows, :error, :throw)
     open_target = Ref{Any}(nothing)
+    add_requested = Ref(false)
+    cursor = 1
 
     onkey = function (m, key, idx)
         row = m.rows[idx]
@@ -163,6 +163,11 @@ function breakpoint_menu(state::DebuggerState)
         elseif (key == 'd' || key == 'x') && row isa JuliaInterpreter.AbstractBreakpoint
             JuliaInterpreter.remove(row)
             return delete_row!(m, idx)
+        elseif key == 'a'
+            # adding needs a free-form location; leave the menu, prompt for
+            # one line and reopen
+            add_requested[] = true
+            return true
         elseif key == 'o' && row isa JuliaInterpreter.AbstractBreakpoint
             loc = bp_location(row)
             if loc !== nothing
@@ -177,10 +182,28 @@ function breakpoint_menu(state::DebuggerState)
         return false
     end
 
-    menu = ActionMenu(rows; writerow = bp_menu_writerow, onkey = onkey, onpick = onpick,
-                      help = "[space/enter] toggle  [d] delete  [o] open  [q] quit",
-                      menu_settings(state)...)
-    run_menu(menu, state)
+    while true
+        rows = Any[JuliaInterpreter.breakpoints()...]
+        push!(rows, :error, :throw)
+        add_requested[] = false
+
+        menu = ActionMenu(rows; writerow = bp_menu_writerow, onkey = onkey, onpick = onpick,
+                          help = "[space/enter] toggle  [a] add  [d] delete  [o] open  [q] quit",
+                          menu_settings(state)...)
+        run_menu(menu, state; cursor = cursor)
+
+        add_requested[] || break
+        io = output_stream(state)
+        printstyled(io, "bp add> "; color = :light_black)
+        input = try
+            strip(readline(state.terminal.in_stream))
+        catch
+            ""
+        end
+        isempty(input) || add_breakpoint!(state, String(input))
+        # reopen with the cursor on the last (newly added) breakpoint
+        cursor = max(length(JuliaInterpreter.breakpoints()), 1)
+    end
 
     if open_target[] !== nothing
         file, line = open_target[]

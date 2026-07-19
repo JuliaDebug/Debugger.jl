@@ -174,6 +174,16 @@ end
             state = menu_state(nothing, :down, ' ', 'q')
             quietly(() -> Debugger.breakpoint_menu(state))
             @test JuliaInterpreter.break_on_error[] == was_error
+            # add a breakpoint from the menu: `a` prompts for a location and reopens
+            state = menu_state(nothing, 'a', "f_menu_inner\n", 'q')
+            quietly(() -> Debugger.breakpoint_menu(state))
+            @test length(JuliaInterpreter.breakpoints()) == 2
+            @test any(bp -> bp isa JuliaInterpreter.BreakpointSignature && bp.f === f_menu_inner,
+                      JuliaInterpreter.breakpoints())
+            # an empty line cancels
+            state = menu_state(nothing, 'a', "\n", 'q')
+            quietly(() -> Debugger.breakpoint_menu(state))
+            @test length(JuliaInterpreter.breakpoints()) == 2
         finally
             JuliaInterpreter.remove()
             JuliaInterpreter.break_off(:error)

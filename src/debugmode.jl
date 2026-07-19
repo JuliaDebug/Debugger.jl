@@ -41,7 +41,7 @@ function debug_mode_help()
         Any expression you enter is debugged as if run through `@enter`.
 
         Breakpoints can be managed from here (they persist across debug sessions):\\
-        - `bp`: interactively manage breakpoints (toggle, delete, open in editor)\\
+        - `bp`: interactively manage breakpoints (toggle, add, delete, open in editor)\\
         - `bp add func [:line] [cond]`: add a breakpoint to function `func`\\
         - `bp add "file.jl":line [cond]`: add a breakpoint at a file location\\
         - `bp rm [i|func|"file.jl":line]`: remove all or matching breakpoints\\

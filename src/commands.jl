@@ -342,7 +342,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
 
 
             Breakpoints:\\
-            - `bp`: interactively manage breakpoints (toggle, delete, open in editor)\\
+            - `bp`: interactively manage breakpoints (toggle, add, delete, open in editor)\\
             - `bp add`\\
                 - `bp add "file.jl":line [cond]`: add a breakpoint at file `file.jl` on line `line` with condition `cond`\\
                 - `bp add func [:line] [cond]`: add a breakpoint to function `func` at line `line` (defaulting to first line) with condition `cond`\\
