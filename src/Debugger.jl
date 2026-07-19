@@ -160,4 +160,7 @@ macro run(ex)
     end
 end
 
+# Last: the precompile workload uses the macros defined above
+include("precompile.jl")
+
 end # module
