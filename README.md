@@ -68,7 +68,7 @@ Misc:
 - `C`: toggle compiled mode
 - `L`: toggle showing lowered code instead of source code
 - `T`: cycle how variable types are shown: compact (long type parameters elided), no types, types only, full types
-- `S`: toggle "sticky" (full-screen) mode, on by default: the debugger runs on the terminal's alternate screen (restored when quitting, like `less` or `vim`) and redraws the status in place instead of scrolling
+- `S`: toggle "sticky" (full-screen) mode, on by default: the debugger runs on the terminal's alternate screen (restored when quitting, like `less` or `vim`) and redraws the status in place instead of scrolling; command output taller than the screen (e.g. the `?` help) is shown in a scrollable pager
 - `+`/`-`: increase / decrease the number of lines of source code shown
 
 Stepping (basic):

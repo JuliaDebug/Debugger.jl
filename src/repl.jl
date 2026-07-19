@@ -44,6 +44,23 @@ function print_or_defer(state::DebuggerState, msg::String)
     end
 end
 
+# In full-screen mode the session runs on the alternate screen, which has no
+# scrollback — output taller than the screen (`?`, a deep `bt`, ...) would
+# simply be cut off. Show such output in a scrollable pager instead.
+function print_or_page(state::DebuggerState, str::AbstractString)
+    io = output_stream(state)
+    if sticky_active(state)
+        rows = safe_displaysize(io)[1]
+        if count(==('\n'), str) + 1 > rows - 2
+            pager = TerminalMenus.Pager(str; pagesize = max(rows - 5, 4))
+            TerminalMenus.request(state.terminal, pager)
+            return nothing
+        end
+    end
+    print(io, str)
+    return nothing
+end
+
 function show_status(state::DebuggerState)
     io = output_stream(state)
     if sticky_active(state)

@@ -86,7 +86,7 @@ function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
         end
         frame = caller(frame)
     end
-    print(io, String(take!(buf)))
+    print_or_page(state, String(take!(buf)))
     return false
 end
 
@@ -132,7 +132,9 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
         old_level = state.level
         try
             state.level = new_level
-            print_frame(output_stream(state), new_level, active_frame(state))
+            buf, outbuf = status_buffer(output_stream(state))
+            print_frame(outbuf, new_level, active_frame(state))
+            print_or_page(state, String(take!(buf)))
         finally
             state.level = old_level
         end
@@ -159,24 +161,26 @@ end
 function execute_command(state::DebuggerState, ::Val{:p}, cmd::AbstractString)
     cmds = split(cmd, r" +")
     io = output_stream(state)
+    buf, outbuf = status_buffer(io)
     frame = active_frame(state)
     if length(cmds) == 1
-        print_locals(io, frame)
+        print_locals(outbuf, frame)
     else
         vars = JuliaInterpreter.locals(frame)
         for requested_var in cmds[2:end]
             found = false
             for var in vars
                 if string(var.name) == requested_var
-                    print_var_rich(io, var; mod=moduleof(frame))
+                    print_var_rich(outbuf, var; mod=moduleof(frame))
                     found = true
                 end
             end
             if !found
-                printstyled(io, "no variable `$requested_var` in this frame\n"; color=Base.error_color())
+                printstyled(outbuf, "no variable `$requested_var` in this frame\n"; color=Base.error_color())
             end
         end
     end
+    print_or_page(state, String(take!(buf)))
     return false
 end
 
@@ -213,8 +217,8 @@ function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
         io = output_stream(state)
         outbuf = IOContext(IOBuffer(), io)
         show_watch_list(outbuf, state)
-        print(io, String(take!(outbuf.io)))
-        println(io)
+        println(outbuf)
+        print_or_page(state, String(take!(outbuf.io)))
         return false
     end
     # Error
@@ -228,7 +232,7 @@ function execute_command(state::DebuggerState, v::Union{Val{:bp}}, cmd::Abstract
             io = output_stream(state)
             outbuf = IOContext(IOBuffer(), io)
             show_breakpoints(outbuf, state)
-            print(io, String(take!(outbuf.io)))
+            print_or_page(state, String(take!(outbuf.io)))
         end
     end
     if length(cmds) == 1
@@ -288,8 +292,7 @@ function execute_command(state::DebuggerState, _, cmd)
 end
 
 function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd::AbstractString)
-    display(
-            @md_str """
+    help = @md_str """
             # Debugger commands
             Below, square brackets denote optional arguments.
 
@@ -360,7 +363,17 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             An empty command will execute the previous command.
 
             Hit `` ` `` to enter "evaluation mode," where any expression you type is executed in the debug context.
-            Hit backspace as the first character of the line (or `^C` anywhere) to return to "debug mode." """)
+            Hit backspace as the first character of the line (or `^C` anywhere) to return to "debug mode." """
+    if sticky_active(state)
+        # the alternate screen has no scrollback; render the help and page it
+        io = output_stream(state)
+        rows, cols = safe_displaysize(io)
+        str = sprint(show, MIME("text/plain"), help;
+                     context = IOContext(io, :displaysize => (rows, cols - 3)))
+        print_or_page(state, str * "\n")
+    else
+        display(help)
+    end
     return false
 end
 

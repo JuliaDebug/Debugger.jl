@@ -89,6 +89,36 @@ end
         end
     end
 
+    @testset "print_or_page" begin
+        was_sticky = Debugger.STICKY[]
+        try
+            Debugger.config(sticky = true)
+            # short output prints directly
+            state = menu_state(nothing)
+            Debugger.print_or_page(state, "short\n")
+            @test String(take!(state.terminal.out_stream)) == "short\n"
+            # output taller than the screen opens a pager (scripted `q` closes it)
+            state = menu_state(nothing, 'q')
+            long = join(("line $i" for i in 1:100), '\n') * "\n"
+            quietly(() -> Debugger.print_or_page(state, long))
+            out = String(take!(state.terminal.out_stream))
+            @test occursin("line 1", out)
+            @test !occursin("line 99", out) # not scrolled to
+            # the `?` help is paged in full-screen mode
+            state = menu_state(nothing, 'q')
+            quietly(() -> execute_command(state, Val{:help}(), "?"))
+            out = String(take!(state.terminal.out_stream))
+            @test occursin("Debugger commands", out)
+            # without sticky mode, long output prints in full
+            Debugger.config(sticky = false)
+            state = menu_state(nothing)
+            Debugger.print_or_page(state, long)
+            @test occursin("line 99", String(take!(state.terminal.out_stream)))
+        finally
+            Debugger.config(sticky = was_sticky)
+        end
+    end
+
     @testset "ActionMenu basics" begin
         picked = Ref(0)
         menu = Debugger.ActionMenu([:a, :b, :c];

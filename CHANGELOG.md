@@ -24,8 +24,10 @@ Pressed at the beginning of an empty prompt line:
 The debugger session now runs on the terminal's alternate screen, like `less`
 or `vim`: your scrollback is untouched and the terminal is restored exactly
 when you quit. The status is redrawn in place on every step instead of
-scrolling. Press `S` or set `Debugger.config(sticky = false)` to get the old
-scrolling transcript back.
+scrolling. Since the alternate screen has no scrollback, command output taller
+than the screen (the `?` help, a deep `bt`, ...) opens in a scrollable pager
+(arrow keys/PgUp/PgDn, `q` to close). Press `S` or set
+`Debugger.config(sticky = false)` to get the old scrolling transcript back.
 
 ### Interactive menus
 
