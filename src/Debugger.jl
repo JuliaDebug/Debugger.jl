@@ -21,6 +21,7 @@ const SEARCH_PATH = []
 function __init__()
     append!(SEARCH_PATH,[joinpath(Sys.BINDIR,"../share/julia/base/"),
             joinpath(Sys.BINDIR,"../include/")])
+    auto_install_repl_mode()
     return nothing
 end
 
@@ -86,6 +87,7 @@ include("printing.jl")
 include("watches.jl")
 include("breakpoints.jl")
 include("menus.jl")
+include("debugmode.jl")
 
 function _make_frame(mod, arg)
     args = try
