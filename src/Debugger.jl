@@ -51,6 +51,12 @@ Base.@kwdef mutable struct DebuggerState
     julia_prompt::Ref{LineEdit.Prompt} = Ref{LineEdit.Prompt}()
     standard_keymap = nothing
     overall_result = nothing
+    # Whether this session switched the terminal to the alternate screen
+    # (sticky mode) and is responsible for switching back
+    owns_alt_screen::Bool = false
+    # Output that must outlive the session's alternate screen (e.g. the error
+    # that aborted the session), printed after the main screen is restored
+    exit_output::Union{Nothing, String} = nothing
 end
 
 function output_stream(state::DebuggerState)

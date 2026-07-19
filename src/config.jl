@@ -17,8 +17,9 @@ const TYPE_COMPACT_THRESHOLD = Ref(24)
 # Maximum number of variables shown in the automatic status display (`fr` always shows all)
 const MAX_VARS_IN_STATUS = Ref(15)
 
-# Clear the terminal before printing the status, giving a stationary display
-const STICKY = Ref(false)
+# Full-screen mode: run on the terminal's alternate screen and redraw the
+# status in place instead of scrolling
+const STICKY = Ref(true)
 
 const CHARSET = Ref{Symbol}(:unicode)
 
@@ -48,7 +49,9 @@ settings as a `NamedTuple`; keywords set the corresponding option:
 - `vartypes::Symbol`: how variable types are displayed, one of `:compact`, `:none`,
   `:types`, `:full` (default: `:compact`). Can be cycled with the `T` key in the debugger.
 - `max_vars::Int`: maximum number of variables in the automatic status display (default: `15`)
-- `sticky::Bool`: clear the terminal before each status print (default: `false`)
+- `sticky::Bool`: "full screen" mode — the debugger runs on the terminal's alternate
+  screen (restored on quit) and redraws the status in place instead of scrolling
+  (default: `true`). Can be toggled with the `S` key in the debugger.
 - `charset::Symbol`: `:unicode` or `:ascii` (default: `:unicode`)
 - `menus::Bool`: use interactive menus for `bp`, `f` and `w` (default: `true`)
 """

@@ -19,5 +19,6 @@ Debugger.set_highlight(false)
     include("misc.jl")
     include("stepping.jl")
     include("interpret.jl")
+    include("menus.jl")
     include("ui.jl")
 #end

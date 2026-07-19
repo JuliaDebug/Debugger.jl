@@ -302,6 +302,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `C`: toggle compiled mode\\
             - `L`: toggle showing lowered code instead of source code\\
             - `T`: cycle how variable types are shown (compact, none, types only, full)\\
+            - `S`: toggle "sticky" (full-screen) mode, on by default: the debugger runs on the terminal's alternate screen and redraws the status in place\\
             - `+`/`-`: increase / decrease the number of lines of source code shown\\
 
 
