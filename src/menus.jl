@@ -245,8 +245,7 @@ end
 function watch_menu(state::DebuggerState)
     frame = active_frame(state)
     # Evaluate once up front; watch expressions may have side effects, so they
-    # should not be re-evaluated on every redraw of the menu (or by the caller
-    # printing the list after the menu closes).
+    # should not be re-evaluated on every redraw of the menu
     rows = Any[(expr, eval_watch_expr(frame, expr)) for expr in state.watch_list]
 
     writerow = function (io, row, idx)
@@ -268,5 +267,5 @@ function watch_menu(state::DebuggerState)
                       help = "[d] delete  [q] quit",
                       menu_settings(state)...)
     run_menu(menu, state)
-    return menu.rows
+    return nothing
 end

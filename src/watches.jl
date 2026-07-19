@@ -42,13 +42,6 @@ function print_watch_entry(io::IO, i::Integer, expr, res_str::AbstractString, er
     println(io, "$(expr_str): $(res_str)")
 end
 
-# `rows` as produced by `watch_menu`: `(expr, (result_string, errored))` pairs
-function show_watch_list(io::IO, rows::AbstractVector)
-    for (i, (expr, (res_str, errored))) in enumerate(rows)
-        print_watch_entry(io, i, expr, res_str, errored)
-    end
-end
-
 function show_watch_list(io::IO, state::DebuggerState)
     frame = active_frame(state)
     for (i, expr) in enumerate(state.watch_list)

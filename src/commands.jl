@@ -186,14 +186,9 @@ function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
     success_and_show = false
     if length(cmds) == 1
         if menus_available(state) && !isempty(state.watch_list)
-            # Print the list from the menu's cached evaluations; re-evaluating
-            # would run side-effecting watch expressions twice
-            rows = watch_menu(state)
-            io = output_stream(state)
-            buf, outbuf = status_buffer(io)
-            show_watch_list(outbuf, rows)
-            print(io, String(take!(buf)))
-            println(io)
+            # The menu's last frame stays on screen, so it is the record;
+            # printing the list again would show everything twice
+            watch_menu(state)
             return false
         end
         success_and_show = true
@@ -238,9 +233,11 @@ function execute_command(state::DebuggerState, v::Union{Val{:bp}}, cmd::Abstract
     end
     if length(cmds) == 1
         if menus_available(state)
+            # the menu's last frame stays on screen; don't print the list again
             breakpoint_menu(state)
+        else
+            repl_show_breakpoints()
         end
-        repl_show_breakpoints()
         return false
     else
         if cmds[2] == "add"
