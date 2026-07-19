@@ -1,46 +1,76 @@
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In outer(a, b, c, d) at ui.jl:51
+|[1/1] outer(a, b, c, d) at ui.jl:52
 | 51  function outer(a, b, c, d)
 |>52      inner_kw(a, b; c = c)
 | 53  end
 |
-|About to run: inner_kw(1, 2; c = 5)
+|  a::Int64 = 1  (arg)
+|  b::Int64 = 2  (arg)
+|  c::Int64 = 5  (arg)
+|  d::Int64 = 20  (arg)
+|
+|→ inner_kw(1, 2; c = 5)
 |1|debug> 
 --------------------------------------------------
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAA
+|AAAAAABBBBBBBBBBBBBBBBBCCCCCCCCCCCC
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+|DDDDDAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCBBB
 |
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBCCCCCCC
+|
+|EEBBBBBBBBBBBBBBBBBBBBB
+|FFFFFFFFF
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In outer(a, b, c, d) at ui.jl:51
+|[1/1] outer(a, b, c, d) at ui.jl:52
 | 51  function outer(a, b, c, d)
 |>52      inner_kw(a, b; c = c)
 | 53  end
 |
-|About to run: inner_kw(1, 2; c = 5)
+|  a::Int64 = 1  (arg)
+|  b::Int64 = 2  (arg)
+|  c::Int64 = 5  (arg)
+|  d::Int64 = 20  (arg)
+|
+|→ inner_kw(1, 2; c = 5)
 |1|debug> s
-|In #inner_kw#9(c, d, , a, b) at ui.jl:55
+|[1/3] inner_kw(a, b; c, d) at ui.jl:56
 | 55  function inner_kw(a, b; c = 3, d = 10)
 |>56      return a + b + c + d
 | 57  end
 |
-|About to run: (+)(1, 2, 5, 10)
+|  a::Int64 = 1  (arg)
+|  b::Int64 = 2  (arg)
+|  c::Int64 = 5  (arg)
+|  d::Int64 = 10  (arg)
+|
+|→ (+)(1, 2, 5, 10)
 |1|debug> 
 --------------------------------------------------
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|BBBBBAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAA
+|AAAAAABBBBBBBBBBBBBBBBBCCCCCCCCCCCC
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+|DDDDDAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCBBB
 |
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCCA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|BBBBBAAAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAA
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBCCCCCCC
 |
-|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCCCCC
+|EEBBBBBBBBBBBBBBBBBBBBB
+|FFFFFFFFFB
+|AAAAAABBBBBBBBBBBBBBBBBBBBCCCCCCCCCCCC
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|DDDDDAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCBBB
+|
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBCCCCCCC
+|
+|EEBBBBBBBBBBBBBBBB
+|FFFFFFFFF

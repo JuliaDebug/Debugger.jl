@@ -1,5 +1,5 @@
 ++++++++++++++++++++++++++++++++++++++++++++++++++
-|In mysum(x) at ui.jl:94
+|[1/1] mysum(x) at ui.jl:95
 |  94  function mysum(x)
 |> 95      s = 0
 |  96      for v in x
@@ -8,17 +8,21 @@
 |  99      return s
 | 100  end
 |
-|About to run: 0
+|  x::Vector{Int64} = [1, 2, 3]  (arg)
+|
+|→ 0
 |1|debug> 
 --------------------------------------------------
-|AAAAAAAAAAAAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAAAAA
-|BBBBBBAAAAAAAAA
-|AAAAAAAAAAAAAAAAAAAA
-|CCCCCCAAAAAAAAAAAAAA
-|AAAAAAAAAAAAA
-|AAAAAAAAAAAAAAAAAA
-|AAAAAAAAA
+|AAAAAABBBBBBBBCCCCCCCCCCCC
+|CCCCCCBBBBBBBBBBBBBBBBB
+|DDDDDDAAAAAAAAA
+|CCCCCCBBBBBBBBBBBBBB
+|EEEEEEBBBBBBBBBBBBBB
+|CCCCCCBBBBBBB
+|CCCCCCBBBBBBBBBBBB
+|CCCCCCBBB
 |
-|AAAAAAAAAAAAAAA
-|DDDDDDDDD
+|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBCCCCCCC
+|
+|FFB
+|GGGGGGGGG
