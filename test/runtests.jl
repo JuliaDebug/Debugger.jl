@@ -20,5 +20,6 @@ Debugger.set_highlight(false)
     include("stepping.jl")
     include("interpret.jl")
     include("menus.jl")
+    include("mixed_mode.jl")
     include("ui.jl")
 #end

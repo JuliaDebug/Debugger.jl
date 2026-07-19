@@ -1,7 +1,7 @@
-# Interactive menus (REPL.TerminalMenus) for breakpoints, frames and watch
-# expressions. All of them are driven by `ActionMenu`, a generic menu where
-# every row is an arbitrary object rendered by a callback and key presses map
-# to actions.
+# Interactive menus (REPL.TerminalMenus) for breakpoints, frames, watch
+# expressions and the mixed-mode focus set. All of them are driven by
+# `ActionMenu`, a generic menu where every row is an arbitrary object rendered
+# by a callback and key presses map to actions.
 
 function menus_available(state::DebuggerState)
     INTERACTIVE_MENUS[] || return false
@@ -273,5 +273,87 @@ function watch_menu(state::DebuggerState)
                       help = "[d] delete  [q] quit",
                       menu_settings(state)...)
     run_menu(menu, state)
+    return nothing
+end
+
+# --- focus menu --------------------------------------------------------------
+
+# Modules worth showing: the current focus set plus everything toggled off (so a
+# toggle is reversible without retyping the name), the permanent overrides, and
+# the Base/stdlib modules the user entered or stepped into (not auto-focused,
+# but one toggle away).
+function focus_menu_rows()
+    mods = Set{Module}(focus_modules())
+    union!(mods, SESSION_UNFOCUSED)
+    union!(mods, INTERPRET_OVERRIDES)
+    union!(mods, COMPILE_OVERRIDES)
+    union!(mods, _stdlib_focus_hinted)
+    return sort!(collect(mods); by = m -> string(nameof(m)))
+end
+
+function focus_menu_writerow(io::IO, mod::Module, idx::Int)
+    infocus = is_focus_module(mod)
+    printstyled(io, infocus ? char_bp_enabled() : char_bp_disabled();
+                color = infocus ? :green : :light_black)
+    print(io, " ", idx, "] ")
+    printstyled(io, string(mod); color = infocus ? :normal : :light_black)
+    if mod ∈ INTERPRET_OVERRIDES || mod ∈ COMPILE_OVERRIDES
+        printstyled(io, " (pinned)"; color = :light_black)
+    elseif mod === SESSION_ENTRY_ROOT[]
+        printstyled(io, " (entered)"; color = :light_black)
+    end
+end
+
+focus_menu_toggle(mod::Module) =
+    is_focus_module(mod) ? unfocus_module!(mod) : focus_module!(mod)
+
+function focus_menu(state::DebuggerState)
+    add_requested = Ref(false)
+    cursor = 1
+
+    onkey = function (m, key, idx)
+        if key == ' ' || key == 't'
+            focus_menu_toggle(m.rows[idx]::Module)
+        elseif key == 'a'
+            # adding needs a free-form module name; leave the menu, prompt for
+            # one line and reopen
+            add_requested[] = true
+            return true
+        end
+        return false
+    end
+    onpick = function (m, idx)
+        focus_menu_toggle(m.rows[idx]::Module)
+        return false
+    end
+
+    while true
+        rows = focus_menu_rows()
+        add_requested[] = false
+
+        menu = ActionMenu(rows; writerow = focus_menu_writerow, onkey = onkey, onpick = onpick,
+                          help = "[space/enter] toggle  [a] add  [q] quit",
+                          menu_settings(state)...)
+        run_menu(menu, state; cursor = cursor)
+
+        add_requested[] || break
+        io = output_stream(state)
+        printstyled(io, "focus add> "; color = :light_black)
+        input = try
+            strip(readline(state.terminal.in_stream))
+        catch
+            ""
+        end
+        if !isempty(input)
+            mod = _resolve_module(state, String(input))
+            if mod === nothing
+                printstyled(stderr, "Could not resolve $(repr(input)) as a loaded module\n"; color=Base.error_color())
+            else
+                focus_module!(mod)
+                # reopen with the cursor on the newly added module
+                cursor = something(findfirst(==(Base.moduleroot(mod)), focus_menu_rows()), 1)
+            end
+        end
+    end
     return nothing
 end

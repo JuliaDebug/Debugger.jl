@@ -66,6 +66,8 @@ Misc:
 - `o`: open the current line in an editor
 - `q`: quit the debugger, returning `nothing`
 - `C`: toggle compiled mode
+- `M`: toggle mixed mode (see "Stepping modes" below)
+- `mode [interpreted|mixed|compiled]`: show or set the stepping mode
 - `L`: toggle showing lowered code instead of source code
 - `T`: cycle how variable types are shown: compact (long type parameters elided), no types, types only, full types
 - `S`: toggle "sticky" (full-screen) mode, on by default: the debugger runs on the terminal's alternate screen (restored when quitting, like `less` or `vim`) and redraws the status in place instead of scrolling
@@ -232,28 +234,74 @@ Hit breakpoint:
 >[1] f(x) at REPL[6]:3
 ```
 
-### Compiled mode
+### Stepping modes: interpreted, mixed and compiled
 
-In order to fully support breakpoints, the debugger interprets all code, even code that is stepped over.
-Currently, there are cases where the interpreter is too slow for this to be feasible.
-A workaround is to use "compiled mode" which is toggled by pressing `C` in the debug REPL mode (note the change of prompt color).
-When using compiled mode, code that is stepped over will be executed
-by the normal julia compiler and run just as fast as normally.
-The drawback is that breakpoints in compiled code that is stepped over are missed.
+In order to fully support breakpoints, the debugger can interpret all code, even code that is stepped
+over. Currently, there are cases where the interpreter is too slow for this to be feasible. The
+debugger therefore supports three stepping modes:
 
-To split the difference between these two extremes, one can fine tune which modules are compiled and which are not.
-For example, to compile all code in Base, even when not in `C` mode, and hence break on all specified points in user code,
-issue the following commands on the REPL *before* `@enter`:
+- **mixed** (the default): calls into modules outside the "focus set" — `Core`, `Base`, the standard
+  libraries *and* dependency packages — run natively, at full compiled speed, *unless* the call could
+  reach focus code. A call is interpreted whenever the callee or any argument carries a function or
+  type from a focus module, also inside wrappers: `map(f, xs)`, `sort(xs; by = f)`, `f.(xs)`,
+  do-blocks, `Vector{MyType}` arguments and so on all remain fully debuggable, while e.g.
+  `sort(::Vector{Int})` or a `DataFrames` call operating purely on its own types runs at native
+  speed. As the default, it keeps the plain `1|debug>` prompt.
+- **interpreted**: everything is interpreted; breakpoints always work, including the corner cases
+  mixed mode cannot catch (see below). Toggled with the `M` key (note the `1|interpreted>` prompt
+  and its color).
+- **compiled**: everything that is stepped over runs natively. Fastest, but breakpoints in code that
+  is stepped over are missed. Toggled with the `C` key (note the `1|compiled>` prompt and its color).
+
+The mode can also be shown/set with the `mode [interpreted|mixed|compiled]` command in the debug REPL,
+and the mode new sessions start in can be set (e.g. in `startup.jl`) with:
+
+```jl
+Debugger.set_default_mode!(:interpreted)
+```
+
+The focus set — the modules mixed mode interprets — is seeded automatically at each `@enter`/`@run`:
+
+- `Main` (functions defined at the REPL or in scripts);
+- every loaded package whose source is a *dev checkout* (a `pkgdir` outside the read-only
+  `~/.julia/packages` store), i.e. the packages you are plausibly developing;
+- the package of the function you entered (so `@enter DataFrames.groupby(df, :a)` makes `DataFrames`
+  debuggable even though it is a registered install) — except `Base`/stdlibs, which would de-facto
+  disable the fast path;
+- stepping into (`s`) a frame of a dependency package adds it to the focus set for the session (an
+  info message is printed). Stepping into `Base`/a stdlib does *not* — a hint is printed instead.
+
+Inside the debugger, `focus` opens an interactive menu over the current set (space/enter toggles a
+module, `a` adds one by name); `focus add SomeMod` / `focus rm SomeMod` (or `focus rm i` by number)
+do the same non-interactively. These adjust the session; the permanent equivalents, e.g. for
+`startup.jl`:
+
+```jl
+Debugger.interpret_module!(SparseArrays) # always interpret (debug into) this module
+Debugger.compile_module!(MyBigHelperPkg) # never interpret this module (also skips its `@bp` markers)
+Debugger.interpreted_modules()           # show the current focus set
+```
+
+For soundness, mixed mode automatically falls back to full interpretation while any breakpoint is set
+outside the focus set (including file breakpoints that could match such a module), while a breakpoint
+is set in a focus package that loaded non-focus packages depend on (native code in the latter could
+otherwise run past it), or while `break_on(:error)` or `break_on(:throw)` is active — a message is
+printed when this happens. Known limitations of mixed mode (switch to interpreted mode if they
+matter): focus-module callbacks hidden in type-erased containers (e.g. `Vector{Any}`, fields typed
+`::Function`) are not detected; neither are focus-module methods whose signatures only mention
+non-focus types (type piracy), nor focus code reached without any focus-typed argument at the call
+site (callbacks stored in global registries, `Task`s, finalizers). `@bp` markers inside non-focus
+modules are skipped, and file breakpoints on source that was `eval`'d or `include`d from outside a
+package directory may not trigger the fallback.
+
+The [`JuliaInterpreter.compiled_methods`/`compiled_modules`](https://github.com/JuliaDebug/JuliaInterpreter.jl)
+mechanisms keep working in every mode and take precedence over mixed mode's decisions
+(as does `JuliaInterpreter.interpreted_methods`, in the other direction). For example, to compile all
+code in Base even in interpreted mode:
 
 ```jl
 using JuliaInterpreter, MethodAnalysis
 union!(JuliaInterpreter.compiled_modules, child_modules(Base))
-```
-
-Additional imported modules can also always be compiled with:
-
-```jl
-union!(JuliaInterpreter.compiled_modules, SomePackage)
 ```
 
 
@@ -270,7 +318,7 @@ shows the current settings. The available options are:
 - `max_vars::Int`: maximum number of variables shown in the automatic status display (default: `15`)
 - `sticky::Bool`: "full screen" mode — the debugger runs on the terminal's alternate screen and redraws the status in place instead of scrolling (default: `true`); can also be toggled with the `S` key
 - `charset::Symbol`: `:unicode` or `:ascii` (default: `:unicode`)
-- `menus::Bool`: use the interactive menus for `bp`, `f` and `w` (default: `true`)
+- `menus::Bool`: use the interactive menus for `bp`, `f`, `w` and `focus` (default: `true`)
 
 The older entry points `Debugger.set_theme(theme)` and `Debugger.set_highlight(false)` still work.
 

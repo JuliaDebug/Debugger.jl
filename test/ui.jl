@@ -105,7 +105,11 @@ end
         print_full_path = Debugger._print_full_path[]
         source_lines = Debugger.NUM_SOURCE_LINES_UP_DOWN[]
         watch_list = copy(Debugger.WATCH_LIST)
+        saved_mode = Debugger.default_mode()
         Debugger._print_full_path[] = false
+        # the recorded terminal sessions were captured in mixed mode (the default);
+        # pin it in case the process default was changed
+        Debugger.set_default_mode!(:mixed)
         try
             using TerminalRegressionTests
 
@@ -232,6 +236,7 @@ end
             Debugger.NUM_SOURCE_LINES_UP_DOWN[] = source_lines
             empty!(Debugger.WATCH_LIST)
             append!(Debugger.WATCH_LIST, watch_list)
+            Debugger.set_default_mode!(saved_mode)
         end
     else
         @warn "Skipping UI tests"

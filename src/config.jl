@@ -23,7 +23,7 @@ const STICKY = Ref(true)
 
 const CHARSET = Ref{Symbol}(:unicode)
 
-# Interactive TerminalMenus-based menus for `bp`, `f` and `w`
+# Interactive TerminalMenus-based menus for `bp`, `f`, `w` and `focus`
 const INTERACTIVE_MENUS = Ref(true)
 
 set_theme(theme::String) = _current_theme[] = theme
@@ -53,7 +53,7 @@ settings as a `NamedTuple`; keywords set the corresponding option:
   screen (restored on quit) and redraws the status in place instead of scrolling
   (default: `true`). Can be toggled with the `S` key in the debugger.
 - `charset::Symbol`: `:unicode` or `:ascii` (default: `:unicode`)
-- `menus::Bool`: use interactive menus for `bp`, `f` and `w` (default: `true`)
+- `menus::Bool`: use interactive menus for `bp`, `f`, `w` and `focus` (default: `true`)
 """
 function config(; theme::Union{Nothing,String} = nothing,
                   highlight::Union{Nothing,Bool} = nothing,

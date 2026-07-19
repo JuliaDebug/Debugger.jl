@@ -2843,6 +2843,20 @@
 |
 |→ (===)(20, 0)
 |1|debug> 
+|[1/2] ==(x, y) at promotion.jl:637
+|>637  (==)(x::T, y::T) where {T<:Number} = x === y
+|
+|  x::Int64 = 20  (arg)
+|  y::Int64 = 0  (arg)
+|  T        = Int64  (param)
+|
+|  w1] sin(a): UndefVarError: `a` not defined in `Base`
+|  w2] b: UndefVarError: `b` not defined in `Base`
+|
+|→ (===)(20, 0)
+|Stepping mode: compiled (stepped-over code runs natively, breakpoints in it are 
+|missed)
+|1|compiled> 
 --------------------------------------------------
 |AAAAAABBBBBBBBBBBBCCCCCCCCCCC
 |CCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
@@ -2975,7 +2989,21 @@
 |CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 |
 |EEBBBBBBBBBBBB
-|IIIIIIIII
+|FFFFFFFFF
+|AAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
+|DDDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|
+|CCCCCCBBBBBBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|
+|EEBBBBBBBBBBBB
+|CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|CCCCCCC
+|IIIIIIIIIIII
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 |[1/1] my_gcd(a, b) at ui.jl:5
 | 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
@@ -3108,7 +3136,21 @@
 |  w2] b: UndefVarError: `b` not defined in `Base`
 |
 |→ (===)(20, 0)
-|1|debug> c
+|1|debug> 
+|[1/2] ==(x, y) at promotion.jl:637
+|>637  (==)(x::T, y::T) where {T<:Number} = x === y
+|
+|  x::Int64 = 20  (arg)
+|  y::Int64 = 0  (arg)
+|  T        = Int64  (param)
+|
+|  w1] sin(a): UndefVarError: `a` not defined in `Base`
+|  w2] b: UndefVarError: `b` not defined in `Base`
+|
+|→ (===)(20, 0)
+|Stepping mode: compiled (stepped-over code runs natively, breakpoints in it are 
+|missed)
+|1|compiled> c
 |Hit breakpoint:
 |[1/1] my_gcd(a, b) at ui.jl:13
 |  9  k = min(za, zb)
@@ -3134,6 +3176,379 @@
 |  w2] b: 20
 |
 |→ (!=)(0x0000000000000005, 0x0000000000000005)
+|1|compiled> 
+--------------------------------------------------
+|AAAAAABBBBBBBBBBBBCCCCCCCCCCC
+|CCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|DDDDAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCBBBBBBBBBBBBBBBBBBB
+|
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|
+|EEBBBBBBBBBBB
+|FFFFFFFFFB
+|AAAAAABBBBBBBBBBBBCCCCCCCCCCC
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|DDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|
+|EEBBBBBBBBBBB
+|GGGGGGGGGBBBBBB
+|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|
+|GGGGGGGGGB
+|BB
+|
+|FFFFFFFFFBBB
+|
+|FFFFFFFFFBBBBBBB
+|CCCCCCBBBBB
+|
+|FFFFFFFFFBBBBBBBBBBBB
+|CCCCCCBBBBB
+|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|
+|FFFFFFFFFBBBBBBB
+|CCCCCCBBBBB
+|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCCBBBBB
+|
+|FFFFFFFFFB
+|CCCCCCBBBBB
+|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCCBBBBB
+|
+|FFFFFFFFFBBBBBB
+|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCCBBBBB
+|
+|FFFFFFFFFB
+|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCCBBBBB
+|
+|FFFFFFFFFB
+|AAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
+|DDDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|
+|CCCCCCBBBBBBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|
+|EEBBBBBBBBBBBB
+|FFFFFFFFFBBBB
+|AAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|FFFFFFFFFBBBB
+|AAAABBBBBBBBBBBBCCCCCCCCCCC
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|FFFFFFFFFBBB
+|AAAAAABBBBBBBBBBBBCCCCCCCCCCC
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|DDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|
+|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCCBBBBB
+|
+|EEBBBBBBBBBBB
+|FFFFFFFFFBBB
+|AAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
+|DDDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|
+|CCCCCCBBBBBBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|
+|EEBBBBBBBBBBBB
+|FFFFFFFFFBB
+|DAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
+|DAAAABBBBBBBBBBBBCCCCCCCCCCC
+|FFFFFFFFFBB
+|AAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
+|DDDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|
+|CCCCCCBBBBBBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|
+|EEBBBBBBBBBBBB
+|FFFFFFFFF
+|AAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
+|DDDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|
+|CCCCCCBBBBBBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|
+|EEBBBBBBBBBBBB
+|CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|CCCCCCC
+|IIIIIIIIIIIIB
+|BBBBBBBBBBBBBBB
+|AAAAAABBBBBBBBBBBBCCCCCCCCCCCC
+|CCCCCBBBBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+|HHHHHBBBBBBBBBBBB
+|DDDDDAAAAAAAAAAAA
+|CCCCCBBBBBBBBBBBB
+|CCCCCBBBBBBBBBBBBBBBBBBB
+|CCCCCBBBBBBB
+|CCCCCBBBBBBBBBB
+|
+|BBBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBBCCCCCCCCC
+|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|BBBBBBBBBBBBBBB
+|BBBBBBBBBBBBBBB
+|BBBBBBBBBBBBBBB
+|
+|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCCBBBBB
+|
+|EEBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|IIIIIIIIIIII
+++++++++++++++++++++++++++++++++++++++++++++++++++
+|[1/1] my_gcd(a, b) at ui.jl:5
+| 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
+|t32,Int64,UInt64,Int128,UInt128}
+|>5      a == 0 && return abs(b)
+| 6      b == 0 && return abs(a)
+| 7      za = trailing_zeros(a)
+| 8      zb = trailing_zeros(b)
+| 9      k = min(za, zb)
+|
+|  a::Int64 = 10  (arg)
+|  b::Int64 = 20  (arg)
+|  T        = Int64  (param)
+|
+|→ (==)(10, 0)
+|1|debug> n
+|[1/1] my_gcd(a, b) at ui.jl:6
+|  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
+|nt32,Int64,UInt64,Int128,UInt128}
+|  5      a == 0 && return abs(b)
+|> 6      b == 0 && return abs(a)
+|  7      za = trailing_zeros(a)
+|  8      zb = trailing_zeros(b)
+|  9      k = min(za, zb)
+| 10      u = unsigned(abs(a >> za))
+|
+|  a::Int64 = 10  (arg)
+|  b::Int64 = 20  (arg)
+|  T        = Int64  (param)
+|
+|→ (==)(20, 0)
+|1|julia> my_gcd
+|my_gcd (generic function with 1 method)
+|
+|1|julia> a
+|10
+|
+|1|debug> n^C
+|
+|1|debug> w add a
+|  w1] a: 10
+|
+|1|debug> w add sin(a)
+|  w1] a: 10
+|  w2] sin(a): -0.5440211108893698
+|
+|1|debug> w add b
+|  w1] a: 10
+|  w2] sin(a): -0.5440211108893698
+|  w3] b: 20
+|
+|1|debug> w
+|  w1] a: 10
+|  w2] sin(a): -0.5440211108893698
+|  w3] b: 20
+|
+|1|debug> w rm 1
+|  w1] sin(a): -0.5440211108893698
+|  w2] b: 20
+|
+|1|debug> w
+|  w1] sin(a): -0.5440211108893698
+|  w2] b: 20
+|
+|1|debug> s
+|[1/2] ==(x, y) at promotion.jl:637
+|>637  (==)(x::T, y::T) where {T<:Number} = x === y
+|
+|  x::Int64 = 20  (arg)
+|  y::Int64 = 0  (arg)
+|  T        = Int64  (param)
+|
+|  w1] sin(a): UndefVarError: `a` not defined in `Base`
+|  w2] b: UndefVarError: `b` not defined in `Base`
+|
+|→ (===)(20, 0)
+|1|debug> fr 1
+|[1] ==(x, y) at promotion.jl:637
+|  x::Int64 = 20  (arg)
+|  y::Int64 = 0  (arg)
+|  T        = Int64  (param)
+|1|debug> fr 2
+|[2] my_gcd(a, b) at ui.jl:4
+|  a::Int64 = 10  (arg)
+|  b::Int64 = 20  (arg)
+|  T        = Int64  (param)
+|1|debug> f 2
+|[2/2] my_gcd(a, b) at ui.jl:6
+|  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
+|nt32,Int64,UInt64,Int128,UInt128}
+|  5      a == 0 && return abs(b)
+|> 6      b == 0 && return abs(a)
+|  7      za = trailing_zeros(a)
+|  8      zb = trailing_zeros(b)
+|  9      k = min(za, zb)
+| 10      u = unsigned(abs(a >> za))
+|
+|  a::Int64 = 10  (arg)
+|  b::Int64 = 20  (arg)
+|  T        = Int64  (param)
+|
+|  w1] sin(a): -0.5440211108893698
+|  w2] b: 20
+|
+|→ (==)(20, 0)
+|2|debug> f 1
+|[1/2] ==(x, y) at promotion.jl:637
+|>637  (==)(x::T, y::T) where {T<:Number} = x === y
+|
+|  x::Int64 = 20  (arg)
+|  y::Int64 = 0  (arg)
+|  T        = Int64  (param)
+|
+|  w1] sin(a): UndefVarError: `a` not defined in `Base`
+|  w2] b: UndefVarError: `b` not defined in `Base`
+|
+|→ (===)(20, 0)
+|1|debug> bt
+|>[1] ==(x, y) at promotion.jl:637
+| [2] my_gcd(a, b) at ui.jl:6
+|1|debug> st
+|[1/2] ==(x, y) at promotion.jl:637
+|>637  (==)(x::T, y::T) where {T<:Number} = x === y
+|
+|  x::Int64 = 20  (arg)
+|  y::Int64 = 0  (arg)
+|  T        = Int64  (param)
+|
+|  w1] sin(a): UndefVarError: `a` not defined in `Base`
+|  w2] b: UndefVarError: `b` not defined in `Base`
+|
+|→ (===)(20, 0)
+|1|debug> 
+|[1/2] ==(x, y) at promotion.jl:637
+|>637  (==)(x::T, y::T) where {T<:Number} = x === y
+|
+|  x::Int64 = 20  (arg)
+|  y::Int64 = 0  (arg)
+|  T        = Int64  (param)
+|
+|  w1] sin(a): UndefVarError: `a` not defined in `Base`
+|  w2] b: UndefVarError: `b` not defined in `Base`
+|
+|→ (===)(20, 0)
+|Stepping mode: compiled (stepped-over code runs natively, breakpoints in it are 
+|missed)
+|1|compiled> c
+|Hit breakpoint:
+|[1/1] my_gcd(a, b) at ui.jl:13
+|  9  k = min(za, zb)
+| 10  u = unsigned(abs(a >> za))
+| 11  v = unsigned(abs(b >> zb))
+|●12  Debugger.@bp
+|>13  while u != v
+| 14      if u > v
+| 15          u, v = v, u
+| 16      end
+| 17      v -= u
+|
+|  a::Int64  = 10  (arg)
+|  b::Int64  = 20  (arg)
+|  T         = Int64  (param)
+|  v::UInt64 = 0x0000000000000005
+|  u::UInt64 = 0x0000000000000005
+|  k::Int64  = 1
+|  zb::Int64 = 2
+|  za::Int64 = 1
+|
+|  w1] sin(a): -0.5440211108893698
+|  w2] b: 20
+|
+|→ (!=)(0x0000000000000005, 0x0000000000000005)
+|1|compiled> 
+|[1/1] my_gcd(a, b) at ui.jl:13
+|  9  k = min(za, zb)
+| 10  u = unsigned(abs(a >> za))
+| 11  v = unsigned(abs(b >> zb))
+|●12  Debugger.@bp
+|>13  while u != v
+| 14      if u > v
+| 15          u, v = v, u
+| 16      end
+| 17      v -= u
+|
+|  a::Int64  = 10  (arg)
+|  b::Int64  = 20  (arg)
+|  T         = Int64  (param)
+|  v::UInt64 = 0x0000000000000005
+|  u::UInt64 = 0x0000000000000005
+|  k::Int64  = 1
+|  zb::Int64 = 2
+|  za::Int64 = 1
+|
+|  w1] sin(a): -0.5440211108893698
+|  w2] b: 20
+|
+|→ (!=)(0x0000000000000005, 0x0000000000000005)
+|Stepping mode: mixed (code outside the focus modules runs natively unless it can
+| reach them)
 |1|debug> 
 --------------------------------------------------
 |AAAAAABBBBBBBBBBBBCCCCCCCCCCC
@@ -3267,7 +3682,21 @@
 |CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 |
 |EEBBBBBBBBBBBB
-|IIIIIIIIIB
+|FFFFFFFFF
+|AAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
+|DDDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+|
+|BBBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBCCCCCCC
+|BBBBBBBBBBBBBBBBBBCCCCCCCCC
+|
+|CCCCCCBBBBBBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+|
+|EEBBBBBBBBBBBB
+|CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|CCCCCCC
+|IIIIIIIIIIIIB
 |BBBBBBBBBBBBBBB
 |AAAAAABBBBBBBBBBBBCCCCCCCCCCCC
 |CCCCCBBBBBBBBBBBBBBB
@@ -3293,300 +3722,7 @@
 |CCCCCCBBBBB
 |
 |EEBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|IIIIIIIII
-++++++++++++++++++++++++++++++++++++++++++++++++++
-|[1/1] my_gcd(a, b) at ui.jl:5
-| 4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UIn
-|t32,Int64,UInt64,Int128,UInt128}
-|>5      a == 0 && return abs(b)
-| 6      b == 0 && return abs(a)
-| 7      za = trailing_zeros(a)
-| 8      zb = trailing_zeros(b)
-| 9      k = min(za, zb)
-|
-|  a::Int64 = 10  (arg)
-|  b::Int64 = 20  (arg)
-|  T        = Int64  (param)
-|
-|→ (==)(10, 0)
-|1|debug> n
-|[1/1] my_gcd(a, b) at ui.jl:6
-|  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
-|nt32,Int64,UInt64,Int128,UInt128}
-|  5      a == 0 && return abs(b)
-|> 6      b == 0 && return abs(a)
-|  7      za = trailing_zeros(a)
-|  8      zb = trailing_zeros(b)
-|  9      k = min(za, zb)
-| 10      u = unsigned(abs(a >> za))
-|
-|  a::Int64 = 10  (arg)
-|  b::Int64 = 20  (arg)
-|  T        = Int64  (param)
-|
-|→ (==)(20, 0)
-|1|julia> my_gcd
-|my_gcd (generic function with 1 method)
-|
-|1|julia> a
-|10
-|
-|1|debug> n^C
-|
-|1|debug> w add a
-|  w1] a: 10
-|
-|1|debug> w add sin(a)
-|  w1] a: 10
-|  w2] sin(a): -0.5440211108893698
-|
-|1|debug> w add b
-|  w1] a: 10
-|  w2] sin(a): -0.5440211108893698
-|  w3] b: 20
-|
-|1|debug> w
-|  w1] a: 10
-|  w2] sin(a): -0.5440211108893698
-|  w3] b: 20
-|
-|1|debug> w rm 1
-|  w1] sin(a): -0.5440211108893698
-|  w2] b: 20
-|
-|1|debug> w
-|  w1] sin(a): -0.5440211108893698
-|  w2] b: 20
-|
-|1|debug> s
-|[1/2] ==(x, y) at promotion.jl:637
-|>637  (==)(x::T, y::T) where {T<:Number} = x === y
-|
-|  x::Int64 = 20  (arg)
-|  y::Int64 = 0  (arg)
-|  T        = Int64  (param)
-|
-|  w1] sin(a): UndefVarError: `a` not defined in `Base`
-|  w2] b: UndefVarError: `b` not defined in `Base`
-|
-|→ (===)(20, 0)
-|1|debug> fr 1
-|[1] ==(x, y) at promotion.jl:637
-|  x::Int64 = 20  (arg)
-|  y::Int64 = 0  (arg)
-|  T        = Int64  (param)
-|1|debug> fr 2
-|[2] my_gcd(a, b) at ui.jl:4
-|  a::Int64 = 10  (arg)
-|  b::Int64 = 20  (arg)
-|  T        = Int64  (param)
-|1|debug> f 2
-|[2/2] my_gcd(a, b) at ui.jl:6
-|  4  function my_gcd(a::T, b::T) where T<:Union{Int8,UInt8,Int16,UInt16,Int32,UI
-|nt32,Int64,UInt64,Int128,UInt128}
-|  5      a == 0 && return abs(b)
-|> 6      b == 0 && return abs(a)
-|  7      za = trailing_zeros(a)
-|  8      zb = trailing_zeros(b)
-|  9      k = min(za, zb)
-| 10      u = unsigned(abs(a >> za))
-|
-|  a::Int64 = 10  (arg)
-|  b::Int64 = 20  (arg)
-|  T        = Int64  (param)
-|
-|  w1] sin(a): -0.5440211108893698
-|  w2] b: 20
-|
-|→ (==)(20, 0)
-|2|debug> f 1
-|[1/2] ==(x, y) at promotion.jl:637
-|>637  (==)(x::T, y::T) where {T<:Number} = x === y
-|
-|  x::Int64 = 20  (arg)
-|  y::Int64 = 0  (arg)
-|  T        = Int64  (param)
-|
-|  w1] sin(a): UndefVarError: `a` not defined in `Base`
-|  w2] b: UndefVarError: `b` not defined in `Base`
-|
-|→ (===)(20, 0)
-|1|debug> bt
-|>[1] ==(x, y) at promotion.jl:637
-| [2] my_gcd(a, b) at ui.jl:6
-|1|debug> st
-|[1/2] ==(x, y) at promotion.jl:637
-|>637  (==)(x::T, y::T) where {T<:Number} = x === y
-|
-|  x::Int64 = 20  (arg)
-|  y::Int64 = 0  (arg)
-|  T        = Int64  (param)
-|
-|  w1] sin(a): UndefVarError: `a` not defined in `Base`
-|  w2] b: UndefVarError: `b` not defined in `Base`
-|
-|→ (===)(20, 0)
-|1|debug> c
-|Hit breakpoint:
-|[1/1] my_gcd(a, b) at ui.jl:13
-|  9  k = min(za, zb)
-| 10  u = unsigned(abs(a >> za))
-| 11  v = unsigned(abs(b >> zb))
-|●12  Debugger.@bp
-|>13  while u != v
-| 14      if u > v
-| 15          u, v = v, u
-| 16      end
-| 17      v -= u
-|
-|  a::Int64  = 10  (arg)
-|  b::Int64  = 20  (arg)
-|  T         = Int64  (param)
-|  v::UInt64 = 0x0000000000000005
-|  u::UInt64 = 0x0000000000000005
-|  k::Int64  = 1
-|  zb::Int64 = 2
-|  za::Int64 = 1
-|
-|  w1] sin(a): -0.5440211108893698
-|  w2] b: 20
-|
-|→ (!=)(0x0000000000000005, 0x0000000000000005)
-|1|debug> 
---------------------------------------------------
-|AAAAAABBBBBBBBBBBBCCCCCCCCCCC
-|CCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|DDDDAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCBBBBBBBBBBBBBBBBBBB
-|
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBBBBCCCCCCCCC
-|
-|EEBBBBBBBBBBB
-|FFFFFFFFFB
-|AAAAAABBBBBBBBBBBBCCCCCCCCCCC
-|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|DDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCBBBBBBBBBBBBBBBBBBB
-|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBBBBCCCCCCCCC
-|
-|EEBBBBBBBBBBB
-|GGGGGGGGGBBBBBB
-|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|
-|GGGGGGGGGB
-|BB
-|
-|FFFFFFFFFBBB
-|
-|FFFFFFFFFBBBBBBB
-|CCCCCCBBBBB
-|
-|FFFFFFFFFBBBBBBBBBBBB
-|CCCCCCBBBBB
-|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|
-|FFFFFFFFFBBBBBBB
-|CCCCCCBBBBB
-|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCCBBBBB
-|
-|FFFFFFFFFB
-|CCCCCCBBBBB
-|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCCBBBBB
-|
-|FFFFFFFFFBBBBBB
-|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCCBBBBB
-|
-|FFFFFFFFFB
-|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCCBBBBB
-|
-|FFFFFFFFFB
-|AAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
-|DDDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBBBBCCCCCCCCC
-|
-|CCCCCCBBBBBBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-|CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-|
-|EEBBBBBBBBBBBB
-|FFFFFFFFFBBBB
-|AAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBBBBCCCCCCCCC
-|FFFFFFFFFBBBB
-|AAAABBBBBBBBBBBBCCCCCCCCCCC
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBBBBCCCCCCCCC
-|FFFFFFFFFBBB
-|AAAAAABBBBBBBBBBBBCCCCCCCCCCC
-|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|DDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCBBBBBBBBBBBBBBBBBBB
-|CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBBBBCCCCCCCCC
-|
-|CCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBB
-|CCCCCCBBBBB
-|
-|EEBBBBBBBBBBB
-|FFFFFFFFFBBB
-|AAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
-|DDDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBBBBCCCCCCCCC
-|
-|CCCCCCBBBBBBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-|CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-|
-|EEBBBBBBBBBBBB
-|FFFFFFFFFBB
-|DAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
-|DAAAABBBBBBBBBBBBCCCCCCCCCCC
-|FFFFFFFFFBB
-|AAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCC
-|DDDDDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-|
-|BBBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBCCCCCCC
-|BBBBBBBBBBBBBBBBBBCCCCCCCCC
-|
-|CCCCCCBBBBBBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-|CCCCCCBBBHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-|
-|EEBBBBBBBBBBBB
-|IIIIIIIIIB
-|BBBBBBBBBBBBBBB
+|IIIIIIIIIIII
 |AAAAAABBBBBBBBBBBBCCCCCCCCCCCC
 |CCCCCBBBBBBBBBBBBBBB
 |CCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
@@ -3611,4 +3747,6 @@
 |CCCCCCBBBBB
 |
 |EEBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+|CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+|CCCCCCCCCCCC
 |FFFFFFFFF
