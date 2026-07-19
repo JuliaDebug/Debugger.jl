@@ -342,8 +342,31 @@ function _eval_code(frame::Frame, code::AbstractString)
     try
         return JuliaInterpreter.eval_code(frame, code), false
     catch
-        return Base.catch_stack(), true
+        return scrub_eval_backtrace(Base.current_exceptions()), true
     end
+end
+
+# Remove the debugger machinery (`eval_code` and below: Debugger, LineEdit,
+# `RunDebugger`, ...) from the backtraces of errors thrown by code evaluated
+# in evaluation mode, like the REPL does for its own errors
+function scrub_eval_backtrace(stack)
+    return Base.ExceptionStack(Any[
+        (exception = entry.exception, backtrace = scrub_eval_backtrace(entry.backtrace))
+        for entry in stack])
+end
+
+function scrub_eval_backtrace(bt::Union{Vector, Nothing})
+    bt === nothing && return bt
+    frames = bt isa Vector{Base.StackTraces.StackFrame} ? copy(bt) : Base.stacktrace(bt)
+    i = findfirst(fr -> !fr.from_c && fr.func === :eval_code, frames)
+    if i !== nothing
+        # the `eval` frame `eval_code` calls into is machinery as well
+        if i > 1 && frames[i-1].func === :eval
+            i -= 1
+        end
+        deleteat!(frames, i:length(frames))
+    end
+    return frames
 end
 
 # Completions

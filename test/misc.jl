@@ -289,6 +289,22 @@ end
     end
 end
 
+@testset "scrubbed evaluation-mode backtraces" begin
+    f_scrub(x) = x + 1
+    frame = JuliaInterpreter.enter_call(f_scrub, 1)
+    stack, errored = Debugger._eval_code(frame, "not_defined_var_xyz + 1")
+    @test errored
+    @test stack isa Base.ExceptionStack
+    @test stack[1].exception isa UndefVarError
+    # the debugger/REPL machinery below the evaluated code is scrubbed
+    frames = stack[1].backtrace
+    @test !any(fr -> fr.func in (:eval_code, :_eval_code, :RunDebugger, :run_interface), frames)
+    # successful evaluation is unaffected
+    val, errored = Debugger._eval_code(frame, "x + 1")
+    @test !errored
+    @test val == 2
+end
+
 @testset "p command" begin
     function command_output(frame, cmd)
         buf = IOBuffer()
