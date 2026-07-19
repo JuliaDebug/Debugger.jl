@@ -305,6 +305,16 @@ end
     @test val == 2
 end
 
+@testset "variable alignment ignores outliers" begin
+    f_align(x, a_very_long_variable_name_that_would_push_the_column) =
+        x + a_very_long_variable_name_that_would_push_the_column
+    frame = JuliaInterpreter.enter_call(f_align, 1, 2)
+    out = sprint(io -> Debugger.print_locals(io, frame))
+    # the short variable is not padded out to the long one's width
+    @test occursin(r"^  x::Int64 = 1"m, out)
+    @test occursin("a_very_long_variable_name_that_would_push_the_column::Int64 = 2", out)
+end
+
 @testset "p command" begin
     function command_output(frame, cmd)
         buf = IOBuffer()

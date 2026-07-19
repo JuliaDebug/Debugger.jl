@@ -100,7 +100,10 @@ end
 
 function print_var_entry(io::IO, e::VariableEntry, lhs_width::Int, width::Int)
     tagstr = isempty(e.tag) ? "" : string("(", e.tag, ")")
-    line = string("  ", rpad(e.lhs, lhs_width))
+    # Entries wider than the alignment target print unaligned instead of
+    # dragging the `=` column out for everything else
+    lhs = textwidth(e.lhs) <= lhs_width ? rpad(e.lhs, lhs_width) : e.lhs
+    line = string("  ", lhs)
     if e.show_value
         budget = clamp(width - textwidth(line) - textwidth(tagstr) - 5, 20, 512)
         val = repr_limited(e.value, budget)
@@ -120,7 +123,12 @@ function print_locals(io::IO, frame::Frame; limit::Integer = typemax(Int))
     entries = variable_entries(frame)
     isempty(entries) && return 0
     width = safe_displaysize(io)[2]
-    lhs_width = min(maximum(e -> textwidth(e.lhs), entries), 40)
+    # Align the `=` column, but ignore outliers: one very long variable name
+    # (or type) should not pad every other variable with whitespace. Align to
+    # the widest entry that is within reach of the median width.
+    widths = sort!([textwidth(e.lhs) for e in entries])
+    allowed = widths[(length(widths) + 1) ÷ 2] + 10
+    lhs_width = maximum(w for w in widths if w <= allowed; init = 0)
     nshown = min(length(entries), limit)
     for e in entries[1:nshown]
         print_var_entry(io, e, lhs_width, width)
