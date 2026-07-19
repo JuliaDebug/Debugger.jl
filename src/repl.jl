@@ -5,6 +5,8 @@ function write_prompt(terminal, mode)
     LineEdit.write_prompt(terminal, mode, LineEdit.hascolor(terminal))
 end
 
+show_status(state::DebuggerState) = print_status(output_stream(state), state)
+
 function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue=false)
     if repl === nothing
         if !isdefined(Base, :active_repl)
@@ -88,7 +90,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             return false
         end
         if do_print_status
-            print_status(output_stream(state), active_frame(state); force_lowered = state.lowered_status)
+            show_status(state)
         end
         return true
     end
@@ -118,17 +120,30 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 toggle_lowered(state)
                 println(output_stream(state))
-                print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
+                show_status(state)
                 write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "L")
+            end
+        end,
+        'T' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                i = findfirst(==(VARIABLE_TYPES[]), TYPE_DISPLAY_MODES)
+                VARIABLE_TYPES[] = TYPE_DISPLAY_MODES[mod1(something(i, 0) + 1, length(TYPE_DISPLAY_MODES))]
+                io = output_stream(state)
+                println(io)
+                show_status(state)
+                printstyled(io, "variable types: ", VARIABLE_TYPES[], "\n"; color=:light_black)
+                write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "T")
             end
         end,
         '+' => function (s, args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 NUM_SOURCE_LINES_UP_DOWN[] += 1
                 println(output_stream(state))
-                print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
+                show_status(state)
                 write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "+")
@@ -138,7 +153,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 NUM_SOURCE_LINES_UP_DOWN[] = max(1, NUM_SOURCE_LINES_UP_DOWN[] - 1)
                 println(output_stream(state))
-                print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
+                show_status(state)
                 write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "-")
@@ -172,14 +187,13 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     if pc_expr(state.frame) === nothing
         JuliaInterpreter.maybe_next_call!(state.frame)
     end
-    print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
+    show_status(state)
 
     prompts = LineEdit.TextInterface[panel]
 
     if VERSION < v"1.13-"
         push!(prompts, search_prompt)
     end
-
 
     interface = LineEdit.ModalInterface(prompts)
     mistate = LineEdit.init_state(terminal, interface)

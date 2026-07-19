@@ -68,16 +68,25 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
 end
 
 function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
+    args = split(cmd, r" +")
+    length(args) > 2 && return invalid_command(state, cmd)
+    verbose = length(args) == 2
+    verbose && args[2] != "v" && return invalid_command(state, cmd)
     io = output_stream(state)
-    iob = IOContext(IOBuffer(), io)
+    buf, iob = status_buffer(io)
     num = 0
     frame = state.frame
     while frame !== nothing
         num += 1
-        print_frame(iob, num, frame; current_line=true)
+        if verbose
+            print_frame(iob, num, frame; current_line=true)
+        else
+            printstyled(iob, num == state.level ? ">" : " "; color=:yellow)
+            print_frame_header(iob, frame; level=num, current_line=true)
+        end
         frame = caller(frame)
     end
-    print(io, String(take!(iob.io)))
+    print(io, String(take!(buf)))
     return false
 end
 
@@ -153,7 +162,7 @@ function execute_command(state::DebuggerState, ::Val{:p}, cmd::AbstractString)
             found = false
             for var in vars
                 if string(var.name) == requested_var
-                    print_var(io, var)
+                    print_var_rich(io, var; mod=moduleof(frame))
                     found = true
                 end
             end
@@ -272,6 +281,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `q`: quit the debugger, returning `nothing`\\
             - `C`: toggle compiled mode\\
             - `L`: toggle showing lowered code instead of source code\\
+            - `T`: cycle how variable types are shown (compact, none, types only, full)\\
             - `+`/`-`: increase / decrease the number of lines of source code shown\\
 
 
@@ -296,16 +306,16 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
 
             Querying:\\
             - `st`: show the "status" (current function, source code and current expression to run)\\
-            - `bt`: show a backtrace\\
+            - `bt [v]`: show a compact backtrace (`v` for a verbose one including all variables)\\
             - `fr [i::Int]`: show all variables in the current or `i`th frame\\
             - `p`\\
                 - `p`: print all variables in the current frame (same as `fr`)\\
-                - `p x [y ...]`: print the value of the variable(s) `x` (and `y` ...)\\
+                - `p x [y ...]`: print the full value of the variable(s) `x` (and `y` ...)\\
 
 
             Evaluation:\\
             - `w`\\
-                - `w add expr`: add an expression to the watch list\\
+                - `w add expr`: add an expression to the watch list; watch expressions are shown in the status\\
                 - `w`: show all watch expressions evaluated in the current function's context\\
                 - `w rm [i::Int]`: remove all or the `i`-th watch expression\\
 
@@ -317,7 +327,6 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
                 - `bp add func(::Float64, Int)[:line] [cond]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line) with condition `cond`\\
                 - `bp add func(x, y)[:line] [cond]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc with condition `cond`\\
                 - `bp add line [cond]`: add a breakpoint to `line` of the file of the current function with condition `cond`\\
-            - `bp` show all breakpoints\\
             - `bp rm [i::Int]`: remove all or the `i`-th breakpoint\\
             - `bp rm "file.jl":line`: remove the breakpoint at the given file and line\\
             - `bp rm func [:line]`: remove breakpoints for the function `func` (at line `line`)\\

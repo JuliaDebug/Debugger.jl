@@ -47,17 +47,17 @@ execute_command(state, Val{:so}(), "c")
 
 @inline fnothing(x) = 1
 frame = @make_frame fnothing(0)
-@test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: return 1"
+@test chomp(sprint(Debugger.print_next_expr, frame)) == "→ return 1"
 
 # Julia 1.12 can initially pause on the global lookup immediately before a call.
 frame = @make_frame (20 == 0)
 frame.pc = 1
-@test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: (===)(20, 0)"
+@test chomp(sprint(Debugger.print_next_expr, frame)) == "→ (===)(20, 0)"
 
 f_preview_add(x, y) = x + y
 frame = @make_frame f_preview_add(6, 4)
 frame.pc = 1
-@test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: (+)(6, 4)"
+@test chomp(sprint(Debugger.print_next_expr, frame)) == "→ (+)(6, 4)"
 
 function f()
     x = 1 + 1
@@ -76,7 +76,8 @@ try
     Debugger.set_highlight(true)
     frame = Debugger.@make_frame f()
     st = chomp(sprint(Debugger.print_status, frame; context = :color => true))
-    x_1_plus_1_colored = "x\e[0m \e[38;2;249;248;245m=\e[0m \e[38;2;244;191;117m1\e[0m \e[38;2;249;248;245m+\e[0m \e[38;2;244;191;117m"
+    # the current line is emphasized: bold is re-applied after every color reset
+    x_1_plus_1_colored = "x\e[0m\e[1m \e[38;2;249;248;245m=\e[0m\e[1m \e[38;2;244;191;117m1\e[0m\e[1m \e[38;2;249;248;245m+\e[0m\e[1m \e[38;2;244;191;117m"
     @test occursin(x_1_plus_1_colored, st)
 
     frame = Debugger.@make_frame f_unicode()
@@ -282,7 +283,8 @@ end
     end
     f_p_cmd(x) = (y = x + 1; y * 2)
     frame = @make_frame f_p_cmd(3)
-    @test occursin("x::$Int = 3", command_output(frame, "p x"))
+    # `p x` shows the full value without type decorations
+    @test occursin(r"^x = 3$"m, command_output(frame, "p x"))
     @test occursin("x::$Int = 3", command_output(frame, "p"))
     @test occursin("no variable `nope` in this frame", command_output(frame, "p nope"))
 end
