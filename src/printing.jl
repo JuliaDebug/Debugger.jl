@@ -382,19 +382,50 @@ function compute_source_offsets(code::AbstractString, current_offsetline::Intege
     startoffset, stopoffset
 end
 
+# `Highlights.highlight` creates a tree-sitter parser and compiles the
+# highlight query on every call (~30 ms) — far too slow for a status print
+# that highlights every variable line. Cache them for the session.
+mutable struct HighlightCache
+    parser::Any
+    query::Any
+    theme::Any
+    theme_name::String
+end
+const _highlight_cache = Ref{Union{HighlightCache, Nothing}}(nothing)
+
+function highlight_cache()
+    cache = _highlight_cache[]
+    if cache === nothing || cache.theme_name != _current_theme[]
+        lang = Highlights.resolve_language(:julia)
+        parser = Highlights.TreeSitter.Parser(lang)
+        query = Highlights.TreeSitter.Query(lang, ["highlights"])
+        theme = Highlights.load_theme(_current_theme[])
+        cache = HighlightCache(parser, query, theme, _current_theme[])
+        _highlight_cache[] = cache
+    end
+    return cache
+end
+
 function highlight_code(code; context=nothing)
     if context !== nothing && !get(context, :color, false)
         return code
     end
-    if _syntax_highlighting[]
+    _syntax_highlighting[] || return code
+    try
+        cache = highlight_cache()
+        tokens = Highlights.highlight_tokens(cache.parser, cache.query, code)
+        return sprint(context=context) do io
+            Highlights.format(io, MIME("text/ansi"), tokens, code, cache.theme, :julia)
+        end
+    catch
+        # The fast path uses Highlights internals; fall back to the public API
+        # if they change
         try
-            sprint(highlight, MIME("text/ansi"), code, :julia, _current_theme[]; context=context)
+            return sprint(highlight, MIME("text/ansi"), code, :julia, _current_theme[]; context=context)
         catch e
             printstyled(stderr, "failed to highlight code, $e\n"; color=Base.warn_color())
             return code
         end
-    else
-        return code
     end
 end
 
