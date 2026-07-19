@@ -8,7 +8,10 @@ function safe_displaysize(io::IO)
     end
 end
 
-function repr_limited(val, n, f=show)
+# `val` is an arbitrary user value: without `@nospecialize` this method (and
+# inference through the `show` machinery below it) recompiles for every new
+# value type that shows up in the variable display
+function repr_limited(@nospecialize(val), n, f=show)
     iob = IOBuffer()
     local limited_str
     try
