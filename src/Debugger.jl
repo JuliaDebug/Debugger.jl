@@ -8,6 +8,7 @@ using Base.Meta: isexpr
 using REPL
 using REPL.LineEdit
 using REPL.REPLCompletions
+using REPL.TerminalMenus
 
 using CodeTracking
 using JuliaInterpreter: JuliaInterpreter, Frame, lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState,
@@ -84,6 +85,7 @@ include("limitio.jl")
 include("printing.jl")
 include("watches.jl")
 include("breakpoints.jl")
+include("menus.jl")
 
 function _make_frame(mod, arg)
     args = try

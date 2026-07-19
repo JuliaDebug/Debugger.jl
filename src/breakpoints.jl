@@ -159,7 +159,10 @@ function show_breakpoints(io::IO, state::DebuggerState)
     bps = JuliaInterpreter.breakpoints()
     if !isempty(bps)
         for (i, bp) in enumerate(bps)
-            println(io, "$i] $bp")
+            enabled = bp.enabled[]
+            printstyled(io, bp_status_char(enabled, bp.condition !== nothing);
+                        color = enabled ? :light_red : :light_black)
+            println(io, " $i] $bp")
         end
         println(io)
     end

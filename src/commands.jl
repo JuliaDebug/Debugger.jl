@@ -105,6 +105,12 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
     subcmds = split(cmd, r" +")
     if length(subcmds) == 1
         if cmd == "f"
+            if menus_available(state)
+                sel = frame_menu(state)
+                sel === nothing && return false # cancelled
+                state.level = sel
+                return true
+            end
             new_level = 1
         else
             new_level = state.level
@@ -179,6 +185,17 @@ function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
     cmds = split(cmd, r" +")
     success_and_show = false
     if length(cmds) == 1
+        if menus_available(state) && !isempty(state.watch_list)
+            # Print the list from the menu's cached evaluations; re-evaluating
+            # would run side-effecting watch expressions twice
+            rows = watch_menu(state)
+            io = output_stream(state)
+            buf, outbuf = status_buffer(io)
+            show_watch_list(outbuf, rows)
+            print(io, String(take!(buf)))
+            println(io)
+            return false
+        end
         success_and_show = true
     elseif length(cmds) >= 2
         if cmds[2] == "rm"
@@ -220,6 +237,9 @@ function execute_command(state::DebuggerState, v::Union{Val{:bp}}, cmd::Abstract
         end
     end
     if length(cmds) == 1
+        if menus_available(state)
+            breakpoint_menu(state)
+        end
         repl_show_breakpoints()
         return false
     else
@@ -293,7 +313,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `sl`: step into the last call on the current line (e.g. steps into `f` if the line is `f(g(h(x)))`).\\
             - `sr`: step until next `return`.\\
             - `c`: continue execution until a breakpoint is hit\\
-            - `f [i::Int]`: go to the `i`-th function in the call stack (stepping is only possible in the function at the top of the call stack)\\
+            - `f [i::Int]`: go to the `i`-th function in the call stack; without an argument, pick the frame interactively (stepping is only possible in the function at the top of the call stack)\\
             - `up/down [i::Int]` go up or down one or `i` functions in the call stack\\
 
 
@@ -315,12 +335,13 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
 
             Evaluation:\\
             - `w`\\
-                - `w add expr`: add an expression to the watch list; watch expressions are shown in the status\\
-                - `w`: show all watch expressions evaluated in the current function's context\\
+                - `w add expr`: add an expression to the watch list\\
+                - `w`: interactively manage the watch list (delete entries); watch expressions are shown in the status\\
                 - `w rm [i::Int]`: remove all or the `i`-th watch expression\\
 
 
             Breakpoints:\\
+            - `bp`: interactively manage breakpoints (toggle, delete, open in editor)\\
             - `bp add`\\
                 - `bp add "file.jl":line [cond]`: add a breakpoint at file `file.jl` on line `line` with condition `cond`\\
                 - `bp add func [:line] [cond]`: add a breakpoint to function `func` at line `line` (defaulting to first line) with condition `cond`\\

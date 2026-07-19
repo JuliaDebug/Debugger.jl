@@ -22,6 +22,9 @@ const STICKY = Ref(false)
 
 const CHARSET = Ref{Symbol}(:unicode)
 
+# Interactive TerminalMenus-based menus for `bp`, `f` and `w`
+const INTERACTIVE_MENUS = Ref(true)
+
 set_theme(theme::String) = _current_theme[] = theme
 set_highlight(opt::Bool) = _syntax_highlighting[] = opt
 
@@ -47,6 +50,7 @@ settings as a `NamedTuple`; keywords set the corresponding option:
 - `max_vars::Int`: maximum number of variables in the automatic status display (default: `15`)
 - `sticky::Bool`: clear the terminal before each status print (default: `false`)
 - `charset::Symbol`: `:unicode` or `:ascii` (default: `:unicode`)
+- `menus::Bool`: use interactive menus for `bp`, `f` and `w` (default: `true`)
 """
 function config(; theme::Union{Nothing,String} = nothing,
                   highlight::Union{Nothing,Bool} = nothing,
@@ -54,7 +58,8 @@ function config(; theme::Union{Nothing,String} = nothing,
                   vartypes::Union{Nothing,Symbol} = nothing,
                   max_vars::Union{Nothing,Int} = nothing,
                   sticky::Union{Nothing,Bool} = nothing,
-                  charset::Union{Nothing,Symbol} = nothing)
+                  charset::Union{Nothing,Symbol} = nothing,
+                  menus::Union{Nothing,Bool} = nothing)
     theme !== nothing && set_theme(theme)
     highlight !== nothing && set_highlight(highlight)
     context_lines !== nothing && (NUM_SOURCE_LINES_UP_DOWN[] = max(1, context_lines))
@@ -70,7 +75,9 @@ function config(; theme::Union{Nothing,String} = nothing,
             throw(ArgumentError("charset should be :unicode or :ascii, got :$charset"))
         CHARSET[] = charset
     end
+    menus !== nothing && (INTERACTIVE_MENUS[] = menus)
     return (theme = _current_theme[], highlight = _syntax_highlighting[],
             context_lines = NUM_SOURCE_LINES_UP_DOWN[], vartypes = VARIABLE_TYPES[],
-            max_vars = MAX_VARS_IN_STATUS[], sticky = STICKY[], charset = CHARSET[])
+            max_vars = MAX_VARS_IN_STATUS[], sticky = STICKY[], charset = CHARSET[],
+            menus = INTERACTIVE_MENUS[])
 end
