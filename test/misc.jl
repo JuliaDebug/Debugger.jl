@@ -59,6 +59,22 @@ frame = @make_frame f_preview_add(6, 4)
 frame.pc = 1
 @test chomp(sprint(Debugger.print_next_expr, frame)) == "→ (+)(6, 4)"
 
+# A global consumed as an *argument* of the upcoming call (e.g. pausing on the
+# `*` load in `map(*, x, y)`) should also preview the full call instead of
+# showing the bare global
+f_preview_arg(x, y) = map(*, x, y)
+let frame = JuliaInterpreter.enter_call(f_preview_arg, [1, 2], [3, 4])
+    nst = JuliaInterpreter.nstatements(frame.framecode)
+    pcstar = findfirst(i -> (e = pc_expr(frame, i); e isa GlobalRef && e.name == :*), 1:nst)
+    # globals load as separate statements only in newer lowering (Julia 1.12+)
+    if pcstar !== nothing
+        while frame.pc < pcstar
+            JuliaInterpreter.step_expr!(frame)
+        end
+        @test chomp(sprint(Debugger.print_next_expr, frame)) == "→ map(*, [1, 2], [3, 4])"
+    end
+end
+
 function f()
     x = 1 + 1
     @info "hello"

@@ -217,28 +217,31 @@ function expression_for_display(frame::Frame)
     expr = pc_expr(frame)
     if expr isa GlobalRef && frame.pc < nstatements(frame.framecode)
         # Julia 1.12 may pause on a global lookup followed by separate argument
-        # loads and then a call. Preview that call so the status still shows its
-        # arguments rather than just `Main.:+`.
+        # loads and then a call. Preview that call so the status still shows the
+        # call rather than just `Main.:+` — both when the global is the callee
+        # and when it is an argument (e.g. pausing on `Base.Math.:*` inside
+        # a call like `map(*, x, y)`).
         for next_pc in (frame.pc + 1):nstatements(frame.framecode)
             stmt = pc_expr(frame, next_pc)
             call = isexpr(stmt, :(=)) ? stmt.args[2] : stmt
             if isexpr(call, :call)
-                f = call.args[1]
-                if f isa JuliaInterpreter.SSAValue && f.id == frame.pc
-                    call = copy(call)
-                    for i in eachindex(call.args)
-                        arg = call.args[i]
-                        if arg isa JuliaInterpreter.SSAValue && frame.pc <= arg.id < next_pc
-                            source = pc_expr(frame, arg.id)
-                            if source isa Union{GlobalRef, JuliaInterpreter.SlotNumber, QuoteNode}
-                                call.args[i] = source
-                            else
-                                return expr
-                            end
+                any(a -> a isa JuliaInterpreter.SSAValue && a.id == frame.pc, call.args) || return expr
+                call = copy(call)
+                for i in eachindex(call.args)
+                    arg = call.args[i]
+                    # Substitute the loads that have not run yet; SSA values
+                    # computed before `frame.pc` are resolved by `lookup` in
+                    # `print_next_expr`
+                    if arg isa JuliaInterpreter.SSAValue && frame.pc <= arg.id < next_pc
+                        source = pc_expr(frame, arg.id)
+                        if source isa Union{GlobalRef, JuliaInterpreter.SlotNumber, QuoteNode}
+                            call.args[i] = source
+                        else
+                            return expr
                         end
                     end
-                    return call
                 end
+                return call
             end
 
             stmt isa Union{GlobalRef, JuliaInterpreter.SlotNumber, QuoteNode} || break
