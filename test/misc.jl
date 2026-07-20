@@ -65,7 +65,9 @@ frame.pc = 1
 f_preview_arg(x, y) = map(*, x, y)
 let frame = JuliaInterpreter.enter_call(f_preview_arg, [1, 2], [3, 4])
     nst = JuliaInterpreter.nstatements(frame.framecode)
-    pcstar = findfirst(i -> (e = pc_expr(frame, i); e isa GlobalRef && e.name == :*), 1:nst)
+    # the load is a `GlobalRef`, or a `QuoteNode` when JuliaInterpreter folded the const
+    pcstar = findfirst(i -> (e = pc_expr(frame, i);
+                             (e isa GlobalRef && e.name == :*) || (e isa QuoteNode && e.value === *)), 1:nst)
     # globals load as separate statements only in newer lowering (Julia 1.12+)
     if pcstar !== nothing
         while frame.pc < pcstar
