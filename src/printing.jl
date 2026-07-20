@@ -226,12 +226,14 @@ end
 
 function expression_for_display(frame::Frame)
     expr = pc_expr(frame)
-    if expr isa GlobalRef && frame.pc < nstatements(frame.framecode)
+    if expr isa Union{GlobalRef, QuoteNode} && frame.pc < nstatements(frame.framecode)
         # Julia 1.12 may pause on a global lookup followed by separate argument
         # loads and then a call. Preview that call so the status still shows the
         # call rather than just `Main.:+` — both when the global is the callee
         # and when it is an argument (e.g. pausing on `Base.Math.:*` inside
-        # a call like `map(*, x, y)`).
+        # a call like `map(*, x, y)`). JuliaInterpreter's `optimize!` may fold
+        # a const `GlobalRef` statement into a `QuoteNode` of its value, so
+        # accept both forms.
         for next_pc in (frame.pc + 1):nstatements(frame.framecode)
             stmt = pc_expr(frame, next_pc)
             call = isexpr(stmt, :(=)) ? stmt.args[2] : stmt
