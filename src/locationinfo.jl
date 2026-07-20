@@ -119,8 +119,13 @@ definition line unless `current_line` is `true`.
 function frame_location(frame::Frame; current_line::Bool=false)
     meth = frame.framecode.scope
     if meth isa Method
-        line = current_line ? JuliaInterpreter.linenumber(frame) : meth.line
-        path = string(_print_full_path[] ? meth.file : basename(String(meth.file)), ":", line)
+        if current_line
+            ret = JuliaInterpreter.whereis(frame)
+            file, line = ret === nothing ? (String(meth.file), JuliaInterpreter.linenumber(frame)) : ret
+        else
+            file, line = String(meth.file), meth.line
+        end
+        path = string(_print_full_path[] ? file : basename(file), ":", line)
         return CodeTracking.maybe_fix_path(path)
     else
         ret = JuliaInterpreter.whereis(frame)

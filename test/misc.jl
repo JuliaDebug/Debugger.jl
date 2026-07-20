@@ -87,6 +87,9 @@ state = dummy_state(frame)
 execute_command(state, Val{:n}(), "n")
 defline, deffile, current_line, body = Debugger.locinfo(state.frame)
 @test occursin("handle_message(logger, level", body)
+current_file, current_line = JuliaInterpreter.whereis(state.frame)
+@test Debugger.frame_location(state.frame; current_line=true) ==
+      CodeTracking.maybe_fix_path(string(current_file, ":", current_line))
 
 f_unicode() = √
 
@@ -108,6 +111,18 @@ end
 frame = @make_frame Test.TestLogger()
 desc = Debugger.locdesc(frame)
 @test occursin(Sys.STDLIB, desc)
+
+f_slot_display(x) = (y = x + 1; y)
+let frame = JuliaInterpreter.enter_call(f_slot_display, 1)
+    pc = findfirst(i -> pc_expr(frame, i) isa JuliaInterpreter.SlotNumber,
+                   1:JuliaInterpreter.nstatements(frame.framecode))
+    if pc !== nothing
+        frame.pc = pc
+        slot = pc_expr(frame)::JuliaInterpreter.SlotNumber
+        name = frame.framecode.src.slotnames[slot.id]
+        @test chomp(sprint(Debugger.print_next_expr, frame)) == "→ $name"
+    end
+end
 
 import InteractiveUtils
 @testset "`o` command" begin
