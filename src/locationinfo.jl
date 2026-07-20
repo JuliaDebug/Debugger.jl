@@ -11,6 +11,33 @@ function body_for_method(current_file, current_line, meth)
     end
 end
 
+# Lowering attributes a function's implicit trailing `return nothing` to the
+# line of the preceding statement, which for a function ending in a conditional
+# is the last line of a branch that possibly never executed (#342). Detect that
+# statement: the final `return nothing`, directly after another `return` with
+# the same line attribution (the branch's own return).
+function is_phantom_trailing_return(frame::Frame)
+    n = JuliaInterpreter.nstatements(frame.framecode)
+    frame.pc == n && n > 1 || return false
+    returns_nothing(stmt) = begin
+        val = stmt isa Core.ReturnNode ? stmt.val :
+              isexpr(stmt, :return)    ? stmt.args[1] : missing
+        val === nothing || (val isa QuoteNode && val.value === nothing)
+    end
+    returns_nothing(pc_expr(frame, n)) || return false
+    JuliaInterpreter.is_return(pc_expr(frame, n - 1)) || return false
+    return JuliaInterpreter.linenumber(frame, n) == JuliaInterpreter.linenumber(frame, n - 1)
+end
+
+# The line of the method's closing `end` (or of a one-line definition), or
+# `nothing` if the source is unavailable
+function method_end_line(meth::Method)
+    body_defline = CodeTracking.definition(String, meth)
+    body_defline === nothing && return nothing
+    body, defline = body_defline
+    return defline + countlines(IOBuffer(body)) - 1
+end
+
 function locinfo(frame::Frame)
     scope = frame.framecode.scope
     if scope isa Method
@@ -18,6 +45,10 @@ function locinfo(frame::Frame)
         ret = JuliaInterpreter.whereis(frame)
         ret === nothing && return nothing
         current_file, current_line = ret
+        if is_phantom_trailing_return(frame)
+            endline = method_end_line(meth)
+            endline === nothing || (current_line = endline)
+        end
         unknown_start = true
         if JuliaInterpreter.is_generated(meth) && !frame.framecode.generator
             # We're inside the expansion of a generated function.
@@ -122,6 +153,10 @@ function frame_location(frame::Frame; current_line::Bool=false)
         if current_line
             ret = JuliaInterpreter.whereis(frame)
             file, line = ret === nothing ? (String(meth.file), JuliaInterpreter.linenumber(frame)) : ret
+            if is_phantom_trailing_return(frame)
+                endline = method_end_line(meth)
+                endline === nothing || (line = endline)
+            end
         else
             file, line = String(meth.file), meth.line
         end
