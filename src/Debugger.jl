@@ -8,6 +8,7 @@ using Base.Meta: isexpr
 using REPL
 using REPL.LineEdit
 using REPL.REPLCompletions
+using REPL.TerminalMenus
 
 using CodeTracking
 using JuliaInterpreter: JuliaInterpreter, Frame, lookup, FrameCode, BreakpointRef, debug_command, leaf, root, BreakpointState,
@@ -20,6 +21,7 @@ const SEARCH_PATH = []
 function __init__()
     append!(SEARCH_PATH,[joinpath(Sys.BINDIR,"../share/julia/base/"),
             joinpath(Sys.BINDIR,"../include/")])
+    auto_install_repl_mode()
     return nothing
 end
 
@@ -49,6 +51,12 @@ Base.@kwdef mutable struct DebuggerState
     julia_prompt::Ref{LineEdit.Prompt} = Ref{LineEdit.Prompt}()
     standard_keymap = nothing
     overall_result = nothing
+    # Whether this session switched the terminal to the alternate screen
+    # (sticky mode) and is responsible for switching back
+    owns_alt_screen::Bool = false
+    # Output that must outlive the session's alternate screen (e.g. the error
+    # that aborted the session), printed after the main screen is restored
+    exit_output::Union{Nothing, String} = nothing
 end
 
 function output_stream(state::DebuggerState)
@@ -76,6 +84,7 @@ end
 
 maybe_quote(x) = (isa(x, Expr) || isa(x, Symbol)) ? QuoteNode(x) : x
 
+include("config.jl")
 include("locationinfo.jl")
 include("repl.jl")
 include("commands.jl")
@@ -83,6 +92,8 @@ include("limitio.jl")
 include("printing.jl")
 include("watches.jl")
 include("breakpoints.jl")
+include("menus.jl")
+include("debugmode.jl")
 
 function _make_frame(mod, arg)
     args = try
@@ -148,5 +159,8 @@ macro run(ex)
         end
     end
 end
+
+# Last: the precompile workload uses the macros defined above
+include("precompile.jl")
 
 end # module

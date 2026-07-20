@@ -10,3 +10,9 @@ function step_through(frame)
 end
 
 @test Debugger.repr_limited(Text("ωωω"), 2) == Debugger.suppressed("ω")
+# bulk writes go through `unsafe_write` and keep the content up to the limit
+let r = Debugger.repr_limited("a"^1000, 10)
+    @test startswith(r, "<\"aaa")
+    @test endswith(r, "...>")
+    @test length(r) < 20
+end

@@ -141,6 +141,9 @@ end
             end
 
             function run_terminal_test(frame, commands, validation; initial_continue=false)
+                # The watch list is a global that persists between debug sessions;
+                # keep the tests self-contained
+                empty!(Debugger.WATCH_LIST)
                 run_debugger = function (emuterm)
                     repl = REPL.LineEditREPL(emuterm, true)
                     repl.interface = REPL.setup_interface(repl)

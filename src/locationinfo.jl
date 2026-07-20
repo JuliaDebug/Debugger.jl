@@ -40,72 +40,95 @@ function locinfo(frame::Frame)
         end
         return defline, current_file, current_line, body
     else
-        println("not yet implemented")
+        return nothing
     end
 end
 
 # Used for the tests
 const _print_full_path = Ref(true)
 
-function locdesc(frame::Frame; current_line=false)
-    sprint() do io
-        if frame.framecode.scope isa Method
-            locdesc(io, frame; current_line=current_line)
-        else
-            println(io, "not yet implemented")
-        end
-    end
-end
+"""
+    frame_signature(frame::Frame) -> String
 
-function locdesc(io, frame::Frame; current_line=false)
+The signature part of a frame description, e.g. `"foo(x, y; c)"`.
+"""
+function frame_signature(frame::Frame)
     framecode = frame.framecode
     meth = framecode.scope
-    @assert meth isa Method
+    meth isa Method || return string("top-level scope in ", framecode.scope)
+    return sprint() do io
+        argnames = framecode.src.slotnames[2:meth.nargs]
+        spectypes = Any[Any for i=1:length(argnames)]
 
-    argnames = framecode.src.slotnames[2:meth.nargs]
-    spectypes = Any[Any for i=1:length(argnames)]
-
-    is_kw = false
-    if frame.caller !== nothing
-        is_kw = occursin("#kw##", string(frame.caller.framecode.scope))
-    end
-    if is_kw
-        i = 0
-        for arg in argnames
-            if arg == Symbol("")
-                break
+        is_kw = false
+        if frame.caller !== nothing
+            is_kw = occursin("#kw##", string(frame.caller.framecode.scope))
+        end
+        if !is_kw
+            # A keyword-body method (`#f#n`) has a nameless slot separating the
+            # keyword arguments from the positional ones. This also catches the
+            # `Core.kwcall` lowering on newer Julia versions, where the caller
+            # test above never fires.
+            is_kw = any(==(Symbol("")), argnames) && startswith(string(meth.name), "#")
+        end
+        if is_kw
+            i = 0
+            for arg in argnames
+                if arg == Symbol("")
+                    break
+                end
+                i += 1
             end
-            i += 1
+            kw_indices = 1:i
+            positional_indices = i+2:length(argnames)
+        else
+            kw_indices = 1:0
+            positional_indices = 1:length(argnames)
         end
-        kw_indices = 1:i
-        positional_indices = i+2:length(argnames)
-    else
-        kw_indices = 1:0
-        positional_indices = 1:length(argnames)
-    end
 
-    methname = string(meth.name)
-    if is_kw
-        m = match(r"#(.*?)#(?:[0-9]*)$", methname)
-        m === nothing || (methname = m.captures[1])
-    end
-    print(io, methname,'(')
-    function print_indices(indices)
-        first = true
-        for (argname, argT) in zip(argnames[indices], spectypes[indices])
-            first || print(io, ", ")
-            first = false
-            print(io, argname)
-            argT === Any || print(io, "::", argT)
+        methname = string(meth.name)
+        if is_kw
+            m = match(r"#(.*?)#(?:[0-9]*)$", methname)
+            m === nothing || (methname = m.captures[1])
         end
+        print(io, methname, '(')
+        function print_indices(indices)
+            first = true
+            for (argname, argT) in zip(argnames[indices], spectypes[indices])
+                first || print(io, ", ")
+                first = false
+                print(io, argname)
+                argT === Any || print(io, "::", argT)
+            end
+        end
+        print_indices(positional_indices)
+        if !isempty(kw_indices)
+            print(io, "; ")
+            print_indices(kw_indices)
+        end
+        print(io, ')')
     end
-    print_indices(positional_indices)
-    if !isempty(kw_indices)
-        print(io, "; ")
-        print_indices(kw_indices)
-    end
-    line = current_line ? JuliaInterpreter.linenumber(frame) : meth.line
-    path = string(_print_full_path[] ? meth.file : basename(String(meth.file)), ":", line)
-    path = CodeTracking.maybe_fix_path(path)
-    print(io, ") at ", path)
 end
+
+"""
+    frame_location(frame::Frame; current_line=false) -> String
+
+The location part of a frame description, e.g. `"foo.jl:12"`. Shows the method
+definition line unless `current_line` is `true`.
+"""
+function frame_location(frame::Frame; current_line::Bool=false)
+    meth = frame.framecode.scope
+    if meth isa Method
+        line = current_line ? JuliaInterpreter.linenumber(frame) : meth.line
+        path = string(_print_full_path[] ? meth.file : basename(String(meth.file)), ":", line)
+        return CodeTracking.maybe_fix_path(path)
+    else
+        ret = JuliaInterpreter.whereis(frame)
+        ret === nothing && return "unknown location"
+        file, line = ret
+        return string(_print_full_path[] ? file : basename(file), ":", line)
+    end
+end
+
+locdesc(frame::Frame; current_line::Bool=false) =
+    string(frame_signature(frame), " at ", frame_location(frame; current_line=current_line))

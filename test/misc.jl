@@ -47,17 +47,33 @@ execute_command(state, Val{:so}(), "c")
 
 @inline fnothing(x) = 1
 frame = @make_frame fnothing(0)
-@test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: return 1"
+@test chomp(sprint(Debugger.print_next_expr, frame)) == "→ return 1"
 
 # Julia 1.12 can initially pause on the global lookup immediately before a call.
 frame = @make_frame (20 == 0)
 frame.pc = 1
-@test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: (===)(20, 0)"
+@test chomp(sprint(Debugger.print_next_expr, frame)) == "→ (===)(20, 0)"
 
 f_preview_add(x, y) = x + y
 frame = @make_frame f_preview_add(6, 4)
 frame.pc = 1
-@test chomp(sprint(Debugger.print_next_expr, frame)) == "About to run: (+)(6, 4)"
+@test chomp(sprint(Debugger.print_next_expr, frame)) == "→ (+)(6, 4)"
+
+# A global consumed as an *argument* of the upcoming call (e.g. pausing on the
+# `*` load in `map(*, x, y)`) should also preview the full call instead of
+# showing the bare global
+f_preview_arg(x, y) = map(*, x, y)
+let frame = JuliaInterpreter.enter_call(f_preview_arg, [1, 2], [3, 4])
+    nst = JuliaInterpreter.nstatements(frame.framecode)
+    pcstar = findfirst(i -> (e = pc_expr(frame, i); e isa GlobalRef && e.name == :*), 1:nst)
+    # globals load as separate statements only in newer lowering (Julia 1.12+)
+    if pcstar !== nothing
+        while frame.pc < pcstar
+            JuliaInterpreter.step_expr!(frame)
+        end
+        @test chomp(sprint(Debugger.print_next_expr, frame)) == "→ map(*, [1, 2], [3, 4])"
+    end
+end
 
 function f()
     x = 1 + 1
@@ -76,7 +92,8 @@ try
     Debugger.set_highlight(true)
     frame = Debugger.@make_frame f()
     st = chomp(sprint(Debugger.print_status, frame; context = :color => true))
-    x_1_plus_1_colored = "x\e[0m \e[38;2;249;248;245m=\e[0m \e[38;2;244;191;117m1\e[0m \e[38;2;249;248;245m+\e[0m \e[38;2;244;191;117m"
+    # the current line is emphasized: bold is re-applied after every color reset
+    x_1_plus_1_colored = "x\e[0m\e[1m \e[38;2;249;248;245m=\e[0m\e[1m \e[38;2;244;191;117m1\e[0m\e[1m \e[38;2;249;248;245m+\e[0m\e[1m \e[38;2;244;191;117m"
     @test occursin(x_1_plus_1_colored, st)
 
     frame = Debugger.@make_frame f_unicode()
@@ -272,6 +289,32 @@ end
     end
 end
 
+@testset "scrubbed evaluation-mode backtraces" begin
+    f_scrub(x) = x + 1
+    frame = JuliaInterpreter.enter_call(f_scrub, 1)
+    stack, errored = Debugger._eval_code(frame, "not_defined_var_xyz + 1")
+    @test errored
+    @test stack isa Base.ExceptionStack
+    @test stack[1].exception isa UndefVarError
+    # the debugger/REPL machinery below the evaluated code is scrubbed
+    frames = stack[1].backtrace
+    @test !any(fr -> fr.func in (:eval_code, :_eval_code, :RunDebugger, :run_interface), frames)
+    # successful evaluation is unaffected
+    val, errored = Debugger._eval_code(frame, "x + 1")
+    @test !errored
+    @test val == 2
+end
+
+@testset "variable alignment ignores outliers" begin
+    f_align(x, a_very_long_variable_name_that_would_push_the_column) =
+        x + a_very_long_variable_name_that_would_push_the_column
+    frame = JuliaInterpreter.enter_call(f_align, 1, 2)
+    out = sprint(io -> Debugger.print_locals(io, frame))
+    # the short variable is not padded out to the long one's width
+    @test occursin(r"^  x::Int64 = 1"m, out)
+    @test occursin("a_very_long_variable_name_that_would_push_the_column::Int64 = 2", out)
+end
+
 @testset "p command" begin
     function command_output(frame, cmd)
         buf = IOBuffer()
@@ -282,7 +325,8 @@ end
     end
     f_p_cmd(x) = (y = x + 1; y * 2)
     frame = @make_frame f_p_cmd(3)
-    @test occursin("x::$Int = 3", command_output(frame, "p x"))
+    # `p x` shows the full value without type decorations
+    @test occursin(r"^x = 3$"m, command_output(frame, "p x"))
     @test occursin("x::$Int = 3", command_output(frame, "p"))
     @test occursin("no variable `nope` in this frame", command_output(frame, "p nope"))
 end

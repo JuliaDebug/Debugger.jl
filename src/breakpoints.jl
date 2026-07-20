@@ -31,15 +31,20 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
     bp_error(err) = (@error err; false)
     undef_func(m, expr) = bp_error("Expression $(expr) in " * (m !== Main ? "$m or"  : "") * " Main did not evaluate to a function or type")
     isempty(cmd) && return bp_error()
-    frame = active_frame(state)
+    # `state.frame` is `nothing` when managing breakpoints from the top-level
+    # `debug>` mode, outside of a debug session
+    frame = state.frame === nothing ? nothing : active_frame(state)
 
     location_expr, offset = parse_as_much_as_possible(cmd, 1)
     location_expr === nothing && return bp_error("failed to parse breakpoint expression")
     cond_expr, _ = parse_as_much_as_possible(cmd, offset)
 
+    frame_module = frame === nothing ? repl_active_module() : moduleof(frame)
+
     # Check if it is just a number, in that case, breakpoint is at current file
     if location_expr isa Integer
         line = location_expr
+        frame === nothing && return bp_error("adding a breakpoint by line number requires an active debug session")
         ret = JuliaInterpreter.whereis(frame)
         if ret === nothing
             return bp_error("could not determine location info of current frame")
@@ -69,7 +74,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
 
     f = nothing
     if location_expr isa Symbol || location_expr isa Expr
-        m = moduleof(frame)
+        m = frame_module
         has_args = false
         if location_expr isa Symbol
             f = get_function_in_module_or_Main(m, location_expr)
@@ -79,7 +84,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
                 has_args = true
                 expr = expr.args[1]
             end
-            for m in (moduleof(frame), Main)
+            for m in (frame_module, Main)
                 try
                     f_eval = Base.eval(m, expr)
                     if f_eval isa Function || f_eval isa Type
@@ -102,7 +107,7 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
     if f === nothing
         location_expr isa Expr || return bp_error("failed to parse breakpoint expression")
         location_expr.head == :call || return bp_error("expected a call expression or an expression that evaluates to a function")
-        m = moduleof(frame)
+        m = frame_module
         f = get_function_in_module_or_Main(m, fsym)
         f === nothing && return undef_func(m, fsym)
     end
@@ -117,12 +122,13 @@ function add_breakpoint!(state::DebuggerState, cmd::AbstractString)
         type_args = true
     end
 
-    locals = filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
+    locals = frame === nothing ? JuliaInterpreter.Variable[] :
+        filter(v -> v.name != Symbol(""), JuliaInterpreter.locals(frame))
 
     res = nothing
     arg_types = []
     for arg in f_args
-        for m in (moduleof(frame), Main)
+        for m in (frame_module, Main)
             try 
                 res = interpret_variable(arg, locals, m)
             catch e
@@ -159,7 +165,10 @@ function show_breakpoints(io::IO, state::DebuggerState)
     bps = JuliaInterpreter.breakpoints()
     if !isempty(bps)
         for (i, bp) in enumerate(bps)
-            println(io, "$i] $bp")
+            enabled = bp.enabled[]
+            printstyled(io, bp_status_char(enabled, bp.condition !== nothing);
+                        color = enabled ? :light_red : :light_black)
+            println(io, " $i] $bp")
         end
         println(io)
     end
@@ -235,7 +244,8 @@ function remove_breakpoint!(state::DebuggerState, location::AbstractString)
         end
     elseif location_expr isa Symbol || location_expr isa Expr
         f = nothing
-        for m in (moduleof(active_frame(state)), Main)
+        frame_module = state.frame === nothing ? repl_active_module() : moduleof(active_frame(state))
+        for m in (frame_module, Main)
             try
                 f_eval = Base.eval(m, location_expr)
                 if f_eval isa Function || f_eval isa Type

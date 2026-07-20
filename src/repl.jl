@@ -5,6 +5,80 @@ function write_prompt(terminal, mode)
     LineEdit.write_prompt(terminal, mode, LineEdit.hascolor(terminal))
 end
 
+# Whether any session currently has the terminal switched to the alternate screen
+const _ALT_SCREEN = Ref(false)
+
+# Sticky (full-screen) rendering needs a real terminal that understands the
+# escape codes; everything else (tests, dumb terminals) keeps the scrolling
+# transcript
+function sticky_active(state::DebuggerState)
+    STICKY[] || return false
+    term = state.terminal
+    term isa REPL.Terminals.TTYTerminal || return false
+    return term.term_type != "dumb"
+end
+
+function enter_alt_screen(state::DebuggerState)
+    if sticky_active(state) && !_ALT_SCREEN[]
+        print(output_stream(state), "\e[?1049h\e[H")
+        _ALT_SCREEN[] = true
+        state.owns_alt_screen = true
+    end
+end
+
+function exit_alt_screen(state::DebuggerState)
+    if state.owns_alt_screen && _ALT_SCREEN[]
+        _ALT_SCREEN[] = false
+        state.owns_alt_screen = false
+        print(output_stream(state), "\e[?1049l")
+    end
+end
+
+# Print `msg` if the session is on the main screen; otherwise defer it to when
+# the alternate screen is left, so it is not restored away with it
+function print_or_defer(state::DebuggerState, msg::String)
+    if state.owns_alt_screen
+        state.exit_output = something(state.exit_output, "") * msg
+    else
+        print(output_stream(state), msg)
+    end
+end
+
+# In full-screen mode the session runs on the alternate screen, which has no
+# scrollback — output taller than the screen (`?`, a deep `bt`, ...) would
+# simply be cut off. Show such output in a scrollable pager instead.
+function print_or_page(state::DebuggerState, str::AbstractString)
+    io = output_stream(state)
+    if sticky_active(state)
+        rows = safe_displaysize(io)[1]
+        if count(==('\n'), str) + 1 > rows - 2
+            pager = TerminalMenus.Pager(str; pagesize = max(rows - 5, 4))
+            TerminalMenus.request(state.terminal, pager)
+            return nothing
+        end
+    end
+    print(io, str)
+    return nothing
+end
+
+function show_status(state::DebuggerState)
+    io = output_stream(state)
+    if sticky_active(state)
+        # Draw the status at the top of the screen. Clearing the screen and
+        # then printing makes the terminal render an empty frame in between
+        # (visible as blinking), so instead overwrite in place: move home,
+        # erase each line as it is rewritten, and erase whatever remains of
+        # the previous frame below at the end.
+        buf = IOBuffer()
+        ioc = IOContext(IOContext(buf, io), :displaysize => safe_displaysize(io))
+        print_status(ioc, state)
+        str = String(take!(buf))
+        print(io, "\e[H", replace(str, "\n" => "\e[K\n"), "\e[0J")
+    else
+        print_status(io, state)
+    end
+end
+
 function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue=false)
     if repl === nothing
         if !isdefined(Base, :active_repl)
@@ -68,10 +142,11 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             # currently, the unwinding in JuliaInterpreter unlinks the frames to
             # where the error is thrown
 
-            # Buffer error printing
+            # Buffer error printing. The error aborts the session, so it must
+            # survive leaving the alternate screen in sticky mode.
             io = IOContext(IOBuffer(), output_stream(state))
             Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
-            print(output_stream(state), String(take!(io.io)))
+            print_or_defer(state, String(take!(io.io)))
             # Comment below out if you are debugging the Debugger
             #Base.display_error(Base.pipe_writer(terminal), err, catch_backtrace())
             LineEdit.transition(s, :abort)
@@ -88,7 +163,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             return false
         end
         if do_print_status
-            print_status(output_stream(state), active_frame(state); force_lowered = state.lowered_status)
+            show_status(state)
         end
         return true
     end
@@ -118,17 +193,47 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 toggle_lowered(state)
                 println(output_stream(state))
-                print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
+                show_status(state)
                 write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "L")
+            end
+        end,
+        'T' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                i = findfirst(==(VARIABLE_TYPES[]), TYPE_DISPLAY_MODES)
+                VARIABLE_TYPES[] = TYPE_DISPLAY_MODES[mod1(something(i, 0) + 1, length(TYPE_DISPLAY_MODES))]
+                io = output_stream(state)
+                println(io)
+                show_status(state)
+                printstyled(io, "variable types: ", VARIABLE_TYPES[], "\n"; color=:light_black)
+                write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "T")
+            end
+        end,
+        'S' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                STICKY[] = !STICKY[]
+                io = output_stream(state)
+                if STICKY[]
+                    enter_alt_screen(state)
+                else
+                    exit_alt_screen(state)
+                end
+                println(io)
+                show_status(state)
+                printstyled(io, "sticky mode: ", STICKY[] ? "on" : "off", "\n"; color=:light_black)
+                write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "S")
             end
         end,
         '+' => function (s, args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 NUM_SOURCE_LINES_UP_DOWN[] += 1
                 println(output_stream(state))
-                print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
+                show_status(state)
                 write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "+")
@@ -138,7 +243,7 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 NUM_SOURCE_LINES_UP_DOWN[] = max(1, NUM_SOURCE_LINES_UP_DOWN[] - 1)
                 println(output_stream(state))
-                print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
+                show_status(state)
                 write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "-")
@@ -155,40 +260,50 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
     state.standard_keymap = keymaps
     panel.keymap_dict = LineEdit.keymap([repl_switch;state.standard_keymap])
 
-    # If a breakpoint is set on the statement we are already stopped at, `c` would
-    # step over it, so stay put and show the prompt instead (#134)
-    if initial_continue && !JuliaInterpreter.shouldbreak(state.frame, state.frame.pc)
-        try
-            execute_command(state, Val(:c), "c")
-        catch err
-            # Buffer error printing
-            io = IOContext(IOBuffer(), output_stream(state))
-            Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
-            print(output_stream(state), String(take!(io.io)))
-            return
-        end
-        state.frame === nothing && return state.overall_result
-    end
-    if pc_expr(state.frame) === nothing
-        JuliaInterpreter.maybe_next_call!(state.frame)
-    end
-    print_status(output_stream(state), active_frame(state); force_lowered=state.lowered_status)
-
-    prompts = LineEdit.TextInterface[panel]
-
-    if VERSION < v"1.13-"
-        push!(prompts, search_prompt)
-    end
-
-
-    interface = LineEdit.ModalInterface(prompts)
-    mistate = LineEdit.init_state(terminal, interface)
-    previous_mistate = repl.mistate
-    repl.mistate = mistate
+    # In sticky mode the session runs on the terminal's alternate screen (like
+    # `less` or `vim`), so quitting restores the terminal as it was
+    enter_alt_screen(state)
     try
-        REPL.run_interface(terminal, interface, mistate)
+        # If a breakpoint is set on the statement we are already stopped at, `c` would
+        # step over it, so stay put and show the prompt instead (#134)
+        if initial_continue && !JuliaInterpreter.shouldbreak(state.frame, state.frame.pc)
+            try
+                execute_command(state, Val(:c), "c")
+            catch err
+                # Buffer error printing
+                io = IOContext(IOBuffer(), output_stream(state))
+                Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
+                print_or_defer(state, String(take!(io.io)))
+                return
+            end
+            state.frame === nothing && return state.overall_result
+        end
+        if pc_expr(state.frame) === nothing
+            JuliaInterpreter.maybe_next_call!(state.frame)
+        end
+        show_status(state)
+
+        prompts = LineEdit.TextInterface[panel]
+
+        if VERSION < v"1.13-"
+            push!(prompts, search_prompt)
+        end
+
+        interface = LineEdit.ModalInterface(prompts)
+        mistate = LineEdit.init_state(terminal, interface)
+        previous_mistate = repl.mistate
+        repl.mistate = mistate
+        try
+            REPL.run_interface(terminal, interface, mistate)
+        finally
+            repl.mistate = previous_mistate
+        end
     finally
-        repl.mistate = previous_mistate
+        exit_alt_screen(state)
+        if state.exit_output !== nothing
+            print(output_stream(state), state.exit_output)
+            state.exit_output = nothing
+        end
     end
 
     return state.overall_result
@@ -244,8 +359,31 @@ function _eval_code(frame::Frame, code::AbstractString)
     try
         return JuliaInterpreter.eval_code(frame, code), false
     catch
-        return Base.catch_stack(), true
+        return scrub_eval_backtrace(Base.current_exceptions()), true
     end
+end
+
+# Remove the debugger machinery (`eval_code` and below: Debugger, LineEdit,
+# `RunDebugger`, ...) from the backtraces of errors thrown by code evaluated
+# in evaluation mode, like the REPL does for its own errors
+function scrub_eval_backtrace(stack)
+    return Base.ExceptionStack(Any[
+        (exception = entry.exception, backtrace = scrub_eval_backtrace(entry.backtrace))
+        for entry in stack])
+end
+
+function scrub_eval_backtrace(bt::Union{Vector, Nothing})
+    bt === nothing && return bt
+    frames = bt isa Vector{Base.StackTraces.StackFrame} ? copy(bt) : Base.stacktrace(bt)
+    i = findfirst(fr -> !fr.from_c && fr.func === :eval_code, frames)
+    if i !== nothing
+        # the `eval` frame `eval_code` calls into is machinery as well
+        if i > 1 && frames[i-1].func === :eval
+            i -= 1
+        end
+        deleteat!(frames, i:length(frames))
+    end
+    return frames
 end
 
 # Completions

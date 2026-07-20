@@ -68,16 +68,25 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
 end
 
 function execute_command(state::DebuggerState, ::Val{:bt}, cmd)
+    args = split(cmd, r" +")
+    length(args) > 2 && return invalid_command(state, cmd)
+    verbose = length(args) == 2
+    verbose && args[2] != "v" && return invalid_command(state, cmd)
     io = output_stream(state)
-    iob = IOContext(IOBuffer(), io)
+    buf, iob = status_buffer(io)
     num = 0
     frame = state.frame
     while frame !== nothing
         num += 1
-        print_frame(iob, num, frame; current_line=true)
+        if verbose
+            print_frame(iob, num, frame; current_line=true)
+        else
+            printstyled(iob, num == state.level ? ">" : " "; color=:yellow)
+            print_frame_header(iob, frame; level=num, current_line=true)
+        end
         frame = caller(frame)
     end
-    print(io, String(take!(iob.io)))
+    print_or_page(state, String(take!(buf)))
     return false
 end
 
@@ -96,6 +105,12 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
     subcmds = split(cmd, r" +")
     if length(subcmds) == 1
         if cmd == "f"
+            if menus_available(state)
+                sel = frame_menu(state)
+                sel === nothing && return false # cancelled
+                state.level = sel
+                return true
+            end
             new_level = 1
         else
             new_level = state.level
@@ -117,7 +132,9 @@ function execute_command(state::DebuggerState, ::Union{Val{:f}, Val{:fr}}, cmd)
         old_level = state.level
         try
             state.level = new_level
-            print_frame(output_stream(state), new_level, active_frame(state))
+            buf, outbuf = status_buffer(output_stream(state))
+            print_frame(outbuf, new_level, active_frame(state))
+            print_or_page(state, String(take!(buf)))
         finally
             state.level = old_level
         end
@@ -144,24 +161,26 @@ end
 function execute_command(state::DebuggerState, ::Val{:p}, cmd::AbstractString)
     cmds = split(cmd, r" +")
     io = output_stream(state)
+    buf, outbuf = status_buffer(io)
     frame = active_frame(state)
     if length(cmds) == 1
-        print_locals(io, frame)
+        print_locals(outbuf, frame)
     else
         vars = JuliaInterpreter.locals(frame)
         for requested_var in cmds[2:end]
             found = false
             for var in vars
                 if string(var.name) == requested_var
-                    print_var(io, var)
+                    print_var_rich(outbuf, var; mod=moduleof(frame))
                     found = true
                 end
             end
             if !found
-                printstyled(io, "no variable `$requested_var` in this frame\n"; color=Base.error_color())
+                printstyled(outbuf, "no variable `$requested_var` in this frame\n"; color=Base.error_color())
             end
         end
     end
+    print_or_page(state, String(take!(buf)))
     return false
 end
 
@@ -170,6 +189,12 @@ function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
     cmds = split(cmd, r" +")
     success_and_show = false
     if length(cmds) == 1
+        if menus_available(state) && !isempty(state.watch_list)
+            # The menu's last frame stays on screen, so it is the record;
+            # printing the list again would show everything twice
+            watch_menu(state)
+            return false
+        end
         success_and_show = true
     elseif length(cmds) >= 2
         if cmds[2] == "rm"
@@ -192,8 +217,8 @@ function execute_command(state::DebuggerState, ::Val{:w}, cmd::AbstractString)
         io = output_stream(state)
         outbuf = IOContext(IOBuffer(), io)
         show_watch_list(outbuf, state)
-        print(io, String(take!(outbuf.io)))
-        println(io)
+        println(outbuf)
+        print_or_page(state, String(take!(outbuf.io)))
         return false
     end
     # Error
@@ -207,11 +232,16 @@ function execute_command(state::DebuggerState, v::Union{Val{:bp}}, cmd::Abstract
             io = output_stream(state)
             outbuf = IOContext(IOBuffer(), io)
             show_breakpoints(outbuf, state)
-            print(io, String(take!(outbuf.io)))
+            print_or_page(state, String(take!(outbuf.io)))
         end
     end
     if length(cmds) == 1
-        repl_show_breakpoints()
+        if menus_available(state)
+            # the menu's last frame stays on screen; don't print the list again
+            breakpoint_menu(state)
+        else
+            repl_show_breakpoints()
+        end
         return false
     else
         if cmds[2] == "add"
@@ -262,8 +292,7 @@ function execute_command(state::DebuggerState, _, cmd)
 end
 
 function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd::AbstractString)
-    display(
-            @md_str """
+    help = @md_str """
             # Debugger commands
             Below, square brackets denote optional arguments.
 
@@ -272,6 +301,8 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `q`: quit the debugger, returning `nothing`\\
             - `C`: toggle compiled mode\\
             - `L`: toggle showing lowered code instead of source code\\
+            - `T`: cycle how variable types are shown (compact, none, types only, full)\\
+            - `S`: toggle "sticky" (full-screen) mode, on by default: the debugger runs on the terminal's alternate screen and redraws the status in place\\
             - `+`/`-`: increase / decrease the number of lines of source code shown\\
 
 
@@ -283,7 +314,7 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `sl`: step into the last call on the current line (e.g. steps into `f` if the line is `f(g(h(x)))`).\\
             - `sr`: step until next `return`.\\
             - `c`: continue execution until a breakpoint is hit\\
-            - `f [i::Int]`: go to the `i`-th function in the call stack (stepping is only possible in the function at the top of the call stack)\\
+            - `f [i::Int]`: go to the `i`-th function in the call stack; without an argument, pick the frame interactively (stepping is only possible in the function at the top of the call stack)\\
             - `up/down [i::Int]` go up or down one or `i` functions in the call stack\\
 
 
@@ -296,28 +327,28 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
 
             Querying:\\
             - `st`: show the "status" (current function, source code and current expression to run)\\
-            - `bt`: show a backtrace\\
+            - `bt [v]`: show a compact backtrace (`v` for a verbose one including all variables)\\
             - `fr [i::Int]`: show all variables in the current or `i`th frame\\
             - `p`\\
                 - `p`: print all variables in the current frame (same as `fr`)\\
-                - `p x [y ...]`: print the value of the variable(s) `x` (and `y` ...)\\
+                - `p x [y ...]`: print the full value of the variable(s) `x` (and `y` ...)\\
 
 
             Evaluation:\\
             - `w`\\
                 - `w add expr`: add an expression to the watch list\\
-                - `w`: show all watch expressions evaluated in the current function's context\\
+                - `w`: interactively manage the watch list (delete entries); watch expressions are shown in the status\\
                 - `w rm [i::Int]`: remove all or the `i`-th watch expression\\
 
 
             Breakpoints:\\
+            - `bp`: interactively manage breakpoints (toggle, add, delete, open in editor)\\
             - `bp add`\\
                 - `bp add "file.jl":line [cond]`: add a breakpoint at file `file.jl` on line `line` with condition `cond`\\
                 - `bp add func [:line] [cond]`: add a breakpoint to function `func` at line `line` (defaulting to first line) with condition `cond`\\
                 - `bp add func(::Float64, Int)[:line] [cond]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line) with condition `cond`\\
                 - `bp add func(x, y)[:line] [cond]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc with condition `cond`\\
                 - `bp add line [cond]`: add a breakpoint to `line` of the file of the current function with condition `cond`\\
-            - `bp` show all breakpoints\\
             - `bp rm [i::Int]`: remove all or the `i`-th breakpoint\\
             - `bp rm "file.jl":line`: remove the breakpoint at the given file and line\\
             - `bp rm func [:line]`: remove breakpoints for the function `func` (at line `line`)\\
@@ -332,7 +363,17 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             An empty command will execute the previous command.
 
             Hit `` ` `` to enter "evaluation mode," where any expression you type is executed in the debug context.
-            Hit backspace as the first character of the line (or `^C` anywhere) to return to "debug mode." """)
+            Hit backspace as the first character of the line (or `^C` anywhere) to return to "debug mode." """
+    if sticky_active(state)
+        # the alternate screen has no scrollback; render the help and page it
+        io = output_stream(state)
+        rows, cols = safe_displaysize(io)
+        str = sprint(show, MIME("text/plain"), help;
+                     context = IOContext(io, :displaysize => (rows, cols - 3)))
+        print_or_page(state, str * "\n")
+    else
+        display(help)
+    end
     return false
 end
 

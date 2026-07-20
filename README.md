@@ -37,6 +37,25 @@ This interface allows for manipulating program execution, such as stepping in an
 out of functions, line stepping, showing local variables, setting breakpoints and evaluating code in
 the context of functions.
 
+## The `debug>` REPL mode
+
+Loading Debugger in an interactive session installs a `debug>` REPL mode, entered
+by pressing `)` at the beginning of an empty `julia>` prompt (and left with backspace,
+like the Pkg and shell modes). In this mode:
+
+- any expression you enter is debugged as if run through `@enter`,
+- breakpoints can be managed with the usual `bp` commands (see below) — also
+  *outside* of a debug session; breakpoints persist between sessions.
+
+```
+julia> using Debugger
+
+debug> bp add sin
+[ Info: added breakpoint for function sin
+
+debug> cos(1.0)  # equivalent to @enter cos(1.0)
+```
+
 ## Debugger commands
 
 Below, square brackets denote optional arguments.
@@ -48,6 +67,8 @@ Misc:
 - `q`: quit the debugger, returning `nothing`
 - `C`: toggle compiled mode
 - `L`: toggle showing lowered code instead of source code
+- `T`: cycle how variable types are shown: compact (long type parameters elided), no types, types only, full types
+- `S`: toggle "sticky" (full-screen) mode, on by default: the debugger runs on the terminal's alternate screen (restored when quitting, like `less` or `vim`) and redraws the status in place instead of scrolling; command output taller than the screen (e.g. the `?` help) is shown in a scrollable pager
 - `+`/`-`: increase / decrease the number of lines of source code shown
 
 Stepping (basic):
@@ -58,7 +79,7 @@ Stepping (basic):
 - `sl`: step into the last call on the current line (e.g. steps into `f` if the line is `f(g(h(x)))`).
 - `sr`: step until next `return`.
 - `c`: continue execution until a breakpoint is hit
-- `f [i::Int]`: go to the `i`-th function in the call stack (stepping is only possible in the function at the top of the call stack)
+- `f [i::Int]`: go to the `i`-th function in the call stack; without an argument, pick the frame interactively (stepping is only possible in the function at the top of the call stack)
 - `up/down [i::Int]` go up or down one or `i` functions in the call stack
 
 Stepping (advanced):
@@ -69,27 +90,30 @@ Stepping (advanced):
 
 Querying:
 - `st`: show the "status" (current function, source code and current expression to run)
-- `bt`: show a backtrace
+- `bt [v]`: show a compact backtrace; `bt v` also shows the variables of every frame
 - `fr [i::Int]`: show all variables in the current or `i`th frame
 - `p`
     - `p`: print all variables in the current frame (same as `fr`)
-    - `p x [y ...]`: print the value of the variable(s) `x` (and `y` ...)
+    - `p x [y ...]`: print the full value of the variable(s) `x` (and `y` ...), like the REPL would show it
 
 Evaluation:
 - `w`
-    - `w add expr`: add an expression to the watch list
-    - `w`: show all watch expressions evaluated in the current function's context
+    - `w add expr`: add an expression to the watch list; watch expressions are evaluated and shown as part of the status
+    - `w`: interactively manage the watch list (delete entries with `d`)
     - `w rm [i::Int]`: remove all or the `i`-th watch expression
 
 Breakpoints:
 - `bp`
+    - `bp`: interactively manage breakpoints — move with the arrow keys, toggle with space/enter,
+      add with `a` (prompts for a location using the `bp add` syntax below), delete with `d`,
+      open the breakpoint location in an editor with `o`, quit with `q`.
+      Break-on-error and break-on-throw can be toggled from the same menu.
     - `bp add`
         - `bp add "file.jl":line [cond]`: add a breakpoint at file `file.jl` on line `line` with condition `cond`
         - `bp add func [:line] [cond]`: add a breakpoint to function `func` at line `line` (defaulting to first line) with condition `cond`
         - `bp add func(::Float64, Int)[:line] [cond]`: add a breakpoint to methods matching the signature at line `line` (defaulting to first line) with condition `cond`
         - `bp add func(x, y)[:line] [cond]`: add a breakpoint to the method matching the types of the local variable `x`, `y` etc with condition `cond`
         - `bp add line [cond]`: add a breakpoint to `line` of the file of the current function with condition `cond`
-    - `bp` show all breakpoints
     - `bp rm [i::Int]`: remove all or the `i`-th breakpoint
     - `bp rm "file.jl":line`: remove the breakpoint at the given file and line
     - `bp rm func [:line]`: remove breakpoints for the function `func` (at line `line`)
@@ -126,16 +150,15 @@ julia> breakpoint(abs);
 
 julia> @run sin(2.0)
 Hit breakpoint:
-In abs(x) at float.jl:522
+[1/2] abs(x) at float.jl:522
 >522  abs(x::Float64) = abs_float(x)
 
-About to run: (abs_float)(2.0)
+  x::Float64 = 2.0  (arg)
+
+→ (abs_float)(2.0)
 1|debug> bt
-[1] abs(x) at float.jl:522
-  | x::Float64 = 2.0
-[2] sin(x) at special/trig.jl:30
-  | x::Float64 = 2.0
-  | T::DataType = Float64
+>[1] abs(x) at float.jl:522
+ [2] sin(x) at special/trig.jl:30
 ```
 
 #### Breakpoint on error
@@ -152,25 +175,18 @@ julia> f() = "αβ"[2];
 julia> @run f()
 Breaking for error:
 ERROR: StringIndexError("αβ", 2)
-In string_index_err(s, i) at strings/string.jl:12
+[1/4] string_index_err(s, i) at strings/string.jl:12
 >12  @noinline string_index_err(s::AbstractString, i::Integer) =
 
-About to run: (throw)(StringIndexError("αβ", 2))
+  s::String = "αβ"  (arg)
+  i::Int64  = 2     (arg)
+
+→ (throw)(StringIndexError("αβ", 2))
 1|debug> bt
-[1] string_index_err(s, i) at strings/string.jl:12
-  | s::String = "αβ"
-  | i::Int64 = 2
-[2] getindex_continued(s, i, u) at strings/string.jl:218
-  | s::String = "αβ"
-  | i::Int64 = 2
-  | u::UInt32 = 0xb1000000
-  | val::Bool = false
-[3] getindex(s, i) at strings/string.jl:211
-  | s::String = "αβ"
-  | i::Int64 = 2
-  | b::UInt8 = 0xb1
-  | u::UInt32 = 0xb1000000
-[4] f() at REPL[5]:1
+>[1] string_index_err(s, i) at strings/string.jl:12
+ [2] getindex_continued(s, i, u) at strings/string.jl:218
+ [3] getindex(s, i) at strings/string.jl:211
+ [4] f() at REPL[5]:1
 
 julia> JuliaInterpreter.break_off(:error)
 
@@ -200,7 +216,7 @@ All good!
 
 julia> @run f(-2)
 Hit breakpoint:
-In f(x) at REPL[6]:2
+[1/1] f(x) at REPL[6]:2
  1  function f(x)
  2      if x < 0
 >3          @bp
@@ -209,10 +225,11 @@ In f(x) at REPL[6]:2
  6      end
  7  end
 
-About to run: return
+  x::Int64 = -2  (arg)
+
+→ return
 1|debug> bt
-[1] f(x) at REPL[6]:3
-  | x::Int64 = -2
+>[1] f(x) at REPL[6]:3
 ```
 
 ### Compiled mode
@@ -240,11 +257,22 @@ union!(JuliaInterpreter.compiled_modules, SomePackage)
 ```
 
 
-### Syntax highlighting
+### Configuration
 
-The source code preview is syntax highlighted and this highlighting has some options.
-The theme can be set by calling `Debugger.set_theme(theme)` where `theme` is a [Highlights.jl theme](https://highlights.juliadocs.org/dev/themes/).
-It can be completely turned off by calling `Debugger.set_highlight(false)`.
+UI options are set with `Debugger.config(; kwargs...)`; calling it without arguments
+shows the current settings. The available options are:
+
+- `theme::String`: syntax highlighting theme, a [Highlights.jl theme](https://highlights.juliadocs.org/dev/themes/) name (default: `"Monokai Dark"`)
+- `highlight::Bool`: syntax highlight source code and variables (default: `true`)
+- `context_lines::Int`: number of source lines shown above and below the current line (default: `4`)
+- `vartypes::Symbol`: how variable types are displayed: `:compact` (long type parameters elided, e.g. `Dict{…}`),
+  `:none`, `:types` or `:full` (default: `:compact`); can also be cycled with the `T` key in the debugger
+- `max_vars::Int`: maximum number of variables shown in the automatic status display (default: `15`)
+- `sticky::Bool`: "full screen" mode — the debugger runs on the terminal's alternate screen and redraws the status in place instead of scrolling (default: `true`); can also be toggled with the `S` key
+- `charset::Symbol`: `:unicode` or `:ascii` (default: `:unicode`)
+- `menus::Bool`: use the interactive menus for `bp`, `f` and `w` (default: `true`)
+
+The older entry points `Debugger.set_theme(theme)` and `Debugger.set_highlight(false)` still work.
 
 [travis-img]: https://travis-ci.org/JuliaDebug/Debugger.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/JuliaDebug/Debugger.jl
