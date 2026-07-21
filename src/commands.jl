@@ -43,6 +43,7 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
     assert_allow_step(state) || return false
     cmd == "so" && (cmd = "finish")
     cmd == "u" && (cmd = "until")
+    maybe_warn_native_suppressed(state)
     ret = debug_command(state.interp, state.frame, Symbol(cmd); kwargs...)
     if ret === nothing
         state.overall_result = get_return(root(state.frame))
@@ -50,6 +51,10 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
         return false
     else
         state.frame, pc = ret
+        # an explicit step-in may land in a module outside the focus set
+        if v isa Union{Val{:s},Val{:si},Val{:sg},Val{:sl}}
+            maybe_grow_focus!(state)
+        end
         if pc isa BreakpointRef
             if pc.stmtidx != 0 # This is the dummy breakpoint to stop just after entering a call
                 if state.terminal !== nothing # fix this, it happens when a test hits this and hasn't set a terminal
@@ -286,6 +291,98 @@ function execute_command(state::DebuggerState, v::Union{Val{:bp}}, cmd::Abstract
 end
 
 
+function execute_command(state::DebuggerState, ::Val{:mode}, cmd::AbstractString)
+    cmds = split(cmd, r" +")
+    io = output_stream(state)
+    if length(cmds) == 1
+        println(io, "Stepping mode: ", mode_description(state.interp))
+        if state.interp isa MixedInterpreter
+            reason = native_suppressed_reason()
+            if reason === nothing
+                println(io, "Focus (interpreted) modules: ",
+                        join(nameof.(interpreted_modules()), ", "), " (manage with `focus`)")
+            else
+                printstyled(io, "Fast path suspended, running fully interpreted ($reason)\n"; color=:yellow)
+            end
+        end
+        return false
+    elseif length(cmds) == 2
+        mode = Symbol(cmds[2])
+        if mode in (:interpreted, :mixed, :compiled)
+            set_session_mode!(state, mode)
+            println(io, "Stepping mode: ", mode_description(state.interp))
+            return false
+        end
+    end
+    return invalid_command(state, cmd)
+end
+
+function _resolve_module(state, name::AbstractString)
+    ex = try
+        Meta.parse(name)
+    catch
+        return nothing
+    end
+    for m in (state.frame === nothing ? (Main,) : (moduleof(active_frame(state)), Main))
+        val = try
+            Core.eval(m, ex)
+        catch
+            continue
+        end
+        val isa Module && return val
+    end
+    # fall back to loaded packages without a binding in the above modules
+    matches = Set{Module}()
+    for (_, m) in Base.loaded_modules
+        string(nameof(m)) == name && push!(matches, m)
+    end
+    length(matches) == 1 && return first(matches)
+    if length(matches) > 1
+        printstyled(stderr, "Multiple loaded modules named $name\n"; color=Base.error_color())
+    end
+    return nothing
+end
+
+function execute_command(state::DebuggerState, ::Val{:focus}, cmd::AbstractString)
+    cmds = split(cmd, r" +")
+    io = output_stream(state)
+    function print_focus()
+        println(io, "Focus set (modules that are interpreted; everything else runs natively when possible):")
+        for (i, m) in enumerate(interpreted_modules())
+            println(io, " [$i] $m")
+        end
+    end
+    if length(cmds) == 1
+        if menus_available(state)
+            focus_menu(state)
+        else
+            print_focus()
+        end
+        return false
+    elseif length(cmds) == 3 && cmds[2] in ("add", "rm")
+        local mod
+        i = cmds[2] == "rm" ? tryparse(Int, cmds[3]) : nothing
+        if i !== nothing
+            mods = interpreted_modules()
+            if !(1 <= i <= length(mods))
+                printstyled(stderr, "No module numbered $i in the focus set\n"; color=Base.error_color())
+                return false
+            end
+            mod = mods[i]
+        else
+            mod = _resolve_module(state, cmds[3])
+            if mod === nothing
+                printstyled(stderr, "Could not resolve $(repr(cmds[3])) as a loaded module\n"; color=Base.error_color())
+                return false
+            end
+        end
+        cmds[2] == "add" ? focus_module!(mod) : unfocus_module!(mod)
+        print_focus()
+        return false
+    end
+    return invalid_command(state, cmd)
+end
+
 function execute_command(state::DebuggerState, _, cmd)
     display(Markdown.parse("""Unknown command `$cmd`. Run `?` to obtain help."""))
     return false
@@ -300,6 +397,10 @@ function execute_command(state::DebuggerState, ::Union{Val{:help}, Val{:?}}, cmd
             - `o`: open the current line in an editor\\
             - `q`: quit the debugger, returning `nothing`\\
             - `C`: toggle compiled mode\\
+            - `M`: toggle mixed mode (code outside the focus modules runs natively unless it can reach them)\\
+            - `mode [interpreted|mixed|compiled]`: show or set the stepping mode\\
+            - `focus`: show the focus set (the modules mixed mode interprets) as an interactive menu\\
+            - `focus add Mod`/`focus rm Mod|i`: add/remove a module (by name or number) from the focus set\\
             - `L`: toggle showing lowered code instead of source code\\
             - `T`: cycle how variable types are shown (compact, none, types only, full)\\
             - `S`: toggle "sticky" (full-screen) mode, on by default: the debugger runs on the terminal's alternate screen and redraws the status in place\\

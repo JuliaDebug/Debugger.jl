@@ -285,6 +285,53 @@ end
     end
 end
 
+@testset "focus menu" begin
+    Debugger.FOCUS[] = nothing
+    Debugger.invalidate_policy_cache!()
+    try
+        # toggle Main off with space (row order depends on the environment, so
+        # navigate to it), back on with enter; the row stays for re-toggling
+        rows = Debugger.focus_menu_rows()
+        idx = findfirst(==(Main), rows)
+        state = menu_state(nothing, fill(:down, idx - 1)..., ' ', 'q')
+        quietly(() -> Debugger.focus_menu(state))
+        @test Main ∉ Debugger.interpreted_modules()
+        rows = Debugger.focus_menu_rows()
+        idx = findfirst(==(Main), rows)
+        @test idx !== nothing # still shown, just toggled off
+        state = menu_state(nothing, fill(:down, idx - 1)..., :enter, 'q')
+        quietly(() -> Debugger.focus_menu(state))
+        @test Main ∈ Debugger.interpreted_modules()
+
+        # add a module from the menu: `a` prompts for a name and reopens
+        state = menu_state(nothing, 'a', "JuliaInterpreter\n", 'q')
+        quietly(() -> Debugger.focus_menu(state))
+        @test JuliaInterpreter ∈ Debugger.interpreted_modules()
+
+        # row rendering
+        buf = IOBuffer()
+        Debugger.focus_menu_writerow(IOContext(buf, :displaysize => (24, 80)), Main, 1)
+        @test occursin("Main", String(take!(buf)))
+    finally
+        Debugger.FOCUS[] = nothing
+        empty!(Debugger.SESSION_UNFOCUSED)
+        Debugger.invalidate_policy_cache!()
+    end
+end
+
+@testset "focus command falls back to a text list without menus" begin
+    Debugger.config(menus = false)
+    try
+        state = menu_state(nothing)
+        execute_command(state, Val{:focus}(), "focus")
+        out = String(take!(state.terminal.out_stream))
+        @test occursin("Focus set", out)
+        @test occursin("Main", out)
+    finally
+        Debugger.config(menus = true)
+    end
+end
+
 @testset "frameless bp commands (debug> mode)" begin
     JuliaInterpreter.remove()
     try

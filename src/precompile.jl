@@ -49,4 +49,8 @@ end
     empty!(WATCH_LIST)
     JuliaInterpreter.remove()
     _ALT_SCREEN[] = false
+    # The session ran under the mixed-mode default and populated the focus set
+    # and policy caches with references to the precompile process' modules;
+    # reset so nothing stale is serialized (reclassified lazily at runtime).
+    reset_mixed_mode_state!()
 end

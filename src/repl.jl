@@ -1,6 +1,11 @@
 
 promptname(level, name) = "$level|$name> "
 
+# Mixed mode is the default, so it keeps the plain debug prompt (in the
+# traditional orange); the other modes are called out by name and color.
+mode_prompt_name(state) = state.interp isa NonRecursiveInterpreter ? "compiled" :
+                          state.interp isa RecursiveInterpreter    ? "interpreted" : "debug"
+
 function write_prompt(terminal, mode)
     LineEdit.write_prompt(terminal, mode, LineEdit.hascolor(terminal))
 end
@@ -94,12 +99,16 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         terminal = Base.active_repl.t
     end
     state = DebuggerState(; frame=frame, repl=repl, terminal=terminal)
+    seed_focus!(frame)
 
     # Setup debug panel
     normal_prefix = Sys.iswindows() ? "\e[33m" : "\e[38;5;166m"
     compiled_prefix = "\e[96m"
-    panel = LineEdit.Prompt(promptname(state.level, "debug");
-        prompt_prefix = () -> state.interp == NonRecursiveInterpreter() ? compiled_prefix : normal_prefix,
+    # bright magenta; green would be confusable with the julia> prompt
+    interpreted_prefix = "\e[95m"
+    panel = LineEdit.Prompt(promptname(state.level, mode_prompt_name(state));
+        prompt_prefix = () -> state.interp isa NonRecursiveInterpreter ? compiled_prefix :
+                              state.interp isa RecursiveInterpreter    ? interpreted_prefix : normal_prefix,
         prompt_suffix = Base.text_colors[:normal],
         on_enter = s->true)
 
@@ -115,7 +124,6 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
 
     panel.on_done = (s,buf,ok)->begin
         line = String(take!(buf))
-        old_level = state.level
         if !ok || strip(line) == "q"
             LineEdit.transition(s, :abort)
             LineEdit.reset_state(s)
@@ -165,9 +173,8 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             LineEdit.reset_state(s)
             return true
         end
-        if old_level != state.level
-            panel.prompt = promptname(state.level, "debug")
-        end
+        # both the level and the stepping mode are part of the prompt
+        panel.prompt = promptname(state.level, mode_prompt_name(state))
         LineEdit.reset_state(s)
         if state.frame === nothing
             LineEdit.transition(s, :abort)
@@ -195,10 +202,27 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         'C' => function (s, args...)
             if isempty(s) || position(LineEdit.buffer(s)) == 0
                 toggle_mode(state)
-                write(state.terminal, '\r')
+                panel.prompt = promptname(state.level, mode_prompt_name(state))
+                io = output_stream(state)
+                println(io)
+                show_status(state)
+                printstyled(io, "Stepping mode: ", mode_description(state.interp), "\n"; color=:light_black)
                 write_prompt(state.terminal, panel)
             else
                 LineEdit.edit_insert(s, "C")
+            end
+        end,
+        'M' => function (s, args...)
+            if isempty(s) || position(LineEdit.buffer(s)) == 0
+                toggle_mixed(state)
+                panel.prompt = promptname(state.level, mode_prompt_name(state))
+                io = output_stream(state)
+                println(io)
+                show_status(state)
+                printstyled(io, "Stepping mode: ", mode_description(state.interp), "\n"; color=:light_black)
+                write_prompt(state.terminal, panel)
+            else
+                LineEdit.edit_insert(s, "M")
             end
         end,
         'L' => function (s, args...)
@@ -294,6 +318,9 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
             JuliaInterpreter.maybe_next_call!(state.frame)
         end
         show_status(state)
+        # transient notices must come after the status draw, which erases
+        # everything below itself in sticky mode
+        maybe_print_entry_hint(state)
 
         prompts = LineEdit.TextInterface[panel]
 

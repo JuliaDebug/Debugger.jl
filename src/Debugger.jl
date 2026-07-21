@@ -21,6 +21,7 @@ const SEARCH_PATH = []
 function __init__()
     append!(SEARCH_PATH,[joinpath(Sys.BINDIR,"../share/julia/base/"),
             joinpath(Sys.BINDIR,"../include/")])
+    init_mixed_mode()
     auto_install_repl_mode()
     return nothing
 end
@@ -38,13 +39,17 @@ using .LineNumbers: SourceFile, compute_line
 # watch expressions between invocations of the debugger interface
 const WATCH_LIST = []
 
+include("mixed_mode.jl")
+
 Base.@kwdef mutable struct DebuggerState
     frame::Union{Nothing, Frame}
     level::Int = 1
     broke_on_error::Bool = false
     watch_list::Vector = WATCH_LIST
     lowered_status::Bool = false
-    interp::Interpreter = RecursiveInterpreter()
+    interp::Interpreter = interp_for_mode(DEFAULT_MODE[])
+    # the mode to come back to when the `C` (compiled mode) toggle is switched off
+    noncompiled_interp::Interpreter = RecursiveInterpreter()
     repl = nothing
     terminal = nothing
     main_mode = nothing
@@ -65,9 +70,43 @@ function output_stream(state::DebuggerState)
     return IOContext(io, :color => have_color)
 end
 
+# `C` key: binary toggle between compiled mode and the previous non-compiled mode
 function toggle_mode(state)
-    state.interp = (state.interp === RecursiveInterpreter() ? (state.interp = NonRecursiveInterpreter()) : (state.interp = RecursiveInterpreter()))
+    if state.interp isa NonRecursiveInterpreter
+        state.interp = state.noncompiled_interp
+    else
+        state.noncompiled_interp = state.interp
+        state.interp = NonRecursiveInterpreter()
+    end
 end
+
+# `M` key: binary toggle between mixed and interpreted mode
+function toggle_mixed(state)
+    if state.interp isa MixedInterpreter
+        state.interp = RecursiveInterpreter()
+    else
+        state.interp = MixedInterpreter()
+    end
+    state.noncompiled_interp = state.interp
+end
+
+function set_session_mode!(state, mode::Symbol)
+    new_interp = interp_for_mode(mode)
+    if new_interp isa NonRecursiveInterpreter
+        # remember the current mode so the `C` toggle returns to it
+        if !(state.interp isa NonRecursiveInterpreter)
+            state.noncompiled_interp = state.interp
+        end
+    else
+        state.noncompiled_interp = new_interp
+    end
+    state.interp = new_interp
+    return state.interp
+end
+
+mode_description(::RecursiveInterpreter) = "interpreted (all code is interpreted, breakpoints always work)"
+mode_description(::MixedInterpreter) = "mixed (code outside the focus modules runs natively unless it can reach them)"
+mode_description(::NonRecursiveInterpreter) = "compiled (stepped-over code runs natively, breakpoints in it are missed)"
 
 toggle_lowered(state) = state.lowered_status = !state.lowered_status
 
