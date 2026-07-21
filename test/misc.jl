@@ -87,6 +87,9 @@ state = dummy_state(frame)
 execute_command(state, Val{:n}(), "n")
 defline, deffile, current_line, body = Debugger.locinfo(state.frame)
 @test occursin("handle_message(logger, level", body)
+current_file, current_line = JuliaInterpreter.whereis(state.frame)
+@test Debugger.frame_location(state.frame; current_line=true) ==
+      CodeTracking.maybe_fix_path(string(current_file, ":", current_line))
 
 f_unicode() = √
 
@@ -108,6 +111,18 @@ end
 frame = @make_frame Test.TestLogger()
 desc = Debugger.locdesc(frame)
 @test occursin(Sys.STDLIB, desc)
+
+f_slot_display(x) = (y = x + 1; y)
+let frame = JuliaInterpreter.enter_call(f_slot_display, 1)
+    pc = findfirst(i -> pc_expr(frame, i) isa JuliaInterpreter.SlotNumber,
+                   1:JuliaInterpreter.nstatements(frame.framecode))
+    if pc !== nothing
+        frame.pc = pc
+        slot = pc_expr(frame)::JuliaInterpreter.SlotNumber
+        name = frame.framecode.src.slotnames[slot.id]
+        @test chomp(sprint(Debugger.print_next_expr, frame)) == "→ $name"
+    end
+end
 
 import InteractiveUtils
 @testset "`o` command" begin
@@ -398,4 +413,68 @@ end
     @test length(breakpoints()) == 1
 
     JuliaInterpreter.remove()
+end
+
+# Issue #342: the implicit trailing `return nothing` of a function ending in a
+# conditional is attributed to the last line of the (possibly never executed)
+# branch; the debugger should point at the method's closing `end` instead
+struct Circle342 end
+function f_dead_branch(circle::Circle342)
+    if typeof(circle) == "Circle"
+        println("Thou shall not pass!")
+        println("Hello world!")
+    end
+end
+
+@testset "phantom trailing return highlights the end line" begin
+    frame = JuliaInterpreter.enter_call(f_dead_branch, Circle342())
+    state = dummy_state(frame)
+    execute_command(state, Val{:n}(), "n")
+    @test state.frame !== nothing
+    endline = first(methods(f_dead_branch)).line + 5
+    _, _, current_line, _ = Debugger.locinfo(state.frame)
+    @test current_line == endline
+    @test endswith(Debugger.frame_location(state.frame; current_line=true), ":$endline")
+end
+
+# A terminal LineEdit can run on without a real TTY (like the REPL stdlib's
+# own FakeTerminals test helper): raw mode is a recorded no-op
+mutable struct FakeTerminal <: REPL.Terminals.UnixTerminal
+    in_stream::Base.BufferStream
+    out_stream::IOBuffer
+    err_stream::IOBuffer
+    hascolor::Bool
+    raw::Bool
+    FakeTerminal() = new(Base.BufferStream(), IOBuffer(), IOBuffer(), false, false)
+end
+REPL.Terminals.hascolor(t::FakeTerminal) = t.hascolor
+REPL.Terminals.raw!(t::FakeTerminal, raw::Bool) = t.raw = raw
+Base.size(t::FakeTerminal) = (24, 80)
+
+function run_scripted_session(frame, input::String)
+    term = FakeTerminal()
+    write(term.in_stream, input)
+    repl = REPL.LineEditREPL(term, true)
+    repl.interface = REPL.setup_interface(repl)
+    RunDebugger(frame, repl, term)
+    return String(take!(term.out_stream))
+end
+
+function f_session_thrower(x)
+    y = x + 1
+    z = sqrt(-1.0)
+    return y + z
+end
+
+# An error escaping a command must not abort the session (fixes the worst part
+# of stepping onto a throwing line): the error is shown with a backtrace down
+# to the throw site and the debugger stays paused at the current statement
+@testset "session survives errors in commands" begin
+    out = run_scripted_session(JuliaInterpreter.enter_call(f_session_thrower, 1),
+                               "n\nn\nfr\nq\n")
+    @test occursin("DomainError", out)
+    @test occursin("throw_complex_domainerror", out)
+    @test occursin("still paused", out)
+    # the session survived: `fr` after the error still prints the locals
+    @test occursin(r"y.*= .*2", out)
 end

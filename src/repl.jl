@@ -138,20 +138,32 @@ function RunDebugger(frame, repl = nothing, terminal = nothing; initial_continue
         do_print_status = try
             execute_command(state, Val{Symbol(cmd1)}(), command)
         catch err
-            # This will only show the stacktrace up to the current frame because
-            # currently, the unwinding in JuliaInterpreter unlinks the frames to
-            # where the error is thrown
-
-            # Buffer error printing. The error aborts the session, so it must
-            # survive leaving the alternate screen in sticky mode.
-            io = IOContext(IOBuffer(), output_stream(state))
-            Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
-            print_or_defer(state, String(take!(io.io)))
-            # Comment below out if you are debugging the Debugger
-            #Base.display_error(Base.pipe_writer(terminal), err, catch_backtrace())
-            LineEdit.transition(s, :abort)
+            if state.frame === nothing
+                LineEdit.transition(s, :abort)
+                LineEdit.reset_state(s)
+                return false
+            end
+            buf = IOBuffer()
+            io = IOContext(buf, output_stream(state))
+            if err isa InterruptException
+                printstyled(io, "Interrupted: the command was aborted, the debugger is still paused where it was.\n";
+                            color=Base.error_color())
+            else
+                # JuliaInterpreter keeps the frames linked when an exception
+                # escapes the interpreted code, so the backtrace reaches the
+                # actual throw site
+                Base.display_error(io, err, JuliaInterpreter.leaf(state.frame))
+                printstyled(io, "The error terminated the command; the debugger is still paused where it was.\n";
+                            color=:light_black)
+                # Comment below out if you are debugging the Debugger
+                #Base.display_error(Base.pipe_writer(terminal), err, catch_backtrace())
+            end
+            # Drop the dead callee frames the failed command left behind so the
+            # session continues cleanly from the current statement
+            state.frame.callee = nothing
+            print_or_page(state, String(take!(buf)))
             LineEdit.reset_state(s)
-           return false
+            return true
         end
         if old_level != state.level
             panel.prompt = promptname(state.level, "debug")

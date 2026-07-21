@@ -226,6 +226,10 @@ end
 
 function expression_for_display(frame::Frame)
     expr = pc_expr(frame)
+    if expr isa JuliaInterpreter.SlotNumber
+        name = frame.framecode.src.slotnames[expr.id]
+        name === Symbol("") || return name
+    end
     if expr isa Union{GlobalRef, QuoteNode} && frame.pc < nstatements(frame.framecode)
         # Julia 1.12 may pause on a global lookup followed by separate argument
         # loads and then a call. Preview that call so the status still shows the
