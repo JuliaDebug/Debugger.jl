@@ -17,7 +17,7 @@ TerminalRegressionTests = {url = "https://github.com/JuliaDebug/TerminalRegressi
 
 [compat]
 CodeTracking = "2, 3"
-Highlights = "0.6"
+Highlights = "0.6.2"
 JuliaInterpreter = "0.10, 0.11"
 PrecompileTools = "1"
 TerminalRegressionTests = "0.3"
