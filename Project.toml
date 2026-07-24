@@ -13,11 +13,11 @@ REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 tree_sitter_julia_jll = "52be201e-a5e9-5cfe-8bf2-2dc4b062171c"
 
 [sources]
-TerminalRegressionTests = {url = "https://github.com/JuliaDebug/TerminalRegressionTests.jl", rev = "kc/terminal-1.12-support"}
+TerminalRegressionTests = {url = "https://github.com/JuliaDebug/TerminalRegressionTests.jl", rev = "675923307baa801cd32f5774b4b375723c650b54"}
 
 [compat]
 CodeTracking = "2, 3"
-Highlights = "0.6"
+Highlights = "0.6.2"
 JuliaInterpreter = "0.10, 0.11"
 PrecompileTools = "1"
 TerminalRegressionTests = "0.3"
