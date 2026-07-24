@@ -42,10 +42,7 @@ end
     # active REPL), which the scripted session above does not exercise
     precompile(RunDebugger, (Frame,))
 
-    # Clean up global state the workload mutated. The highlight cache in
-    # particular holds tree-sitter pointers that must not be serialized into
-    # the package image.
-    _highlight_cache[] = nothing
+    # Clean up global state the workload mutated.
     empty!(WATCH_LIST)
     JuliaInterpreter.remove()
     _ALT_SCREEN[] = false

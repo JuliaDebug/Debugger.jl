@@ -478,3 +478,26 @@ end
     # the session survived: `fr` after the error still prints the locals
     @test occursin(r"y.*= .*2", out)
 end
+
+# Highlighting must work when the grammar jll is not a direct dep of the active
+# project (i.e. Debugger installed as an indirect dependency). An empty active
+# project reproduces that; `:julia` symbol lookup would fail there.
+@testset "highlighting when grammar jll is not a direct project dep" begin
+    prev_highlight = Debugger.config().highlight
+    Debugger.set_highlight(true)
+    old_project = Base.active_project()
+    try
+        mktempdir() do tmp
+            touch(joinpath(tmp, "Project.toml"))
+            Base.set_active_project(joinpath(tmp, "Project.toml"))
+            io = IOContext(IOBuffer(), :color => true)
+            out = Debugger.highlight_code("x = 1"; context=io)
+            # ANSI escapes mean it highlighted; the bug silently fell back to
+            # the un-highlighted source.
+            @test occursin("\e[", out)
+        end
+    finally
+        Base.set_active_project(old_project)
+        Debugger.set_highlight(prev_highlight)
+    end
+end
