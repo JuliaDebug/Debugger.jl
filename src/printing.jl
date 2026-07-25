@@ -402,29 +402,10 @@ function compute_source_offsets(code::AbstractString, current_offsetline::Intege
     startoffset, stopoffset
 end
 
-# `Highlights.highlight` creates a tree-sitter parser and compiles the
-# highlight query on every call (~30 ms) — far too slow for a status print
-# that highlights every variable line. Cache them for the session.
-mutable struct HighlightCache
-    parser::Any
-    query::Any
-    theme::Any
-    theme_name::String
-end
-const _highlight_cache = Ref{Union{HighlightCache, Nothing}}(nothing)
-
-function highlight_cache()
-    cache = _highlight_cache[]
-    if cache === nothing || cache.theme_name != _current_theme[]
-        lang = Highlights.resolve_language(:julia)
-        parser = Highlights.TreeSitter.Parser(lang)
-        query = Highlights.TreeSitter.Query(lang, ["highlights"])
-        theme = Highlights.load_theme(_current_theme[])
-        cache = HighlightCache(parser, query, theme, _current_theme[])
-        _highlight_cache[] = cache
-    end
-    return cache
-end
+# Pass the grammar module rather than the `:julia` symbol: symbol lookup goes
+# through `Base.identify_package`, which only sees the active project's direct
+# deps and so fails when Debugger is an indirect dependency.
+import tree_sitter_julia_jll
 
 function highlight_code(code; context=nothing)
     if context !== nothing && !get(context, :color, false)
@@ -432,20 +413,12 @@ function highlight_code(code; context=nothing)
     end
     _syntax_highlighting[] || return code
     try
-        cache = highlight_cache()
-        tokens = Highlights.highlight_tokens(cache.parser, cache.query, code)
         return sprint(context=context) do io
-            Highlights.format(io, MIME("text/ansi"), tokens, code, cache.theme, :julia)
+            Highlights.highlight(io, MIME("text/ansi"), code, tree_sitter_julia_jll, _current_theme[])
         end
-    catch
-        # The fast path uses Highlights internals; fall back to the public API
-        # if they change
-        try
-            return sprint(highlight, MIME("text/ansi"), code, :julia, _current_theme[]; context=context)
-        catch e
-            printstyled(stderr, "failed to highlight code, $e\n"; color=Base.warn_color())
-            return code
-        end
+    catch e
+        printstyled(stderr, "failed to highlight code, $e\n"; color=Base.warn_color())
+        return code
     end
 end
 
