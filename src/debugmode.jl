@@ -118,7 +118,8 @@ function install_repl_mode(repl = Base.active_repl; key::Char = ')')
 
     push!(repl.interface.modes, debug_mode)
 
-    key_action = get(main_mode.keymap_dict, key, LineEdit.edit_insert)
+
+    key_action = get(main_mode.keymap_dict, key, (s, repl, c) -> LineEdit.edit_insert(s, c))
     enter_debug_mode = function (s, args...)
         if isempty(s) || position(LineEdit.buffer(s)) == 0
             buf = copy(LineEdit.buffer(s))
