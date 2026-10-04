@@ -15,7 +15,7 @@ tree_sitter_julia_jll = "52be201e-a5e9-5cfe-8bf2-2dc4b062171c"
 [compat]
 CodeTracking = "2, 3"
 Highlights = "0.6.2"
-JuliaInterpreter = "0.10, 0.11"
+JuliaInterpreter = "0.10, 0.11, 0.12"
 PrecompileTools = "1"
 TerminalRegressionTests = "0.3"
 julia = "1.10"
