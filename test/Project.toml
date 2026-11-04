@@ -1,0 +1,15 @@
+[deps]
+CodeTracking = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
+Debugger = "31a5f54b-26ea-5ae9-a837-f05ce5417438"
+InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+JuliaInterpreter = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+TerminalRegressionTests = "98bfdc55-cc95-5876-a49a-74609291cbe0"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[sources]
+Debugger = {path = ".."}
+
+[compat]
+TerminalRegressionTests = "0.3"
