@@ -43,9 +43,13 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
     assert_allow_step(state) || return false
     cmd == "so" && (cmd = "finish")
     cmd == "u" && (cmd = "until")
+    # Look up the root before running the command: once the command finishes,
+    # JuliaInterpreter recycles the finished frames, and `state.frame` may by then
+    # be reused for a frame of some other call tree
+    rootframe = root(state.frame)
     ret = debug_command(state.interp, state.frame, Symbol(cmd); kwargs...)
     if ret === nothing
-        state.overall_result = get_return(root(state.frame))
+        state.overall_result = get_return(rootframe)
         state.frame = nothing
         return false
     else

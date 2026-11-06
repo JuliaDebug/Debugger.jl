@@ -501,3 +501,28 @@ end
         Debugger.set_highlight(prev_highlight)
     end
 end
+
+@noinline f_recycled_leaf(x) = x * 10
+function f_recycled_nested(x)
+    a = f_recycled_leaf(x)
+    # creates interpreter frames outside the debugged call tree, reusing the
+    # recycled frame of `f_recycled_leaf`
+    b = JuliaInterpreter.@interpret identity(42)
+    return a + b
+end
+
+# The return value must come from the root of the debugged call, not from the
+# root of a frame object that was recycled when the command finished
+@testset "return value after finishing from a callee frame" begin
+    try
+        breakpoint(f_recycled_leaf)
+        state = dummy_state(JuliaInterpreter.enter_call(f_recycled_nested, 1))
+        execute_command(state, Val(:c), "c")
+        @test JuliaInterpreter.leaf(state.frame).framecode.scope.name === :f_recycled_leaf
+        execute_command(state, Val(:c), "c")
+        @test state.frame === nothing
+        @test state.overall_result == 52
+    finally
+        JuliaInterpreter.remove()
+    end
+end
