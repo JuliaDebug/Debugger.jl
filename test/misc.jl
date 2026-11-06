@@ -501,3 +501,60 @@ end
         Debugger.set_highlight(prev_highlight)
     end
 end
+
+function f_caught_throws(xs)
+    n = 0
+    for x in xs
+        v = try
+            parse(Int, x)
+        catch
+            -1
+        end
+        n += v
+    end
+    return n
+end
+f_uncaught_throw(x) = parse(Int, x)
+
+# With `break_on(:throw)`, stopping for an exception that the code catches must
+# not end the session: stepping resumes in the `catch` block
+@testset "continue after breaking on a caught throw" begin
+    try
+        JuliaInterpreter.break_on(:throw)
+        state = dummy_state(JuliaInterpreter.enter_call(f_caught_throws, ["a", "1", "b"]))
+        execute_command(state, Val(:c), "c")
+        @test state.broke_on_error
+        @test occursin("'a'", sprint(showerror, state.error_stopped_for))
+        # `c` continues past the handler to the next throw
+        @test execute_command(state, Val(:c), "c")
+        @test state.broke_on_error
+        @test occursin("'b'", sprint(showerror, state.error_stopped_for))
+        # `n` stops in the `catch` block of the catching frame
+        @test execute_command(state, Val(:n), "n")
+        @test !state.broke_on_error
+        @test state.frame.framecode.scope.name === :f_caught_throws
+        @test JuliaInterpreter.caller(state.frame) === nothing
+        execute_command(state, Val(:c), "c")
+        @test state.frame === nothing
+        @test state.overall_result == -1
+    finally
+        JuliaInterpreter.break_off(:throw)
+    end
+end
+
+@testset "no stepping after breaking on an uncaught error" begin
+    try
+        JuliaInterpreter.break_on(:error)
+        state = dummy_state(JuliaInterpreter.enter_call(f_uncaught_throw, "a"))
+        execute_command(state, Val(:c), "c")
+        @test state.broke_on_error
+        frame = state.frame
+        @test !redirect_stderr(devnull) do
+            execute_command(state, Val(:c), "c")
+        end
+        @test state.broke_on_error
+        @test state.frame === frame
+    finally
+        JuliaInterpreter.break_off(:error)
+    end
+end
