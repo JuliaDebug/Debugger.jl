@@ -11,6 +11,15 @@ function assert_allow_step(state)
     return true
 end
 
+# Whether an exception thrown in `frame` is caught by it or by one of its callers
+function is_caught_in_frames(frame::Union{Nothing,Frame})
+    while frame !== nothing
+        isempty(frame.framedata.exception_frames) || return true
+        frame = caller(frame)
+    end
+    return false
+end
+
 invalid_command(state, cmd) = execute_command(state, Val(:_), cmd) # print error
 
 function show_breakpoint(io::IO, bp::BreakpointRef, state::DebuggerState)
@@ -40,6 +49,15 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
             kwargs = Dict(:line => line)
         end
     end
+    if state.broke_on_error && state.level == 1 && is_caught_in_frames(state.frame)
+        # Stopped for an exception that an interpreted frame catches (`break_on(:throw)`):
+        # resume by unwinding into the handler. `c` continues from there; the other
+        # commands stop at the start of the `catch` block.
+        state.frame = JuliaInterpreter.unwind_exception(state.frame, state.error_stopped_for)
+        state.broke_on_error = false
+        state.error_stopped_for = nothing
+        cmd == "c" || return true
+    end
     assert_allow_step(state) || return false
     cmd == "so" && (cmd = "finish")
     cmd == "u" && (cmd = "until")
@@ -58,6 +76,7 @@ function execute_command(state::DebuggerState, v::Union{Val{:c},Val{:nc},Val{:n}
             end
             if pc.err !== nothing
                 state.broke_on_error = true
+                state.error_stopped_for = pc.err
             end
         end
         if pc_expr(state.frame) === nothing # happens when stopping for @bp

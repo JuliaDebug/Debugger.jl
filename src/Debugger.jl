@@ -42,6 +42,8 @@ Base.@kwdef mutable struct DebuggerState
     frame::Union{Nothing, Frame}
     level::Int = 1
     broke_on_error::Bool = false
+    # The exception the session stopped for (see `break_on`), while `broke_on_error`
+    error_stopped_for = nothing
     watch_list::Vector = WATCH_LIST
     lowered_status::Bool = false
     interp::Interpreter = RecursiveInterpreter()
